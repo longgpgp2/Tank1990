@@ -3,6 +3,8 @@ package tank1990.objects.tanks;
 import tank1990.objects.tanks.Bullet;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Tank {
         private int health;
@@ -12,6 +14,7 @@ public abstract class Tank {
         private int x;
         private int y;
         private Color color;
+        private List<Bullet> bullets = new ArrayList<>();
         private int bulletCount=1;
         public Tank(int health, int bulletSpeed, int movementSpeed, Direction direction) {
                 this.health = health;
@@ -25,7 +28,10 @@ public abstract class Tank {
         }
 
         public Bullet shoot(){
-            return null;
+                Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);
+                bullets.add(bullet);
+                System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: " +getDirection());
+                return bullet;
         }
         public String toString(){
                 return null;
@@ -87,11 +93,20 @@ public abstract class Tank {
                 this.color = color;
         }
 
+
         public int getBulletCount() {
                 return bulletCount;
         }
 
         public void setBulletCount(int bulletCount) {
                 this.bulletCount = bulletCount;
+        }
+
+        public List<Bullet> getBullets() {
+                return bullets;
+        }
+
+        public void setBullets(List<Bullet> bullets) {
+                this.bullets = bullets;
         }
 }

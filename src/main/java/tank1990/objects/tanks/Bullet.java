@@ -13,6 +13,13 @@ public class Bullet {
         this.x = startX+10;
         this.y = startY+10;
         this.direction = direction;
+        switch (direction){
+            case Direction.UP -> y-=15;
+            case Direction.DOWN -> y+=15;
+            case Direction.LEFT -> x-=15;
+            case Direction.RIGHT -> x+=15;
+        }
+
         this.speed = speed;
     }
 
@@ -49,9 +56,9 @@ public class Bullet {
         {
             g.setColor(Color.RED);
             if (direction == Direction.DOWN || direction == Direction.UP)
-                g.fillRect((int) x, (int) y, 5, 10);
+                g.fillRect((int) x, (int) y, 3, 10);
             else
-                g.fillRect((int) x, (int) y, 10, 5);
+                g.fillRect((int) x, (int) y, 10, 3);
         }
     }
 

@@ -21,20 +21,22 @@ public class GamePanel extends JPanel {
 
     final int PANEL_WIDTH = 700;
     final int PANEL_HEIGHT = 700;
-    String tankImageSrc;
+    String p1TankImageSrc, p2TankImageSrc;
     Timer timer;
     int velocity = 5;
     int x = 200;
     int y = 100;
+    int x2 = 400;
+    int y2 = 200;
     java.util.List<Environment> environments = new ArrayList<>();
-    PlayerTank p1Tank = new PlayerTank(1);
-    boolean upPressed, downPressed, leftPressed, rightPressed, shoot;
+    Tank p1Tank, p2Tank;
+    boolean upPressed, downPressed, leftPressed, rightPressed, shoot, p2UpPressed, p2DownPressed, p2LeftPressed, p2RightPressed, p2Shoot;
 
     GamePanel() {
         for (int i = 0; i < 10; i++) {
-            environments.add(new BrickWall(i*25, i*25));
+            environments.add(new BrickWall(i * 25, i * 25));
         }
-
+        initPlayerTank(true);
         this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         this.setBackground(Color.WHITE);
         this.addKeyListener(new KeyHandler());
@@ -50,66 +52,107 @@ public class GamePanel extends JPanel {
         });
         timer.start();
     }
-    private void updateBullets(){
-        if(!p1Tank.getBullets().isEmpty())
-            for (Bullet bullet : p1Tank.getBullets()) {
+
+    private void updateBullets(Tank tank) {
+        if (!tank.getBullets().isEmpty())
+            for (Bullet bullet : tank.getBullets()) {
                 bullet.update();
-                System.out.println(p1Tank.getBullets().size());
+
                 checkCollisions(bullet);
+
                 if (bullet.checkBulletOutOfBound() || bullet.isCollided()) {
-                    java.util.List<Bullet> bullets = p1Tank.getBullets();
+                    java.util.List<Bullet> bullets = tank.getBullets();
                     bullets.remove(bullet);
-                    p1Tank.setBullets(bullets);
-                    updateBullets();
+                    tank.setBullets(bullets);
+                    updateBullets(tank);
                     break;
                 }
+
             }
     }
+
     private void updateGame() {
-        Set<String> blockedDirections = checkTankCollisions();
+        Set<String> blockedDirections = checkTankCollisions(p1Tank);
 
         if (upPressed) {
-            if(checkTankOutOfBound()!="UP" && !blockedDirections.contains("UP"))
-            y -= velocity;
+            if (checkTankOutOfBound(p1Tank) != "UP" && !blockedDirections.contains("UP"))
+                y -= velocity;
             else System.out.println(blockedDirections);
         }
         if (downPressed) {
-            if(checkTankOutOfBound()!="DOWN" && !blockedDirections.contains("DOWN"))
-            y += velocity;
+            if (checkTankOutOfBound(p1Tank) != "DOWN" && !blockedDirections.contains("DOWN"))
+                y += velocity;
             else System.out.println(blockedDirections);
         }
         if (leftPressed) {
-            if(checkTankOutOfBound()!="LEFT" && !blockedDirections.contains("LEFT"))
-            x -= velocity;
+            if (checkTankOutOfBound(p1Tank) != "LEFT" && !blockedDirections.contains("LEFT"))
+                x -= velocity;
             else System.out.println(blockedDirections);
         }
         if (rightPressed) {
-            if(checkTankOutOfBound()!="RIGHT" && !blockedDirections.contains("RIGHT"))
-            x += velocity;
+            if (checkTankOutOfBound(p1Tank) != "RIGHT" && !blockedDirections.contains("RIGHT"))
+                x += velocity;
             else System.out.println(blockedDirections);
+        }
+
+        // p2
+
+        Set<String> blockedDirections2 = checkTankCollisions(p1Tank);
+        if (p2UpPressed) {
+            if (checkTankOutOfBound(p2Tank) != "UP" && !blockedDirections2.contains("UP"))
+                y2 -= velocity;
+            else System.out.println(blockedDirections2);
+        }
+        if (p2DownPressed) {
+            if (checkTankOutOfBound(p2Tank) != "DOWN" && !blockedDirections2.contains("DOWN"))
+                y2 += velocity;
+            else System.out.println(blockedDirections2);
+        }
+        if (p2LeftPressed) {
+            if (checkTankOutOfBound(p2Tank) != "LEFT" && !blockedDirections2.contains("LEFT"))
+                x2 -= velocity;
+            else System.out.println(blockedDirections2);
+        }
+        if (p2RightPressed) {
+            if (checkTankOutOfBound(p2Tank) != "RIGHT" && !blockedDirections2.contains("RIGHT"))
+                x2 += velocity;
+            else System.out.println(blockedDirections2);
         }
 
         p1Tank.setX(x);
         p1Tank.setY(y);
-        updateBullets();
+
+        p2Tank.setX(x2);
+        p2Tank.setY(y2);
+        updateBullets(p1Tank);
+        updateBullets(p2Tank);
 
     }
 
-    private String checkTankOutOfBound(){
-        int x = p1Tank.getX();
-        int y = p1Tank.getY();
-        if (x<=0) return "LEFT";
-        if (x>=700-26) return "RIGHT";
-        if (y<=0) return "UP";
-        if (y>=700-26) return "DOWN";
+    private void initPlayerTank(boolean p2Present) {
+        p1Tank = new PlayerTank(1);
+        p1Tank.setDirection(Direction.UP);
+        if (p2Present) {
+            p2Tank = new PlayerTank(2);
+            p2Tank.setDirection(Direction.UP);
+        }
+    }
+
+    private String checkTankOutOfBound(Tank tank) {
+        int x = tank.getX();
+        int y = tank.getY();
+        if (x <= 0) return "LEFT";
+        if (x >= 700 - 20) return "RIGHT";
+        if (y <= 0) return "UP";
+        if (y >= 700 - 20) return "DOWN";
         return "";
     }
-    private Set<String> checkTankCollisions() {
+
+    private Set<String> checkTankCollisions(Tank tank) {
         Set<String> blockedDirections = new HashSet<>();
         for (Environment env : environments) {
-            if(!isTankColliding(env).isEmpty())
-            {
-                for (String s: isTankColliding(env)) {
+            if (!isTankColliding(env, tank).isEmpty()) {
+                for (String s : isTankColliding(env, tank)) {
                     blockedDirections.add(s);
                 }
             }
@@ -119,54 +162,63 @@ public class GamePanel extends JPanel {
     }
 
     private boolean checkCollisions(Bullet bullet) {
-            for (Environment env : environments) {
-
-                if (isColliding(bullet, env)) {
-                    bullet.setCollided(true);
-                    return true;
-                }
+        for (Environment env : environments) {
+            if (isColliding(bullet, env)) {
+                bullet.setCollided(true);
+                return true;
             }
+        }
+        if (isTankShot(bullet, p1Tank)) {
+            bullet.setCollided(true);
+            p1Tank.setHealth(p1Tank.getHealth()-1);
+            if(p2Tank.getHealth()<=0){
+                System.out.println("Player 2 Win");
+                p1TankImageSrc=null;
+            }
+        }
+        if (isTankShot(bullet, p2Tank)) {
+            bullet.setCollided(true);
+            p2Tank.setHealth(p2Tank.getHealth()-1);
+            if(p2Tank.getHealth()<=0){
+                System.out.println("Player 1 Win");
+                p2TankImageSrc=null;
+            }
+        }
         return false;
     }
 
-    private Set<String> isTankColliding(Environment env) {
+    private Set<String> isTankColliding(Environment env, Tank tank) {
         Set<String> blockedDirections = new HashSet<>();
-        int tankX = p1Tank.getX();
-        int tankY = p1Tank.getY();
+        int tankX = tank.getX();
+        int tankY = tank.getY();
 
         int envX = env.getX();
         int envY = env.getY();
 
-        if(envX-tankX<=20&&envX-tankX>=0){
+        boolean inHorizontalRange = (envY - tankY <= 20 && envY - tankY >= 0) || (tankY - envY <= 25 && tankY - envY >= 0);
+        boolean inVerticalRange = (envX - tankX <= 20 && envX - tankX >= 0) || (tankX - envX <= 25 && tankX - envX >= 0);
 
-            if (envY - tankY <= 20 && envY - tankY >= 0){
+        if (envX - tankX <= 20 && envX - tankX >= 0) {
+            if (inHorizontalRange) {
                 blockedDirections.add("RIGHT");
-                blockedDirections.add("DOWN");
-                if (envY - tankY < 20 && envY - tankY > 0)
-                    blockedDirections.remove("DOWN");
-            }
-            if (tankY - envY <= 25 && tankY - envY  >= 0){
-                blockedDirections.add("UP");
-                blockedDirections.add("RIGHT");
-                if (tankY - envY < 25 && tankY - envY  > 0)
-                    blockedDirections.remove("UP");
             }
         }
-
-        if(tankX - envX<=25&&tankX - envX>=0){
-
-            if (envY - tankY <= 20 && envY - tankY >= 0){
-                blockedDirections.add("LEFT");
-                blockedDirections.add("DOWN");
-            }
-            if (tankY - envY <= 25 && tankY - envY  >= 0){
-                blockedDirections.add("UP");
+        if (tankX - envX <= 25 && tankX - envX >= 0) {
+            if (inHorizontalRange) {
                 blockedDirections.add("LEFT");
             }
-
         }
+//        if (envY - tankY <= 20 && envY - tankY >= 0)
+//            if (inVerticalRange) {
+//                blockedDirections.add("DOWN");
+//            }
+//        if (tankY - envY <= 25 && tankY - envY >= 0)
+//            if (inVerticalRange) {
+//                blockedDirections.add("UP");
+//            }
         return blockedDirections;
     }
+
     private boolean isColliding(Bullet bullet, Environment env) {
         int bulletX = (int) bullet.getX();
         int bulletY = (int) bullet.getY();
@@ -182,11 +234,27 @@ public class GamePanel extends JPanel {
                 bulletY + 10 > envY;
     }
 
+    private boolean isTankShot(Bullet bullet, Tank tank) {
+        int bulletX = (int) bullet.getX();
+        int bulletY = (int) bullet.getY();
+
+        int tankX = tank.getX();
+        int tankY = tank.getY();
+        int tankWidth = 20;
+        int tankHeight = 20;
+
+        return bulletX < tankX + tankWidth &&
+                bulletX + 10 > tankX &&
+                bulletY < tankY + tankHeight &&
+                bulletY + 10 > tankY;
+    }
+
 
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Image tankImage = new ImageIcon(tankImageSrc).getImage();
+        Image p1TankImage = new ImageIcon(p1TankImageSrc).getImage();
+        Image p2TankImage = new ImageIcon(p2TankImageSrc).getImage();
         Graphics2D g2D = (Graphics2D) g;
         int width = getWidth();
         int height = getHeight();
@@ -201,17 +269,22 @@ public class GamePanel extends JPanel {
         }
 
         g2D.setColor(p1Tank.getColor());
-        g2D.drawImage(tankImage, p1Tank.getX(), p1Tank.getY(), 20, 20, this);
+        g2D.drawImage(p1TankImage, p1Tank.getX(), p1Tank.getY(), 20, 20, this);
+        g2D.drawImage(p2TankImage, p2Tank.getX(), p2Tank.getY(), 20, 20, this);
         for (Environment env : environments) {
 
             g.setColor(Color.GRAY);
             g.fillRect(env.getX(), env.getY(), 25, 25); // Placeholder
         }
-        if(!p1Tank.getBullets().isEmpty())
-        for (Bullet bullet : p1Tank.getBullets()) {
-            bullet.draw(g);
-        }
+        if (!p1Tank.getBullets().isEmpty())
+            for (Bullet bullet : p1Tank.getBullets()) {
+                bullet.draw(g);
+            }
 
+        if (!p2Tank.getBullets().isEmpty())
+            for (Bullet bullet : p2Tank.getBullets()) {
+                bullet.draw(g);
+            }
         g2D.dispose();
     }
 
@@ -240,15 +313,40 @@ public class GamePanel extends JPanel {
                 rightPressed = true;
                 p1Tank.setDirection(Direction.RIGHT);
             }
-            if (code == KeyEvent.VK_L){
-                shoot=true;
+            if (code == KeyEvent.VK_L) {
+                shoot = true;
                 p1Tank.setBulletCount(3);
-                if(p1Tank.getBullets().size()<p1Tank.getBulletCount())
-                {
+                if (p1Tank.getBullets().size() < p1Tank.getBulletCount()) {
                     p1Tank.shoot();
                 }
             }
-            tankImageSrc = ".\\src\\tank" + p1Tank.getDirection() + ".png";
+
+            //p2 keys
+            if (code == KeyEvent.VK_UP) {
+                p2UpPressed = true;
+                p2Tank.setDirection(Direction.UP);
+            }
+            if (code == KeyEvent.VK_LEFT) {
+                p2LeftPressed = true;
+                p2Tank.setDirection(Direction.LEFT);
+            }
+            if (code == KeyEvent.VK_DOWN) {
+                p2DownPressed = true;
+                p2Tank.setDirection(Direction.DOWN);
+            }
+            if (code == KeyEvent.VK_RIGHT) {
+                p2RightPressed = true;
+                p2Tank.setDirection(Direction.RIGHT);
+            }
+            if (code == KeyEvent.VK_NUMPAD0) {
+                shoot = true;
+                p2Tank.setBulletCount(3);
+                if (p2Tank.getBullets().size() < p2Tank.getBulletCount()) {
+                    p2Tank.shoot();
+                }
+            }
+            p1TankImageSrc = ".\\src\\tank" + p1Tank.getDirection() + ".png";
+            p2TankImageSrc = ".\\src\\tank" + p2Tank.getDirection() + ".png";
         }
 
         @Override
@@ -266,8 +364,26 @@ public class GamePanel extends JPanel {
             if (code == KeyEvent.VK_D) {
                 rightPressed = false;
             }
-            if (code == KeyEvent.VK_L){
-                shoot=false;
+            if (code == KeyEvent.VK_L) {
+                shoot = false;
+            }
+
+            //p2 key
+
+            if (code == KeyEvent.VK_UP) {
+                p2UpPressed = false;
+            }
+            if (code == KeyEvent.VK_LEFT) {
+                p2LeftPressed = false;
+            }
+            if (code == KeyEvent.VK_DOWN) {
+                p2DownPressed = false;
+            }
+            if (code == KeyEvent.VK_RIGHT) {
+                p2RightPressed = false;
+            }
+            if (code == KeyEvent.VK_NUMPAD0) {
+                shoot = false;
             }
         }
     }

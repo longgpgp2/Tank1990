@@ -9,11 +9,10 @@ public class PlayerTank extends Tank{
     private Direction direction;
     private List<Bullet> bullets = new ArrayList<>();
     public PlayerTank(){
-//asdasd
     }
 
     public PlayerTank(int owner) {
-        super(1, 1, 1, Direction.UP);
+        super(3, 1, 1, Direction.UP);
         this.owner = owner;
         this.setColor(Color.YELLOW);
     }
@@ -25,8 +24,6 @@ public class PlayerTank extends Tank{
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: " +getDirection());
         return bullet;
-
-
     }
 
 
