@@ -13,28 +13,59 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class GamePanel extends JPanel {
 
+    final int GAME_SIZE = 400;
     final int PANEL_WIDTH = 700;
     final int PANEL_HEIGHT = 700;
+    private final int BRICK_WIDTH = (int) (PANEL_WIDTH/(Math.sqrt(GAME_SIZE)));
+    private final int BRICK_HEIGHT = (int) (PANEL_HEIGHT/(Math.sqrt(GAME_SIZE)));
     String p1TankImageSrc, p2TankImageSrc;
     Timer timer;
-    int velocity = 5;
-    int x = 200;
-    int y = 100;
+    int velocity = BRICK_HEIGHT/5;
+    int x = BRICK_HEIGHT*10;
+    int y = BRICK_HEIGHT*10;
     int x2 = 400;
-    int y2 = 200;
+    int y2 = 500;
     java.util.List<Environment> environments = new ArrayList<>();
+    private java.util.List<Integer> map = new ArrayList<Integer>();
     Tank p1Tank, p2Tank;
     boolean upPressed, downPressed, leftPressed, rightPressed, shoot, p2UpPressed, p2DownPressed, p2LeftPressed, p2RightPressed, p2Shoot;
 
     GamePanel() {
-        for (int i = 0; i < 10; i++) {
-            environments.add(new BrickWall(i * 25, i * 25));
+
+        File file = new File(".\\src\\main\\resources\\battlefield.map");
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line=null;
+            while((line = (br.readLine()))!= null){
+                for (int i = 0; i < line.length(); i++) {
+                    char c = line.charAt(i);
+                    if(Character.isDigit(c)){
+                        map.add(Integer.parseInt(String.valueOf(c)));
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println(map);
+
+        for (int i = 0; i < map.size(); i++) {
+            int envX= (int) (i%(Math.sqrt(GAME_SIZE)));
+            int envY= (int) (i/(Math.sqrt(GAME_SIZE)));
+            if(map.get(i)==1)
+            environments.add(new BrickWall(envX*BRICK_WIDTH, envY*BRICK_HEIGHT));
+            else
+                environments.add(new BrickWall(envX*BRICK_WIDTH/2, envY*BRICK_HEIGHT/2));
         }
         initPlayerTank(true);
         this.setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
@@ -189,33 +220,72 @@ public class GamePanel extends JPanel {
 
     private Set<String> isTankColliding(Environment env, Tank tank) {
         Set<String> blockedDirections = new HashSet<>();
+        boolean up= false;
+        boolean down= false;
+        boolean left= false;
+        boolean right= false;
+
         int tankX = tank.getX();
         int tankY = tank.getY();
 
         int envX = env.getX();
         int envY = env.getY();
 
-        boolean inHorizontalRange = (envY - tankY <= 20 && envY - tankY >= 0) || (tankY - envY <= 25 && tankY - envY >= 0);
-        boolean inVerticalRange = (envX - tankX <= 20 && envX - tankX >= 0) || (tankX - envX <= 25 && tankX - envX >= 0);
+        boolean inHorizontalRange = (envY - tankY <= BRICK_HEIGHT && envY - tankY >= 0) || (tankY - envY <= BRICK_WIDTH && tankY - envY >= 0);
+        boolean inVerticalRange = (envX - tankX <= BRICK_HEIGHT && envX - tankX >= 0) || (tankX - envX <= BRICK_WIDTH && tankX - envX >= 0);
 
-        if (envX - tankX <= 20 && envX - tankX >= 0) {
+        if (envX - tankX <= BRICK_WIDTH && envX - tankX >= 0) {
             if (inHorizontalRange) {
                 blockedDirections.add("RIGHT");
             }
         }
-        if (tankX - envX <= 25 && tankX - envX >= 0) {
+        if (tankX - envX <= BRICK_WIDTH && tankX - envX >= 0) {
             if (inHorizontalRange) {
                 blockedDirections.add("LEFT");
             }
         }
-//        if (envY - tankY <= 20 && envY - tankY >= 0)
-//            if (inVerticalRange) {
-//                blockedDirections.add("DOWN");
-//            }
-//        if (tankY - envY <= 25 && tankY - envY >= 0)
-//            if (inVerticalRange) {
-//                blockedDirections.add("UP");
-//            }
+        if (envY - tankY <= BRICK_WIDTH && envY - tankY >= 0)
+            if (inVerticalRange) {
+                blockedDirections.add("DOWN");
+            }
+        if (tankY - envY <= BRICK_WIDTH && tankY - envY >= 0)
+            if (inVerticalRange) {
+                blockedDirections.add("UP");
+            }
+
+        if (envX>=tankX+BRICK_WIDTH) {
+            right = true;
+            blockedDirections.remove("UP");
+            blockedDirections.remove("DOWN");
+        }
+        if (envY>=tankY+BRICK_HEIGHT) {
+            down = true;
+            blockedDirections.remove("LEFT");
+            blockedDirections.remove("RIGHT");
+        }
+        if (envX+BRICK_WIDTH<=tankX) {
+            left = true;
+            blockedDirections.remove("UP");
+            blockedDirections.remove("DOWN");
+        }
+        if (envY+BRICK_HEIGHT<=tankY) {
+            up = true;
+            blockedDirections.remove("LEFT");
+            blockedDirections.remove("RIGHT");
+        }
+
+        if (right==true && left ==true){
+            System.out.println("MOVABLE VERTICALLY");
+            blockedDirections.remove("UP");
+            blockedDirections.remove("DOWN");
+        }
+
+        if (up==true && down ==true){
+            blockedDirections.remove("LEFT");
+            blockedDirections.remove("RIGHT");
+        }
+
+
         return blockedDirections;
     }
 
@@ -240,8 +310,8 @@ public class GamePanel extends JPanel {
 
         int tankX = tank.getX();
         int tankY = tank.getY();
-        int tankWidth = 20;
-        int tankHeight = 20;
+        int tankWidth = BRICK_WIDTH-10;
+        int tankHeight = BRICK_HEIGHT-10;
 
         return bulletX < tankX + tankWidth &&
                 bulletX + 10 > tankX &&
@@ -260,21 +330,21 @@ public class GamePanel extends JPanel {
         int height = getHeight();
 
         // Draw vertical lines (columns)
-        for (int i = 0; i <= width; i += 25) {
+        for (int i = 0; i <= width; i += BRICK_WIDTH) {
             g.drawLine(i, 0, i, height);
         }
         // Draw horizontal lines (rows)
-        for (int i = 0; i <= height; i += 25) {
+        for (int i = 0; i <= height; i += BRICK_HEIGHT) {
             g.drawLine(0, i, width, i);
         }
 
         g2D.setColor(p1Tank.getColor());
-        g2D.drawImage(p1TankImage, p1Tank.getX(), p1Tank.getY(), 20, 20, this);
-        g2D.drawImage(p2TankImage, p2Tank.getX(), p2Tank.getY(), 20, 20, this);
+        g2D.drawImage(p1TankImage, p1Tank.getX(), p1Tank.getY(), BRICK_WIDTH, BRICK_HEIGHT, this);
+        g2D.drawImage(p2TankImage, p2Tank.getX(), p2Tank.getY(),  BRICK_WIDTH, BRICK_HEIGHT, this);
         for (Environment env : environments) {
 
             g.setColor(Color.GRAY);
-            g.fillRect(env.getX(), env.getY(), 25, 25); // Placeholder
+            g.fillRect(env.getX(), env.getY(), BRICK_WIDTH, BRICK_HEIGHT); // Placeholder
         }
         if (!p1Tank.getBullets().isEmpty())
             for (Bullet bullet : p1Tank.getBullets()) {
