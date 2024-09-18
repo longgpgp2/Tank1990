@@ -274,17 +274,6 @@ public class GamePanel extends JPanel {
             blockedDirections.remove("RIGHT");
         }
 
-        if (right==true && left ==true){
-            System.out.println("MOVABLE VERTICALLY");
-            blockedDirections.remove("UP");
-            blockedDirections.remove("DOWN");
-        }
-
-        if (up==true && down ==true){
-            blockedDirections.remove("LEFT");
-            blockedDirections.remove("RIGHT");
-        }
-
 
         return blockedDirections;
     }
