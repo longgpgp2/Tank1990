@@ -1,4 +1,4 @@
-package tank1990.objects.common.enums;
+package tank1990.common.enums;
 
 public enum Direction {
     UP,

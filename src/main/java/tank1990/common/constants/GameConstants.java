@@ -1,4 +1,4 @@
-package tank1990.objects.common.constants;
+package tank1990.common.constants;
 
 public class GameConstants {
     public static final int FRAME_WIDTH = 1000;
@@ -10,4 +10,6 @@ public class GameConstants {
     public static final int ENTITY_HEIGHT = 16;
     public static final int TANK_SIZE = 32;
     public static final int POWERUP_SIZE = 32;
+    public static final int MAP_SHIFT_WIDTH = 50;
+    public static final int MAP_SHIFT_HEIGHT = 50;
 }

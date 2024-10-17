@@ -1,40 +1,43 @@
 package tank1990.objects.tanks;
 
-import tank1990.main.GamePanel;
-import tank1990.objects.common.constants.GameConstants;
-import tank1990.objects.common.enums.Direction;
-import tank1990.objects.common.Entity;
+import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.Vector2D;
+import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.Direction;
+import tank1990.common.enums.EntityType;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Tank extends Entity {
-        public  int health;
-        public  int bulletSpeed;
-        public  int movementSpeed;
-        public  Direction direction;
-        public  int x;
-        public  int y;
-        public  Color color;
-        public  List<Bullet> bullets = new ArrayList<>();
-        public  int bulletCount=1;
-        public Tank(int health, int bulletSpeed, int movementSpeed, Direction direction) {
-                super(0, 0, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
+public abstract class Tank extends GameEntity {
+        public int health;
+        public int bulletSpeed;
+        public int movementSpeed;
+        public Direction direction;
+        public int x;
+        public int y;
+        public Color color;
+        public List<Bullet> bullets = new ArrayList<>();
+        public int bulletCount = 1;
+
+        public Tank(EntityType type, int health, int bulletSpeed, int movementSpeed, Direction direction) {
+                super(type, new Vector2D(0, 0), GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
                 this.health = health;
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;
                 this.direction = direction;
         }
 
-
-        public Bullet shoot(){
+        public Bullet shoot() {
                 Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);
                 bullets.add(bullet);
-                System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: " +getDirection());
+                System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: "
+                                + getDirection());
                 return bullet;
         }
-        public String toString(){
+
+        public String toString() {
                 return null;
         }
 
@@ -93,7 +96,6 @@ public abstract class Tank extends Entity {
         public void setColor(Color color) {
                 this.color = color;
         }
-
 
         public int getBulletCount() {
                 return bulletCount;

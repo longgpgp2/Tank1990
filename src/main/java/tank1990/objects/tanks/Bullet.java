@@ -1,35 +1,36 @@
 package tank1990.objects.tanks;
 
-import tank1990.objects.common.Entity;
-import tank1990.objects.common.enums.Direction;
-
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Bullet extends Entity {
-    public  double x, y;
-    public  Direction direction;
-    public  double speed;
-    public  boolean isCollided=false;
+import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.Vector2D;
+import tank1990.common.enums.Direction;
+import tank1990.common.enums.EntityType;
+
+public class Bullet extends GameEntity {
+    public double x, y;
+    public Direction direction;
+    public double speed;
+    public boolean isCollided = false;
 
     public Bullet(int startX, int startY, Direction direction, double speed) {
-        super(startX, startY, 5, 5);
-        this.x = startX+10;
-        this.y = startY+10;
+        super(EntityType.BULLET, new Vector2D(startX, startY), 5, 5);
+        this.x = startX + 10;
+        this.y = startY + 10;
         this.direction = direction;
-        switch (direction){
-            case Direction.UP -> y-=15;
-            case Direction.DOWN -> y+=15;
-            case Direction.LEFT -> x-=15;
-            case Direction.RIGHT -> x+=15;
+        switch (direction) {
+            case Direction.UP -> y -= 15;
+            case Direction.DOWN -> y += 15;
+            case Direction.LEFT -> x -= 15;
+            case Direction.RIGHT -> x += 15;
         }
 
         this.speed = speed;
     }
 
     public void update() {
-        if(!checkBulletOutOfBound())
-        {
+        if (!checkBulletOutOfBound()) {
             double directionValue = 0;
             switch (direction) {
                 case Direction.UP: {
@@ -56,8 +57,7 @@ public class Bullet extends Entity {
     }
 
     public void draw(Graphics g) {
-        if(!checkBulletOutOfBound())
-        {
+        if (!checkBulletOutOfBound()) {
             g.setColor(Color.RED);
             if (direction == Direction.DOWN || direction == Direction.UP)
                 g.fillRect((int) x, (int) y, 3, 10);
@@ -66,9 +66,9 @@ public class Bullet extends Entity {
         }
     }
 
-    public boolean checkBulletOutOfBound(){
-        if(x<0 || y<0 ||x>700|| y>700)
-        return true;
+    public boolean checkBulletOutOfBound() {
+        if (x < 0 || y < 0 || x > 700 || y > 700)
+            return true;
         return false;
     }
 

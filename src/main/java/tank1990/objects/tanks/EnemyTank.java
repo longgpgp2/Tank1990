@@ -1,8 +1,8 @@
 package tank1990.objects.tanks;
 
-import tank1990.objects.common.enums.Direction;
+import tank1990.common.enums.Direction;
 
-public abstract class EnemyTank extends Tank{
+public abstract class EnemyTank extends Tank {
     private String name;
     private int point;
     private String specialTraits;
@@ -10,14 +10,13 @@ public abstract class EnemyTank extends Tank{
     public EnemyTank(String name, int health, int point, int bulletSpeed, int movementSpeed, String specialTraits) {
         super(health, bulletSpeed, movementSpeed, Direction.DOWN);
         this.name = name;
-        this.point=point;
+        this.point = point;
         this.specialTraits = specialTraits;
     }
 
-
     @Override
-    public Bullet shoot(){
-        System.out.println(name+" is shooting!");
+    public Bullet shoot() {
+        System.out.println(name + " is shooting!");
 
         return null;
     }
@@ -37,7 +36,6 @@ public abstract class EnemyTank extends Tank{
     public void setSpecialTraits(String specialTraits) {
         this.specialTraits = specialTraits;
     }
-
 
     public int getPoint() {
         return point;

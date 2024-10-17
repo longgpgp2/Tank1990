@@ -1,7 +1,7 @@
 package tank1990.main;
 
+import tank1990.common.constants.GameConstants;
 import tank1990.manager.KeyHandler;
-import tank1990.objects.common.constants.GameConstants;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.Tank;
 
@@ -19,16 +19,17 @@ public class GamePanel extends JPanel {
     Timer timer;
     java.util.List<Environment> environments = new ArrayList<>();
     private java.util.List<Integer> map = new ArrayList<Integer>();
+
     GamePanel() {
 
         File file = new File(".\\src\\main\\resources\\battlefield.map");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-            String line=null;
-            while((line = (br.readLine()))!= null){
+            String line = null;
+            while ((line = (br.readLine())) != null) {
                 for (int i = 0; i < line.length(); i++) {
                     char c = line.charAt(i);
-                    if(Character.isDigit(c)){
+                    if (Character.isDigit(c)) {
                         map.add(Integer.parseInt(String.valueOf(c)));
                     }
                 }
@@ -36,8 +37,6 @@ public class GamePanel extends JPanel {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
 
         this.setPreferredSize(new Dimension(GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT));
         this.setBackground(Color.WHITE);
@@ -47,7 +46,7 @@ public class GamePanel extends JPanel {
 
     }
 
-    public void startTimer(){
+    public void startTimer() {
         timer = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,15 +56,10 @@ public class GamePanel extends JPanel {
         });
         timer.start();
     }
+
     private void updateGame() {
 
     }
-
-
-
-
-
-
 
     @Override
     public void paintComponent(Graphics g) {
@@ -73,6 +67,5 @@ public class GamePanel extends JPanel {
         Graphics2D g2D = (Graphics2D) g;
         g2D.dispose();
     }
-
 
 }

@@ -1,12 +1,12 @@
 package tank1990.objects.tanks;
 
-import tank1990.objects.common.enums.Direction;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerTank extends Tank{
+import tank1990.common.enums.Direction;
+
+public class PlayerTank extends Tank {
     private int owner;
     private Direction direction;
     private List<Bullet> bullets = new ArrayList<>();
@@ -17,15 +17,13 @@ public class PlayerTank extends Tank{
         this.setColor(Color.YELLOW);
     }
 
-
     @Override
-    public Bullet shoot(){
+    public Bullet shoot() {
         Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);
         bullets.add(bullet);
-        System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: " +getDirection());
+        System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: " + getDirection());
         return bullet;
     }
-
 
     public int getOwner() {
         return owner;
@@ -34,8 +32,6 @@ public class PlayerTank extends Tank{
     public void setOwner(int owner) {
         this.owner = owner;
     }
-
-
 
     @Override
     public String toString() {

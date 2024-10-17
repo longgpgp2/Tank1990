@@ -1,14 +1,15 @@
 package tank1990.main;
 
-import tank1990.objects.common.constants.GameConstants;
-
 import javax.swing.*;
+
+import tank1990.common.constants.GameConstants;
+
 import java.awt.*;
 
 public class GameObject extends JFrame {
     JPanel panel;
 
-    GameObject(){
+    GameObject() {
 
         panel = new GamePanel();
         setSize(new Dimension(GameConstants.FRAME_WIDTH, GameConstants.FRAME_HEIGHT));
