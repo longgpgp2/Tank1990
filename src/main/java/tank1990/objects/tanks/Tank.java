@@ -1,6 +1,7 @@
 package tank1990.objects.tanks;
 
 import tank1990.main.GamePanel;
+import tank1990.objects.common.constants.GameConstants;
 import tank1990.objects.common.enums.Direction;
 import tank1990.objects.common.Entity;
 
@@ -19,7 +20,7 @@ public abstract class Tank extends Entity {
         public  List<Bullet> bullets = new ArrayList<>();
         public  int bulletCount=1;
         public Tank(int health, int bulletSpeed, int movementSpeed, Direction direction) {
-                super(0,0,GamePanel.BRICK_WIDTH, GamePanel.BRICK_HEIGHT);
+                super(0, 0, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
                 this.health = health;
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;

@@ -1,4 +1,4 @@
-package tank1990.objects.common;
+package tank1990.manager;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

@@ -2,6 +2,7 @@ package tank1990.objects.environments;
 
 import tank1990.main.GamePanel;
 import tank1990.objects.common.Entity;
+import tank1990.objects.common.constants.GameConstants;
 
 public abstract class Environment extends Entity {
 		public String name = getClass().getSimpleName();
@@ -13,7 +14,7 @@ public abstract class Environment extends Entity {
 		 public int y;
 
 	public Environment(boolean crossable, boolean destroyable, boolean bulletThrough, int x, int y) {
-		super(x, y, GamePanel.BRICK_WIDTH, GamePanel.BRICK_HEIGHT);
+		super(x, y, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
 		this.crossable = crossable;
 		this.destroyable = destroyable;
 		this.bulletThrough = bulletThrough;
