@@ -5,19 +5,19 @@ public class Water extends Environment{
 
     public Water(int x, int y) {
         super(false, false, true, x, y);
-        this.setHealth(health);
+        super.health= health;
     }
 
 
 
-    @Override
-    public String toString() {
-        return "Environment{" +
-                "name='" + this.getName() + '\'' +
-                ", crossable=" + this.getCrossable() +
-                ", destroyable=" + this.getDestroyable() +
-                ", health=" + this.getHealth() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Environment{" +
+//                "name='" + this.getName() + '\'' +
+//                ", crossable=" + this.getCrossable() +
+//                ", destroyable=" + this.getDestroyable() +
+//                ", health=" + this.getHealth() +
+//                '}';
+//    }
 }
 

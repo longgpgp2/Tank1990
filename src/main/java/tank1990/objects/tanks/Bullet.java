@@ -1,15 +1,19 @@
 package tank1990.objects.tanks;
 
+import tank1990.objects.common.Entity;
+import tank1990.objects.common.enums.Direction;
+
 import java.awt.Color;
 import java.awt.Graphics;
 
-public class Bullet {
-    private double x, y;
-    private Direction direction;
-    private double speed;
-    private boolean isCollided=false;
+public class Bullet extends Entity {
+    public  double x, y;
+    public  Direction direction;
+    public  double speed;
+    public  boolean isCollided=false;
 
-    public Bullet(double startX, double startY, Direction direction, double speed) {
+    public Bullet(int startX, int startY, Direction direction, double speed) {
+        super(startX, startY, 5, 5);
         this.x = startX+10;
         this.y = startY+10;
         this.direction = direction;
@@ -62,48 +66,10 @@ public class Bullet {
         }
     }
 
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
     public boolean checkBulletOutOfBound(){
         if(x<0 || y<0 ||x>700|| y>700)
         return true;
         return false;
     }
 
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public boolean isCollided() {
-        return isCollided;
-    }
-
-    public void setCollided(boolean collided) {
-        isCollided = collided;
-    }
 }

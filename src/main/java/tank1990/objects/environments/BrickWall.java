@@ -5,18 +5,18 @@ public class BrickWall extends Environment{
 
 	public BrickWall(int x, int y) {
 		super(false, true, false, x, y);
-		this.setHealth(health);
+		super.health= health;
 	}
 
 
 
-	@Override
-	public String toString() {
-		return "Environment{" +
-						"name='" + this.getName() + '\'' +
-						", crossable=" + this.getCrossable() +
-						", destroyable=" + this.getDestroyable() +
-						", health=" + this.getHealth() +
-						'}';
-	}
+//	@Override
+//	public String toString() {
+//		return "Environment{" +
+//						"name='" + this.getName() + '\'' +
+//						", crossable=" + this.getCrossable() +
+//						", destroyable=" + this.getDestroyable() +
+//						", health=" + this.getHealth() +
+//						'}';
+//	}
 }

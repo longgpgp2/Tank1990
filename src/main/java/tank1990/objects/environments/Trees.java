@@ -5,18 +5,18 @@ public class Trees extends Environment{
 
     public Trees(int x, int y) {
         super(false, false, true, x, y);
-        this.setHealth(health);
+        super.health= health;
     }
 
 
 
-    @Override
-    public String toString() {
-        return "Environment{" +
-                "name='" + this.getName() + '\'' +
-                ", crossable=" + this.getCrossable() +
-                ", destroyable=" + this.getDestroyable() +
-                ", health=" + this.getHealth() +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Environment{" +
+//                "name='" + this.getName() + '\'' +
+//                ", crossable=" + this.getCrossable() +
+//                ", destroyable=" + this.getDestroyable() +
+//                ", health=" + this.getHealth() +
+//                '}';
+//    }
 }

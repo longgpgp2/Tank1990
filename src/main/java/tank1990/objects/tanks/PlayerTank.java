@@ -1,5 +1,7 @@
 package tank1990.objects.tanks;
 
+import tank1990.objects.common.enums.Direction;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +10,6 @@ public class PlayerTank extends Tank{
     private int owner;
     private Direction direction;
     private List<Bullet> bullets = new ArrayList<>();
-    public PlayerTank(){
-    }
 
     public PlayerTank(int owner) {
         super(3, 1, 1, Direction.UP);

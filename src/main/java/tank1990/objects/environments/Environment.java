@@ -1,56 +1,27 @@
 package tank1990.objects.environments;
 
-public abstract class Environment {
-		private String name = getClass().getSimpleName();
-		private boolean crossable;
-		private boolean destroyable;
-		private boolean bulletThrough;
-		private int[][] health;
-		private int x;
-		private int y;
+import tank1990.main.GamePanel;
+import tank1990.objects.common.Entity;
+
+public abstract class Environment extends Entity {
+		public String name = getClass().getSimpleName();
+		public boolean crossable;
+		public boolean destroyable;
+		 public boolean bulletThrough;
+		 public int[][] health;
+		 public int x;
+		 public int y;
 
 	public Environment(boolean crossable, boolean destroyable, boolean bulletThrough, int x, int y) {
+		super(x, y, GamePanel.BRICK_WIDTH, GamePanel.BRICK_HEIGHT);
 		this.crossable = crossable;
 		this.destroyable = destroyable;
 		this.bulletThrough = bulletThrough;
 		this.x = x;
 		this.y = y;
 	}
-	public Environment(){
 
-	}
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public boolean getCrossable() {
-		return crossable;
-	}
-
-	public void setCrossable(boolean crossable) {
-		this.crossable = crossable;
-	}
-
-	public boolean getDestroyable() {
-		return destroyable;
-	}
-
-	public void setDestroyable(boolean destroyable) {
-		this.destroyable = destroyable;
-	}
-
-	public int[][] getHealth() {
-		return health;
-	}
-
-	public void setHealth(int[][] health) {
-		this.health = health;
-	}
 
 	@Override
 	public String toString() {
@@ -62,35 +33,4 @@ public abstract class Environment {
 						'}';
 	}
 
-	public boolean isCrossable() {
-		return crossable;
-	}
-
-	public boolean isDestroyable() {
-		return destroyable;
-	}
-
-	public boolean isBulletThrough() {
-		return bulletThrough;
-	}
-
-	public void setBulletThrough(boolean bulletThrough) {
-		this.bulletThrough = bulletThrough;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	public void setX(int x) {
-		this.x = x;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	public void setY(int y) {
-		this.y = y;
-	}
 }

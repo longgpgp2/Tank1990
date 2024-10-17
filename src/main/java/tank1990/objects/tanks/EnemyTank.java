@@ -1,6 +1,6 @@
 package tank1990.objects.tanks;
 
-import tank1990.objects.tanks.Bullet;
+import tank1990.objects.common.enums.Direction;
 
 public abstract class EnemyTank extends Tank{
     private String name;
@@ -12,9 +12,6 @@ public abstract class EnemyTank extends Tank{
         this.name = name;
         this.point=point;
         this.specialTraits = specialTraits;
-    }
-
-    public EnemyTank() {
     }
 
 

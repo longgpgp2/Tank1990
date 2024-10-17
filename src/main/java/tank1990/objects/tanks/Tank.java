@@ -1,31 +1,31 @@
 package tank1990.objects.tanks;
 
-import tank1990.objects.tanks.Bullet;
+import tank1990.main.GamePanel;
+import tank1990.objects.common.enums.Direction;
+import tank1990.objects.common.Entity;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Tank {
-        private int health;
-        private int bulletSpeed;
-        private int movementSpeed;
-        private Direction direction;
-        private int x;
-        private int y;
-        private Color color;
-        private List<Bullet> bullets = new ArrayList<>();
-        private int bulletCount=1;
+public abstract class Tank extends Entity {
+        public  int health;
+        public  int bulletSpeed;
+        public  int movementSpeed;
+        public  Direction direction;
+        public  int x;
+        public  int y;
+        public  Color color;
+        public  List<Bullet> bullets = new ArrayList<>();
+        public  int bulletCount=1;
         public Tank(int health, int bulletSpeed, int movementSpeed, Direction direction) {
+                super(0,0,GamePanel.BRICK_WIDTH, GamePanel.BRICK_HEIGHT);
                 this.health = health;
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;
                 this.direction = direction;
         }
 
-        public Tank(){
-
-        }
 
         public Bullet shoot(){
                 Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);

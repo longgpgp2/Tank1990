@@ -1,15 +1,13 @@
 package tank1990.objects.powerups;
 
 public class Timer extends PowerUp{
-	public Timer(String name) {
-		super(name);
+	public Timer(int x, int y) {
+		super(x ,y);
 	}
-	public Timer(){
 
-	}
 	@Override
 	public void activate(){
-		System.out.println(this.getName());
+//		System.out.println(this.getName());
 	}
 
 }

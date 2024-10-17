@@ -3,7 +3,7 @@ package tank1990.main;
 import tank1990.objects.environments.BrickWall;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.Bullet;
-import tank1990.objects.tanks.Direction;
+import tank1990.objects.common.enums.Direction;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
@@ -23,11 +23,11 @@ import java.util.Set;
 
 public class GamePanel extends JPanel {
 
-    final int GAME_SIZE = 400;
-    final int PANEL_WIDTH = 700;
-    final int PANEL_HEIGHT = 700;
-    private final int BRICK_WIDTH = (int) (PANEL_WIDTH/(Math.sqrt(GAME_SIZE)));
-    private final int BRICK_HEIGHT = (int) (PANEL_HEIGHT/(Math.sqrt(GAME_SIZE)));
+    public static final int GAME_SIZE = 400;
+    public static final int PANEL_WIDTH = 700;
+    public static final int PANEL_HEIGHT = 700;
+    public static final int BRICK_WIDTH = (int) (PANEL_WIDTH/(Math.sqrt(GAME_SIZE)));
+    public static final int BRICK_HEIGHT = (int) (PANEL_HEIGHT/(Math.sqrt(GAME_SIZE)));
     String p1TankImageSrc, p2TankImageSrc;
     Timer timer;
     int velocity = BRICK_HEIGHT/5;
@@ -91,7 +91,7 @@ public class GamePanel extends JPanel {
 
                 checkCollisions(bullet);
 
-                if (bullet.checkBulletOutOfBound() || bullet.isCollided()) {
+                if (bullet.checkBulletOutOfBound() || bullet.isCollided) {
                     java.util.List<Bullet> bullets = tank.getBullets();
                     bullets.remove(bullet);
                     tank.setBullets(bullets);
@@ -195,12 +195,12 @@ public class GamePanel extends JPanel {
     private boolean checkCollisions(Bullet bullet) {
         for (Environment env : environments) {
             if (isColliding(bullet, env)) {
-                bullet.setCollided(true);
+                bullet.isCollided = true;
                 return true;
             }
         }
         if (isTankShot(bullet, p1Tank)) {
-            bullet.setCollided(true);
+            bullet.isCollided = true;
             p1Tank.setHealth(p1Tank.getHealth()-1);
             if(p2Tank.getHealth()<=0){
                 System.out.println("Player 2 Win");
@@ -208,7 +208,7 @@ public class GamePanel extends JPanel {
             }
         }
         if (isTankShot(bullet, p2Tank)) {
-            bullet.setCollided(true);
+            bullet.isCollided = true;
             p2Tank.setHealth(p2Tank.getHealth()-1);
             if(p2Tank.getHealth()<=0){
                 System.out.println("Player 1 Win");
@@ -228,8 +228,8 @@ public class GamePanel extends JPanel {
         int tankX = tank.getX();
         int tankY = tank.getY();
 
-        int envX = env.getX();
-        int envY = env.getY();
+        int envX = env.x;
+        int envY = env.y;
 
         boolean inHorizontalRange = (envY - tankY <= BRICK_HEIGHT && envY - tankY >= 0) || (tankY - envY <= BRICK_WIDTH && tankY - envY >= 0);
         boolean inVerticalRange = (envX - tankX <= BRICK_HEIGHT && envX - tankX >= 0) || (tankX - envX <= BRICK_WIDTH && tankX - envX >= 0);
@@ -279,11 +279,11 @@ public class GamePanel extends JPanel {
     }
 
     private boolean isColliding(Bullet bullet, Environment env) {
-        int bulletX = (int) bullet.getX();
-        int bulletY = (int) bullet.getY();
+        int bulletX = (int) bullet.x;
+        int bulletY = (int) bullet.y;
 
-        int envX = env.getX();
-        int envY = env.getY();
+        int envX = env.x;
+        int envY = env.y;
         int envWidth = 25;
         int envHeight = 25;
 
@@ -294,8 +294,8 @@ public class GamePanel extends JPanel {
     }
 
     private boolean isTankShot(Bullet bullet, Tank tank) {
-        int bulletX = (int) bullet.getX();
-        int bulletY = (int) bullet.getY();
+        int bulletX = (int) bullet.x;
+        int bulletY = (int) bullet.y;
 
         int tankX = tank.getX();
         int tankY = tank.getY();
@@ -333,7 +333,7 @@ public class GamePanel extends JPanel {
         for (Environment env : environments) {
 
             g.setColor(Color.GRAY);
-            g.fillRect(env.getX(), env.getY(), BRICK_WIDTH, BRICK_HEIGHT); // Placeholder
+            g.fillRect(env.x, env.y, BRICK_WIDTH, BRICK_HEIGHT); // Placeholder
         }
         if (!p1Tank.getBullets().isEmpty())
             for (Bullet bullet : p1Tank.getBullets()) {
