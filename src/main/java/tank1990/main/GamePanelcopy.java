@@ -90,10 +90,10 @@ public class GamePanelcopy extends JPanel {
     }
 
     private void initPlayerTank(boolean p2Present) {
-        p1Tank = new PlayerTank(1);
+        p1Tank = new PlayerTank(1,5);
         p1Tank.setDirection(Direction.UP);
         if (p2Present) {
-            p2Tank = new PlayerTank(2);
+            p2Tank = new PlayerTank(2,5);
             p2Tank.setDirection(Direction.UP);
         }
     }

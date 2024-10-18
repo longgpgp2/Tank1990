@@ -7,6 +7,7 @@ import tank1990.manager.KeyHandler;
 import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
+import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
@@ -84,6 +85,10 @@ public class GamePanel extends JPanel implements ActionListener{
         for (GameEntity gameEntity : gameEntities) {
             gameEntity.update(0.1);
         }
+        PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        for (Bullet bullet : playerTank.getBullets()) {
+            bullet.update(0.1); // Cập nhật vị trí viên đạn
+        }
     }
 
     @Override
@@ -92,6 +97,11 @@ public class GamePanel extends JPanel implements ActionListener{
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g,this);
+
+        PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        for (Bullet bullet : playerTank.getBullets()) {
+            bullet.draw(g);
+        }
         g2D.dispose();
     }
 

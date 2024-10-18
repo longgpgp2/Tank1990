@@ -19,6 +19,9 @@ public abstract class GameEntity extends Component {
     public int width;
     public int height;
 
+    public int spriteCounter = 0;
+    public int spriteNum = 1;
+
     protected EntityType type;
     protected Vector2D velocity;
     protected Vector2D center;
