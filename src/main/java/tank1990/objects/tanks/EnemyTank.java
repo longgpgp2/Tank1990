@@ -1,6 +1,7 @@
 package tank1990.objects.tanks;
 
 import tank1990.common.enums.Direction;
+import tank1990.common.enums.EntityType;
 
 public abstract class EnemyTank extends Tank {
     private String name;
@@ -8,7 +9,7 @@ public abstract class EnemyTank extends Tank {
     private String specialTraits;
 
     public EnemyTank(String name, int health, int point, int bulletSpeed, int movementSpeed, String specialTraits) {
-        super(health, bulletSpeed, movementSpeed, Direction.DOWN);
+        super(EntityType.ENEMY, health, bulletSpeed, movementSpeed, Direction.DOWN);
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;

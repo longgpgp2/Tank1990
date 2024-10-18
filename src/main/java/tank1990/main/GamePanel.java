@@ -4,6 +4,8 @@ import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
+import tank1990.manager.MapManager;
+import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.Tank;
 
@@ -19,8 +21,10 @@ import java.util.ArrayList;
 
 public class GamePanel extends JPanel {
     Timer timer;
-    java.util.List<Environment> environments = new ArrayList<>();
-    private java.util.List<Integer> map = new ArrayList<Integer>();
+    java.util.List environments = new ArrayList<Environment>();
+    java.util.List map = new ArrayList<Integer>();
+    java.util.List tanks;
+
 
     GamePanel() {
 
@@ -45,6 +49,7 @@ public class GamePanel extends JPanel {
         this.addKeyListener(new KeyHandler());
         this.setFocusable(true);
         startTimer();
+        tanks = TankSpawner.spawnTanks();
 
     }
 
@@ -77,6 +82,7 @@ public class GamePanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
+        MapManager.drawTanks(tanks, g);
         g2D.dispose();
     }
 

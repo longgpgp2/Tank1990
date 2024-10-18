@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tank1990.common.enums.Direction;
+import tank1990.common.enums.EntityType;
 
 public class PlayerTank extends Tank {
     private int owner;
@@ -12,7 +13,7 @@ public class PlayerTank extends Tank {
     private List<Bullet> bullets = new ArrayList<>();
 
     public PlayerTank(int owner) {
-        super(3, 1, 1, Direction.UP);
+        super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
         this.owner = owner;
         this.setColor(Color.YELLOW);
     }
