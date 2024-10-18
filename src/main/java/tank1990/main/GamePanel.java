@@ -1,6 +1,8 @@
 package tank1990.main;
 
+import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
+import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.Tank;
@@ -57,8 +59,18 @@ public class GamePanel extends JPanel {
         timer.start();
     }
 
-    private void updateGame() {
+    ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
 
+    /**
+     * Cập nhật physic cho từng game entity
+     * 
+     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
+     */
+
+    private void updateGame() {
+        for (GameEntity gameEntity : gameEntities) {
+            gameEntity.update(0.1);
+        }
     }
 
     @Override

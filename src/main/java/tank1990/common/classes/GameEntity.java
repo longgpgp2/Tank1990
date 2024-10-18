@@ -8,6 +8,10 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 
+/**
+ * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
+ * swing
+ */
 public abstract class GameEntity extends Component {
     public double x;
     public double y;
@@ -36,12 +40,24 @@ public abstract class GameEntity extends Component {
         GameEntityManager.add(this);
     }
 
+    /**
+     * Vẽ game entity có thể tùy từng game entity có thể vẽ là sprite hoặc shape cơ
+     * bản
+     * 
+     * @param graphics2d graphics của JComponent trong Java Swing
+     */
     public void draw(Graphics2D graphics2d) {
     };
 
     public void draw(Graphics2D graphics2d, double deltaTime) {
     };
 
+    /**
+     * Cập nhật physic cho game entity qua từng deltaTime, khoảng thời gian giữa các
+     * frame hoặc giữa các tick
+     * 
+     * @param deltaTime
+     */
     public void update(double deltaTime) {
     };
 

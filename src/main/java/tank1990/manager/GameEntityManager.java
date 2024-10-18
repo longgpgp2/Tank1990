@@ -37,7 +37,7 @@ public class GameEntityManager {
     }
   }
 
-  public static ArrayList<GameEntity> getGameEntitys() {
+  public static ArrayList<GameEntity> getGameEntities() {
     return gameEntities;
   }
 
@@ -48,9 +48,15 @@ public class GameEntityManager {
         .toArray(GameEntity[]::new);
   }
 
+  // TODO: make this function more generic
+  /**
+   * Chọn type để player va chạm với các entity thuộc type đó
+   * 
+   * @param gameComponentTypes
+   */
   public static void setPlayerCollisionComponents(EntityType[] gameComponentTypes) {
     for (EntityType gameComponentType : gameComponentTypes) {
-      for (GameEntity gameComponent : GameEntityManager.getGameEntitys()) {
+      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
         if (gameComponent.getType() == gameComponentType) {
           playerCollisionComponents.add(gameComponent);
         }
@@ -58,13 +64,18 @@ public class GameEntityManager {
     }
   }
 
+  /**
+   * Lấy các entities mà player va chạm
+   * 
+   * @return
+   */
   public static ArrayList<GameEntity> getPlayerCollisionComponents() {
     return playerCollisionComponents;
   }
 
   public static void setBulletCollisionComponents(EntityType[] gameComponentTypes) {
     for (EntityType gameComponentType : gameComponentTypes) {
-      for (GameEntity gameComponent : GameEntityManager.getGameEntitys()) {
+      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
         if (gameComponent.getType() == gameComponentType) {
           bulletCollisionComponents.add(gameComponent);
         }
@@ -78,7 +89,7 @@ public class GameEntityManager {
 
   public static void setEnemyCollisionComponents(EntityType[] gameComponentTypes) {
     for (EntityType gameComponentType : gameComponentTypes) {
-      for (GameEntity gameComponent : GameEntityManager.getGameEntitys()) {
+      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
         if (gameComponent.getType() == gameComponentType) {
           enemyCollisionComponents.add(gameComponent);
         }
