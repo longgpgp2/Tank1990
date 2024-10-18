@@ -8,6 +8,8 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 
+import javax.swing.*;
+
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
  * swing
@@ -24,6 +26,7 @@ public abstract class GameEntity extends Component {
     protected Vector2D position;
 
     protected CollisionBox collisionBox;
+    ImageIcon image;
     // protected GameSprite sprite;
 
     public GameEntity(EntityType type, Vector2D position, int width, int height) {

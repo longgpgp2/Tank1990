@@ -1,5 +1,7 @@
 package tank1990.manager.spawner;
 
+import tank1990.common.constants.GameConstants;
+import tank1990.manager.GameEntityManager;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 import tank1990.objects.tanks.enemy_tanks.BasicTank;
@@ -26,6 +28,8 @@ public class TankSpawner {
             tanks.add(tank);
         }
         tanks.add(spawnPlayer());
+        GameEntityManager.setEnemyCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setPlayerCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
         return tanks;
     }
 

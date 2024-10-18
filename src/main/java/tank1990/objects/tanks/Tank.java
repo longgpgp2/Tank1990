@@ -6,6 +6,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +21,10 @@ public abstract class Tank extends GameEntity {
         public Color color;
         public List<Bullet> bullets = new ArrayList<>();
         public int bulletCount = 1;
+        public Image image;
 
         public Tank(EntityType type, int health, int bulletSpeed, int movementSpeed, Direction direction) {
-                super(type, new Vector2D(0, 0), GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
+                super(type, new Vector2D(0, 0), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE);
                 this.health = health;
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;

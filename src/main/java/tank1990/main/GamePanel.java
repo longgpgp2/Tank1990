@@ -7,23 +7,28 @@ import tank1990.manager.KeyHandler;
 import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
+import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.image.ImageObserver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements ActionListener{
     Timer timer;
     java.util.List environments = new ArrayList<Environment>();
     java.util.List map = new ArrayList<Integer>();
     java.util.List tanks;
+
 
 
     GamePanel() {
@@ -46,10 +51,11 @@ public class GamePanel extends JPanel {
 
         this.setPreferredSize(new Dimension(GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT));
         this.setBackground(Color.WHITE);
-        this.addKeyListener(new KeyHandler());
+        this.addKeyListener(new TAdapter());
         this.setFocusable(true);
-        startTimer();
+
         tanks = TankSpawner.spawnTanks();
+        startTimer();
 
     }
 
@@ -82,8 +88,25 @@ public class GamePanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
-        MapManager.drawTanks(tanks, g);
+        MapManager.drawTanks(tanks, g, this);
         g2D.dispose();
     }
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+    }
+
+    private class TAdapter extends KeyAdapter {
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            MapManager.getPlayerTank(tanks).keyReleased(e);
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            MapManager.getPlayerTank(tanks).keyPressed(e);
+        }
+    }
 }
