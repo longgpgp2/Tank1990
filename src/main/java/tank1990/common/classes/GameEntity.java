@@ -1,7 +1,6 @@
 package tank1990.common.classes;
 
-import java.awt.Component;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.util.ArrayList;
 
 import tank1990.common.enums.EntityType;
@@ -26,7 +25,7 @@ public abstract class GameEntity extends Component {
     protected Vector2D position;
 
     protected CollisionBox collisionBox;
-    ImageIcon image;
+    public Image image;
     // protected GameSprite sprite;
 
     public GameEntity(EntityType type, Vector2D position, int width, int height) {

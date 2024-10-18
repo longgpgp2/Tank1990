@@ -20,10 +20,10 @@ public class Bullet extends GameEntity {
         this.y = startY + 10;
         this.direction = direction;
         switch (direction) {
-            case Direction.UP -> y -= 15;
-            case Direction.DOWN -> y += 15;
-            case Direction.LEFT -> x -= 15;
-            case Direction.RIGHT -> x += 15;
+            case UP -> y -= 15;
+            case DOWN -> y += 15;
+            case LEFT -> x -= 15;
+            case RIGHT -> x += 15;
         }
 
         this.speed = speed;
@@ -33,19 +33,19 @@ public class Bullet extends GameEntity {
         if (!checkBulletOutOfBound()) {
             double directionValue = 0;
             switch (direction) {
-                case Direction.UP: {
+                case UP: {
                     directionValue = 3 * Math.PI / 2;
                     break;
                 }
-                case Direction.DOWN: {
+                case DOWN: {
                     directionValue = Math.PI / 2;
                     break;
                 }
-                case Direction.LEFT: {
+                case LEFT: {
                     directionValue = Math.PI;
                     break;
                 }
-                case Direction.RIGHT: {
+                case RIGHT: {
                     directionValue = 0;
                     break;
                 }

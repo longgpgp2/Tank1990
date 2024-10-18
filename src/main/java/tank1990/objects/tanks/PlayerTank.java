@@ -78,7 +78,7 @@ public class PlayerTank extends Tank {
     public void update(double deltaTime){
         ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
 //        if(collidedEntities!=null)
-        System.out.println(collidedEntities);
+//        System.out.println(collidedEntities);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -87,21 +87,25 @@ public class PlayerTank extends Tank {
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_A) {
                 x-=velocity;
+                position.x -=velocity;
                 ImageIcon ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t1.png");
                 image = ii.getImage();
                 direction = Direction.LEFT;
         } else if (key == KeyEvent.VK_D) {
                 x+=velocity;
+            position.x +=velocity;
                 ImageIcon ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t1.png");
                 image = ii.getImage();
                 direction = Direction.RIGHT;
         } else if (key == KeyEvent.VK_W) {
             y-=velocity;
+            position.y -=velocity;
             ImageIcon ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png");
             image = ii.getImage();
             direction = Direction.UP;
         } else if (key == KeyEvent.VK_S) {
             y+=velocity;
+            position.y +=velocity;
             ImageIcon ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");
             image = ii.getImage();
             direction = Direction.DOWN;
