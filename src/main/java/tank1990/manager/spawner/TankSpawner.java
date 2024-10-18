@@ -12,7 +12,7 @@ import java.util.List;
 
 public class TankSpawner {
     public static Tank spawnPlayer(){
-        Tank player = new PlayerTank(1);
+        Tank player = new PlayerTank(1,5);
         return player;
     }
     public static List<Tank> spawnEnemy(){
