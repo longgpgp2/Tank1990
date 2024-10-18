@@ -1,36 +1,36 @@
 package tank1990.main;
 
-import tank1990.common.classes.GameEntity;
-import tank1990.common.constants.GameConstants;
-import tank1990.manager.GameEntityManager;
-import tank1990.manager.KeyHandler;
-import tank1990.manager.MapManager;
-import tank1990.manager.spawner.TankSpawner;
-import tank1990.objects.environments.Environment;
-import tank1990.objects.tanks.Bullet;
-import tank1990.objects.tanks.PlayerTank;
-import tank1990.objects.tanks.Tank;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.image.ImageObserver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel implements ActionListener{
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import tank1990.common.classes.GameEntity;
+import tank1990.common.constants.GameConstants;
+import tank1990.manager.GameEntityManager;
+import tank1990.manager.MapManager;
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.environments.Environment;
+import tank1990.objects.tanks.Bullet;
+import tank1990.objects.tanks.PlayerTank;
+
+public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     java.util.List environments = new ArrayList<Environment>();
     java.util.List map = new ArrayList<Integer>();
     java.util.List tanks;
-
-
 
     GamePanel() {
 
@@ -83,11 +83,11 @@ public class GamePanel extends JPanel implements ActionListener{
 
     private void updateGame() {
         for (GameEntity gameEntity : gameEntities) {
-            gameEntity.update(0.1);
+            gameEntity.update(0.01);
         }
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.update(0.1); // Cập nhật vị trí viên đạn
+            bullet.update(0.01); // Cập nhật vị trí viên đạn
         }
     }
 
@@ -96,7 +96,7 @@ public class GamePanel extends JPanel implements ActionListener{
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
-        MapManager.drawEnvironments(environments, g,this);
+        MapManager.drawEnvironments(environments, g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {

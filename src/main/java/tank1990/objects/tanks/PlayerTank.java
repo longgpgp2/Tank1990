@@ -20,12 +20,11 @@ import tank1990.manager.GameEntityManager;
 
 public class PlayerTank extends Tank {
     private int owner;
-    private Direction direction;
     private List<Bullet> bullets = new ArrayList<>();
     private long lastShotTime = 0;
-    private final long shotDelay = 300; // delay 0.3s
+    private long shotDelay = 300; // delay 0.3s
 
-    private final int maxBullets;
+    private int maxBullets;
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);

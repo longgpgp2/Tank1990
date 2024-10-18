@@ -5,7 +5,6 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
-import tank1990.manager.GameEntityManager;
 
 public abstract class EnemyTank extends Tank {
     private String name;
@@ -17,7 +16,8 @@ public abstract class EnemyTank extends Tank {
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;
-        setCollision(new CollisionBox(this, new Vector2D(0,0), GameConstants.TANK_SIZE-2,GameConstants.TANK_SIZE-2));
+        setCollision(
+                new CollisionBox(this, new Vector2D(0, 0), GameConstants.TANK_SIZE - 2, GameConstants.TANK_SIZE - 2));
 
     }
 
