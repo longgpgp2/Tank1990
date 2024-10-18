@@ -35,6 +35,7 @@ public class CollisionBox {
         this.x = globalPosition.x;
         this.y = globalPosition.y;
         this.center = new Vector2D(x + (double) width / 2, y + (double) height / 2);
+        System.out.println("Set position called: " + globalPosition);
     }
 
     public String toString() {

@@ -1,13 +1,13 @@
 package tank1990.common.classes;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.util.ArrayList;
 
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
-
-import javax.swing.*;
 
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
@@ -79,6 +79,7 @@ public abstract class GameEntity extends Component {
 
         if (collisionBox != null) {
             collisionBox.setPosition(position);
+            System.out.println("Position set");
         }
     }
 
