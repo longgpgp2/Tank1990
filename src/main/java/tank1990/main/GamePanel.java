@@ -66,6 +66,7 @@ public class GamePanel extends JPanel implements ActionListener {
         timer = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 updateGame();
                 repaint();
             }
@@ -85,9 +86,25 @@ public class GamePanel extends JPanel implements ActionListener {
         for (GameEntity gameEntity : gameEntities) {
             gameEntity.update(0.01);
         }
+
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>(); // Lưu trữ đạn để xóa
+
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.update(0.01); // Cập nhật vị trí viên đạn
+            bullet.update(); // Cập nhật vị trí viên đạn
+
+            // Kiểm tra nếu đạn đã bị tiêu diệt hoặc ra ngoài biên
+            if (bullet.isCollided() || bullet.isOutOfBound()) {
+                bullet.destroyBullet(); // Tạo vụ nổ
+                bulletsToRemove.add(bullet); // Đánh dấu viên đạn để xóa
+            }
+        }
+
+        // Xóa đạn sau khi vụ nổ đã được tạo
+        for (Bullet bullet : bulletsToRemove) {
+            if (bullet.isExplosionFinished()) { // Kiểm tra nếu vụ nổ đã hoàn tất
+                playerTank.getBullets().remove(bullet); // Xóa viên đạn khi vụ nổ hoàn tất
+            }
         }
     }
 
@@ -100,7 +117,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.draw(g);
+            bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
         }
         g2D.dispose();
     }

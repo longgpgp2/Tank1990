@@ -60,7 +60,7 @@ public class PlayerTank extends Tank {
         switch (getDirection()) {
             case LEFT:
                 bulletX -= -20;
-                bulletY -= -11;
+                bulletY -= -12;
                 break;
             case RIGHT:
                 bulletX += 8;
