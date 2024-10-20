@@ -1,13 +1,18 @@
 package tank1990.manager.animation;
 
-import tank1990.common.enums.Direction;
-import tank1990.objects.tanks.Bullet;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import tank1990.common.enums.Direction;
+import tank1990.objects.tanks.Bullet;
 
 public class Game extends JPanel implements ActionListener {
     private List<Bullet> bullets = new ArrayList<>();
@@ -56,7 +61,6 @@ public class Game extends JPanel implements ActionListener {
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
 
         Bullet bullet = new Bullet(100, 100, Direction.RIGHT, 5);
         gamePanel.addBullet(bullet);

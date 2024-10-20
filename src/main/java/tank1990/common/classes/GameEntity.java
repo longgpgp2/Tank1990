@@ -5,9 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.util.ArrayList;
 
+import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.animation.Game;
 
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
@@ -43,6 +45,9 @@ public abstract class GameEntity extends Component {
         this.position = new Vector2D(x, y);
 
         GameEntityManager.add(this);
+        GameEntityManager.setEnemyCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setPlayerCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
+//        System.out.println(GameEntityManager.getGameEntities());
     }
 
     /**
@@ -128,14 +133,16 @@ public abstract class GameEntity extends Component {
     }
 
     public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameComponents, double deltaTime) {
+
         if (!getCollision().enabled) {
             return null;
         }
-        CollisionUtil.checkEdgeCollision(this);
+//        CollisionUtil.checkEdgeCollision(this);
 
         ArrayList<GameEntity> collidedGameComponents = new ArrayList<>();
 
         for (GameEntity gameComponent : gameComponents) {
+
             if (gameComponent.getCollision() == null ||
                     !gameComponent.getCollision().enabled ||
                     gameComponent == this) {
@@ -146,6 +153,7 @@ public abstract class GameEntity extends Component {
 
             if (hasCollision) {
                 collidedGameComponents.add(gameComponent);
+                System.out.println(gameComponent);
             }
         }
 

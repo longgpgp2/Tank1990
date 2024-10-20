@@ -1,5 +1,7 @@
 package tank1990.manager;
 
+import tank1990.common.classes.CollisionBox;
+import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.objects.environments.*;
@@ -32,8 +34,7 @@ public class MapManager {
             }
             else {
                 g.setColor(Color.RED);
-                tank.getPosition().x = 50*i;
-                tank.getPosition().y = 10*i;
+//                tank.setPosition(new Vector2D(50*i, 10*i));
                 g.fillRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
 //                System.out.println("Enemy position: "+ tank.getPosition().x+", " + tank.getPosition().y);
             }
@@ -84,6 +85,9 @@ public class MapManager {
                     }
                 }
                 if(env!=null){
+                    env.setPosition(new Vector2D(envX, envY));
+                    System.out.println(env.getPosition()+" + "+ env.getCollision());
+                    if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
                     envs.add(env);
                 }
 

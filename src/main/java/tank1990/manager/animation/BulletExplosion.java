@@ -9,7 +9,7 @@ public class BulletExplosion {
     private int frame = 0;
     private Image[] images = new Image[3];
     private boolean finished = false;
-    private final long delay = 100;
+    private final long delay = 10;
     private long lastUpdateTime;
 
     public BulletExplosion(int x, int y) {
@@ -40,8 +40,10 @@ public class BulletExplosion {
     }
 
     public void render(Graphics g) {
-        if (frame < images.length) {
+        if (frame < images.length-2) {
             // Vẽ hình ảnh nổ tại vị trí của nó
+            System.out.println(frame);
+            System.out.println(images.length);
             int imgWidth = images[frame].getWidth(null);
             int imgHeight = images[frame].getHeight(null);
             g.drawImage(images[frame], x - imgWidth / 2, y - imgHeight / 2, null);

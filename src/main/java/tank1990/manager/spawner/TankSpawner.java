@@ -1,5 +1,6 @@
 package tank1990.manager.spawner;
 
+import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
@@ -13,11 +14,14 @@ import java.util.List;
 public class TankSpawner {
     public static Tank spawnPlayer(){
         Tank player = new PlayerTank(1,5);
+        player.setPosition(new Vector2D(100, 100));
         return player;
     }
     public static List<Tank> spawnEnemy(){
         ArrayList tanks = new ArrayList<Tank>();
-        tanks.add(new BasicTank());
+        Tank tank = new BasicTank();
+        tank.setPosition(new Vector2D(200,50 ));
+        tanks.add(tank);
         tanks.add(new BasicTank());
         tanks.add(new BasicTank());
         return tanks;
@@ -29,8 +33,7 @@ public class TankSpawner {
             tanks.add(tank);
         }
         tanks.add(spawnPlayer());
-        GameEntityManager.setEnemyCollisionComponents(new EntityType[]{EntityType.PLAYER});
-        GameEntityManager.setPlayerCollisionComponents(new EntityType[]{EntityType.ENEMY});
+
         return tanks;
     }
 

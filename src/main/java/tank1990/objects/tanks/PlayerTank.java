@@ -12,6 +12,7 @@ import javax.sound.sampled.Clip;
 import javax.swing.ImageIcon;
 
 import tank1990.common.classes.CollisionBox;
+import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
@@ -25,6 +26,7 @@ public class PlayerTank extends Tank {
     private long shotDelay = 300; // delay 0.3s
 
     private int maxBullets;
+    int velocity = 5;
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
@@ -76,7 +78,7 @@ public class PlayerTank extends Tank {
                 break;
         }
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 6);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 1);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
@@ -139,17 +141,24 @@ public class PlayerTank extends Tank {
         }
 
         ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
+//        System.out.println(GameEntityManager.getPlayerCollisionComponents());
+        if (collidedEntities!=null) {
+            for (Object e :collidedEntities) {
+                System.out.println(e);
+            }
+            velocity = 0;
+        }
+        else velocity=5;
 
         bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
     }
 
     public void keyPressed(KeyEvent e) {
-        int velocity = 5;
+
         int time;
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_A) {
-            x -= velocity;
-            position.x -= velocity;
+            setPosition(position.add(new Vector2D(-velocity,0)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
                 ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t1.png");
@@ -160,8 +169,7 @@ public class PlayerTank extends Tank {
             image = ii.getImage();
             direction = Direction.LEFT;
         } else if (key == KeyEvent.VK_D) {
-            x += velocity;
-            position.x += velocity;
+            setPosition(position.add(new Vector2D(+velocity,0)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
                 ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t1.png");
@@ -172,8 +180,7 @@ public class PlayerTank extends Tank {
             image = ii.getImage();
             direction = Direction.RIGHT;
         } else if (key == KeyEvent.VK_W) {
-            y -= velocity;
-            position.y -= velocity;
+            setPosition(position.add(new Vector2D(0,-velocity)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
                 ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png");
@@ -184,8 +191,7 @@ public class PlayerTank extends Tank {
             image = ii.getImage();
             direction = Direction.UP;
         } else if (key == KeyEvent.VK_S) {
-            y += velocity;
-            position.y += velocity;
+            setPosition(position.add(new Vector2D(0,+velocity)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
                 ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");

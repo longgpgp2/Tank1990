@@ -56,8 +56,9 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         setBackground(Color.BLACK);
 
-        tanks = TankSpawner.spawnTanks();
+
         environments = MapManager.generateEnvironments();
+        tanks = TankSpawner.spawnTanks();
         startTimer();
 
     }
@@ -112,8 +113,8 @@ public class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
-        MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);
+        MapManager.drawTanks(tanks, g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {

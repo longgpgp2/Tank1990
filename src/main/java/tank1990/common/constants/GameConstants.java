@@ -14,5 +14,7 @@ public class GameConstants {
     public static final int POWERUP_SIZE = 32;
     public static final int MAP_SHIFT_WIDTH = 50;
     public static final int MAP_SHIFT_HEIGHT = 50;
+    public static final int FPS = 60;
+    public static final double deltaTime = 1/FPS;
     public static final EntityType[] IMPASSABLE_ENTITIES = {EntityType.PLAYER, EntityType.ENEMY, EntityType.BASE, EntityType.EDGE, EntityType.BRICK, EntityType.RIVER, EntityType.STEEL};
 }

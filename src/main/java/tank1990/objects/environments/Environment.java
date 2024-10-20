@@ -21,6 +21,7 @@ public abstract class Environment extends GameEntity {
 		this.bulletThrough = bulletThrough;
 		this.x = x;
 		this.y = y;
+
 	}
 
 	@Override

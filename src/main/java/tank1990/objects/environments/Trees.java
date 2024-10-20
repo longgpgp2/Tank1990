@@ -8,7 +8,7 @@ public class Trees extends Environment{
     int[][] health = {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}};
 
     public Trees(int x, int y) {
-        super(EntityType.TREE,false, false, true, x, y);
+        super(EntityType.TREE,true, false, true, x, y);
         super.health= health;
         image = new ImageIcon("src/main/resources/images/trees.png").getImage();
     }
