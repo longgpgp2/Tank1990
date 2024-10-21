@@ -4,7 +4,10 @@ import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
+import tank1990.common.utils.CollisionUtil;
+import tank1990.manager.spawner.PerkSpawner;
 import tank1990.objects.environments.*;
+import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
@@ -16,10 +19,50 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 public class MapManager {
+    public static Set<Integer> getUnoccupiedIndex(List<Environment> environments, List<Tank> tanks){
+//        Need a GameEntity function that checks for the entity's occupied index
+        Set<Integer> occupiedIndices = new HashSet<>();
+        for (Tank tank:tanks) {
+            int index = CollisionUtil.getTileIndex(tank.getPosition());
+            occupiedIndices.add(index);
+        }
+        for (Environment env: environments) {
+            int index = CollisionUtil.getTileIndex(env.getPosition());
+            occupiedIndices.add(index);
+        }
+        Set unoccupiedIndices = new HashSet();
+        for (int i = 0; i < 16*33; i++) {
+            unoccupiedIndices.add(i);
+        }
+//        System.out.println(occupiedIndices);
+        unoccupiedIndices.removeAll(occupiedIndices);
+//        System.out.println(unoccupiedIndices);
+        return unoccupiedIndices;
+    }
+    public static PowerUp createPowerUp(List<Environment> environments, List<Tank> tanks){
+        Set<Integer> unoccupiedIndices = getUnoccupiedIndex(environments, tanks);
+        Integer[] unoccupiedIndicesAsArray = unoccupiedIndices.toArray(new Integer[0]);
+
+        Random random = new Random();
+        int randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
+        Integer randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
+        Vector2D powerupPosition = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
+
+        randomArrayIndex = random.nextInt(GameConstants.PERK_LIST.length);
+        String perkName = GameConstants.PERK_LIST[randomArrayIndex];
+
+        PowerUp powerUp = PerkSpawner.createPowerUp(perkName,powerupPosition);
+//        System.out.println(powerUp);
+        return powerUp;
+
+    }
+    public static void drawPowerUp(PowerUp powerUp, Graphics g, ImageObserver observer){
+        g.drawImage(powerUp.image, (int) (powerUp.getPosition().x), (int) (powerUp.getPosition().y), powerUp.width, powerUp.height, observer);
+    }
     public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
 //        for (int i = 0; i < tanks.size(); i++) {
 //            System.out.println("Draw a tank: " + tanks.get(i).toString());
@@ -86,7 +129,7 @@ public class MapManager {
                 }
                 if(env!=null){
                     env.setPosition(new Vector2D(envX, envY));
-                    System.out.println(env.getPosition()+" + "+ env.getCollision());
+//                    System.out.println(env.getPosition()+" + "+ env.getCollision());
                     if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
                     envs.add(env);
                 }

@@ -18,11 +18,15 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
+import tank1990.objects.powerups.PowerUp;
+import tank1990.objects.powerups.Tank;
 import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
 
@@ -30,7 +34,8 @@ public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     java.util.List environments = new ArrayList<Environment>();
     java.util.List map = new ArrayList<Integer>();
-    java.util.List tanks;
+    java.util.List tanks = new ArrayList<Tank>();
+    java.util.List powerUps= new ArrayList<PowerUp>();
 
     GamePanel() {
 
@@ -59,6 +64,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         environments = MapManager.generateEnvironments();
         tanks = TankSpawner.spawnTanks();
+//        powerUps.add(MapManager.createPowerUp(environments, tanks));
         startTimer();
 
     }
@@ -115,6 +121,14 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawEnvironments(environments, g, this);
         MapManager.drawTanks(tanks, g, this);
+        if(powerUps.isEmpty()){
+            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+            powerUps.add(powerUp);
+            System.out.println("Powerup: "+powerUp.getPosition());
+            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
+            MapManager.drawPowerUp((PowerUp) powerUps.getFirst(), g, this);
+//            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
+        } else MapManager.drawPowerUp((PowerUp) powerUps.getFirst(), g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {

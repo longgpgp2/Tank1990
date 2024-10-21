@@ -55,7 +55,7 @@ public class GameEntityManager {
    * @param gameComponentTypes
    */
   public static void setPlayerCollisionComponents(EntityType[] gameComponentTypes) {
-    System.out.println(getGameEntities());
+//    System.out.println(getGameEntities());
     for (EntityType gameComponentType : gameComponentTypes) {
 
       for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {

@@ -18,6 +18,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.MapManager;
 
 public class PlayerTank extends Tank {
     private int owner;
@@ -27,6 +28,7 @@ public class PlayerTank extends Tank {
 
     private int maxBullets;
     int velocity = 5;
+
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
@@ -139,7 +141,6 @@ public class PlayerTank extends Tank {
             bullet.move();
             // va cham
         }
-
         ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
 //        System.out.println(GameEntityManager.getPlayerCollisionComponents());
         if (collidedEntities!=null) {
@@ -158,6 +159,7 @@ public class PlayerTank extends Tank {
         int time;
         int key = e.getKeyCode();
         if (key == KeyEvent.VK_A) {
+
             setPosition(position.add(new Vector2D(-velocity,0)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
@@ -168,7 +170,8 @@ public class PlayerTank extends Tank {
             }
             image = ii.getImage();
             direction = Direction.LEFT;
-        } else if (key == KeyEvent.VK_D) {
+        }  if (key == KeyEvent.VK_D) {
+
             setPosition(position.add(new Vector2D(+velocity,0)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
@@ -179,7 +182,8 @@ public class PlayerTank extends Tank {
             }
             image = ii.getImage();
             direction = Direction.RIGHT;
-        } else if (key == KeyEvent.VK_W) {
+        }  if (key == KeyEvent.VK_W) {
+
             setPosition(position.add(new Vector2D(0,-velocity)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
@@ -190,7 +194,8 @@ public class PlayerTank extends Tank {
             }
             image = ii.getImage();
             direction = Direction.UP;
-        } else if (key == KeyEvent.VK_S) {
+        }  if (key == KeyEvent.VK_S) {
+
             setPosition(position.add(new Vector2D(0,+velocity)));
             ImageIcon ii = null;
             if (spriteNum == 1) {
@@ -201,7 +206,7 @@ public class PlayerTank extends Tank {
             }
             image = ii.getImage();
             direction = Direction.DOWN;
-        } else if (key == KeyEvent.VK_SPACE) { // Bắn khi nhấn phím SPACE
+        } if (key == KeyEvent.VK_SPACE) { // Bắn khi nhấn phím SPACE
             shoot();
         }
         spriteCounter++;
@@ -213,6 +218,8 @@ public class PlayerTank extends Tank {
             }
             spriteCounter = 0;
         }
+
+
     }
 
     public void keyReleased(KeyEvent e) {
@@ -220,15 +227,19 @@ public class PlayerTank extends Tank {
         int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_A) {
+
         }
 
         if (key == KeyEvent.VK_D) {
+
         }
 
         if (key == KeyEvent.VK_W) {
+
         }
 
         if (key == KeyEvent.VK_S) {
         }
     }
+
 }
