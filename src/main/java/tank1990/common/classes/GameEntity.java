@@ -47,7 +47,7 @@ public abstract class GameEntity extends Component {
         GameEntityManager.add(this);
         GameEntityManager.setEnemyCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
         GameEntityManager.setPlayerCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
-//        System.out.println(GameEntityManager.getGameEntities());
+        // System.out.println(GameEntityManager.getGameEntities());
     }
 
     /**
@@ -134,17 +134,17 @@ public abstract class GameEntity extends Component {
 
     public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameComponents, double deltaTime) {
 
-        if (!getCollision().enabled) {
+        if (!getCollision().isEnabled()) {
             return null;
         }
-//        CollisionUtil.checkEdgeCollision(this);
+        // CollisionUtil.checkEdgeCollision(this);
 
         ArrayList<GameEntity> collidedGameComponents = new ArrayList<>();
 
         for (GameEntity gameComponent : gameComponents) {
 
             if (gameComponent.getCollision() == null ||
-                    !gameComponent.getCollision().enabled ||
+                    !gameComponent.getCollision().isEnabled() ||
                     gameComponent == this) {
                 continue;
             }
