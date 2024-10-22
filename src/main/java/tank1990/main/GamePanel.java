@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     /**
      * Cập nhật physic cho từng game entity
-     * 
+     *
      * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
      */
 
@@ -131,9 +131,11 @@ public class GamePanel extends JPanel implements ActionListener {
         } else MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
         }
+
         g2D.dispose();
     }
 
