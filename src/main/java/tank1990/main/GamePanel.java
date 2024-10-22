@@ -85,7 +85,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
     /**
      * Cập nhật physic cho từng game entity
-     * 
+     *
      * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
      */
 
@@ -126,14 +126,16 @@ public class GamePanel extends JPanel implements ActionListener {
             powerUps.add(powerUp);
             System.out.println("Powerup: "+powerUp.getPosition());
             System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
-            MapManager.drawPowerUp((PowerUp) powerUps.getFirst(), g, this);
+            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 //            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
-        } else MapManager.drawPowerUp((PowerUp) powerUps.getFirst(), g, this);
+        } else MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
         }
+
         g2D.dispose();
     }
 
