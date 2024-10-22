@@ -23,19 +23,33 @@ import java.util.*;
 import java.util.List;
 
 public class MapManager {
+    public static boolean checkIndexAvailability(int index, Set<Integer> unoccupiedIndices){
+        Set<Integer> requiredIndices = new HashSet<>();
+        requiredIndices.add(index);
+        requiredIndices.add(index+1);
+        requiredIndices.add(index+33);
+        requiredIndices.add(index+34);
+        if(!unoccupiedIndices.containsAll(requiredIndices)) {
+            System.out.println("Index "+index+" is occupied!");
+            return false;
+        }
+        return true;
+    }
     public static Set<Integer> getUnoccupiedIndex(List<Environment> environments, List<Tank> tanks){
 //        Need a GameEntity function that checks for the entity's occupied index
         Set<Integer> occupiedIndices = new HashSet<>();
+        if(tanks!=null)
         for (Tank tank:tanks) {
             int index = CollisionUtil.getTileIndex(tank.getPosition());
             occupiedIndices.add(index);
         }
+        if(environments!=null)
         for (Environment env: environments) {
             int index = CollisionUtil.getTileIndex(env.getPosition());
             occupiedIndices.add(index);
         }
         Set unoccupiedIndices = new HashSet();
-        for (int i = 0; i < 16*33; i++) {
+        for (int i = 0; i < 33*33; i++) {
             unoccupiedIndices.add(i);
         }
 //        System.out.println(occupiedIndices);
@@ -64,26 +78,11 @@ public class MapManager {
         g.drawImage(powerUp.image, (int) (powerUp.getPosition().x), (int) (powerUp.getPosition().y), powerUp.width, powerUp.height, observer);
     }
     public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
-//        for (int i = 0; i < tanks.size(); i++) {
-//            System.out.println("Draw a tank: " + tanks.get(i).toString());
-//        }
-        int i=4;
         for (Tank tank: tanks) {
-            i++;
-            if(tank.getType()== EntityType.PLAYER) {
-                g.setColor(Color.BLUE);
                 g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
 //                g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
-////                System.out.println("Player position: "+ tank.getPosition().x+", " + tank.getPosition().y);
 //                g.setColor(Color.red);
 //                g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
-            }
-            else {
-                g.setColor(Color.RED);
-//                tank.setPosition(new Vector2D(50*i, 10*i));
-                g.fillRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
-//                System.out.println("Enemy position: "+ tank.getPosition().x+", " + tank.getPosition().y);
-            }
         }
     }
 
@@ -132,6 +131,7 @@ public class MapManager {
                 }
                 if(env!=null){
                     env.setPosition(new Vector2D(envX, envY));
+                    int index = CollisionUtil.getTileIndex(env.getPosition());
 //                    System.out.println(env.getPosition()+" + "+ env.getCollision());
                     if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
                     envs.add(env);
@@ -147,6 +147,9 @@ public class MapManager {
         for (Environment env : envs) {
             g.setColor(Color.GRAY);
             g.drawImage(env.image, (int) env.getPosition().x, (int) env.getPosition().y, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT, observer);
+//            g.setColor(Color.white);
+//            int index = CollisionUtil.getTileIndex(env.getPosition());
+//            g.drawString(String.valueOf(index), (int)env.getPosition().x,(int) env.getPosition().y+16);
         }
     }
     public static List<Integer> readLevel(){
