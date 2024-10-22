@@ -83,7 +83,7 @@ public class PlayerTank extends Tank {
                 break;
         }
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 1);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 5);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
