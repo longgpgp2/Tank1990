@@ -1,5 +1,8 @@
 package tank1990.main;
 
+import javax.swing.*;
+import java.awt.*;
+
 public class Main {
     public static void main(String[] args) {
 //        Tank p1Tank = new PlayerTank(1, 2, 2, 2, "YELLOW");
@@ -8,8 +11,14 @@ public class Main {
 //        p1Tank.shoot();
 //        System.out.println(enemyBasicTank.toString());
 //        enemyBasicTank.shoot();
-
-        new GameObject();
+        JFrame frame = new JFrame("Tank 1990");
+        GameState gameState = GameState.getInstance();
+        Menu menu = new Menu(frame);
+        frame.add(menu);
+        frame.setSize(800, 600);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
 
     }
 }

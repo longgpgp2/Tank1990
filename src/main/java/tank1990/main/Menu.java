@@ -1,0 +1,113 @@
+package tank1990.main;
+
+import tank1990.manager.SoundManager;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+public class Menu extends JPanel implements KeyListener {
+    private int currentSelection = 0;
+    private String[] menuItems = {"Start", "Options", "Exit"};
+    private Image logoImage;
+    private JFrame parentFrame;
+    private SoundManager soundManager, backgroundMusic;
+    private GameState gameState ;
+    public Menu(Frame frame){
+        this.parentFrame = (JFrame) frame;
+        this.gameState = GameState.getInstance();
+        setFocusable(true);
+        addKeyListener(this);
+        this.backgroundMusic = new SoundManager();
+        this.backgroundMusic.soundLoader(".\\src\\main\\resources\\sounds\\menuMusicTheme.wav");
+        this.backgroundMusic.setSoundOn(gameState.isSoundOn());
+        this.soundManager = new SoundManager();
+        this.soundManager.soundLoader(".\\src\\main\\resources\\sounds\\changeOption.wav");
+
+        ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
+        logoImage = icon.getImage();
+
+    }
+    @Override
+    protected void paintComponent(Graphics g){
+        super.paintComponent(g);
+
+        g. setColor(Color.BLACK);
+        g.fillRect(0,0,getWidth(),getHeight());
+
+        if (logoImage != null){
+            g.drawImage(logoImage, getWidth()/ 2 - logoImage.getWidth(null) / 2, 100, null);
+        }
+        g.setFont( new Font("Arial", Font.PLAIN, 36));
+        for (int i =0; i< menuItems.length; i++){
+            if ( i == currentSelection){
+                g.setColor(Color.YELLOW);
+            }else{
+                g.setColor(Color.WHITE);
+            }
+            g.drawString(menuItems[i], getWidth() / 2 - 100, 300 + i * 50);
+        }
+    }
+    @Override
+    public void keyPressed(KeyEvent e){
+        int key = e.getKeyCode();
+        if (key == KeyEvent.VK_W){
+            currentSelection --;
+            if (currentSelection <0){
+                currentSelection = menuItems.length-1;
+            }
+            soundManager.resetSound();
+            soundManager.playSound();
+
+        }else if(key == KeyEvent.VK_S){
+            currentSelection ++;
+            if (currentSelection >= menuItems.length){
+                currentSelection =0;
+            }
+            soundManager.resetSound();
+            soundManager.playSound();
+        }else if(key == KeyEvent.VK_ENTER){
+            soundManager.resetSound();
+            soundManager.playSound();
+            selectMenuItem();
+        }
+        repaint();
+    }
+    public void selectMenuItem(){
+        switch (currentSelection){
+            case 0:
+                System.out.println("Start game selected!");
+                parentFrame.dispose();
+                GameObject game = new GameObject();  // Tạo game mới
+                game.startGame();
+                break;
+            case 1:
+                System.out.println("Options selected");
+                parentFrame.dispose();
+                openOptionsMenu();
+                break;
+            case 2:
+                System.out.println("Exit selected");
+                System.exit(0);
+                break;
+        }
+    }
+
+    private void openOptionsMenu(){
+        JFrame optionsFrame = new JFrame("Options Menu");
+        OptionsMenu optionsMenu = new OptionsMenu(optionsFrame, backgroundMusic);
+        optionsFrame.add(optionsMenu);
+        optionsFrame.setSize(800, 600);
+        optionsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        optionsFrame.setLocationRelativeTo(this);
+        optionsFrame.setVisible(true);
+    }
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+}
