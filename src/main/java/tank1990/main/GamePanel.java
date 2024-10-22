@@ -98,7 +98,7 @@ public class GamePanel extends JPanel implements ActionListener {
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>(); // Lưu trữ đạn để xóa
 
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.update(); // Cập nhật vị trí viên đạn
+//            bullet.update(); // Cập nhật vị trí viên đạn
 
             // Kiểm tra nếu đạn đã bị tiêu diệt hoặc ra ngoài biên
             if (bullet.isCollided() || bullet.isOutOfBound()) {

@@ -18,17 +18,19 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.KeyHandler;
 import tank1990.manager.MapManager;
 
 public class PlayerTank extends Tank {
+    private static int counter=0;
     private int owner;
-    private List<Bullet> bullets = new ArrayList<>();
-    private long lastShotTime = 0;
-    private long shotDelay = 300; // delay 0.3s
+    public List<Bullet> bullets = new ArrayList<>();
+    public long lastShotTime = 0;
+    public long shotDelay = 300; // delay 0.3s
 
-    private int maxBullets;
-    int velocity = 5;
-
+    public int maxBullets;
+    public int velocity = 5;
+    KeyHandler keyHandler;
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
@@ -38,6 +40,7 @@ public class PlayerTank extends Tank {
         setCollision(
                 new CollisionBox(this, new Vector2D(0, 0), GameConstants.TANK_SIZE - 2, GameConstants.TANK_SIZE - 2));
         this.maxBullets = maxBullets;
+        keyHandler = new KeyHandler(this);
     }
 
     private void playSound(String soundFile) {
@@ -136,6 +139,9 @@ public class PlayerTank extends Tank {
     // }
     @Override
     public void update(double deltaTime) {
+//        counter++;
+//        System.out.print(" "+counter);
+        keyHandler.updatePosition();
         // vị trí đạn
         for (Bullet bullet : bullets) {
             bullet.move();
@@ -155,91 +161,75 @@ public class PlayerTank extends Tank {
     }
 
     public void keyPressed(KeyEvent e) {
-
-        int time;
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_A) {
-
-            setPosition(position.add(new Vector2D(-velocity,0)));
-            ImageIcon ii = null;
-            if (spriteNum == 1) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t1.png");
-            }
-            if (spriteNum == 2) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t2.png");
-            }
-            image = ii.getImage();
-            direction = Direction.LEFT;
-        }  if (key == KeyEvent.VK_D) {
-
-            setPosition(position.add(new Vector2D(+velocity,0)));
-            ImageIcon ii = null;
-            if (spriteNum == 1) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t1.png");
-            }
-            if (spriteNum == 2) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t2.png");
-            }
-            image = ii.getImage();
-            direction = Direction.RIGHT;
-        }  if (key == KeyEvent.VK_W) {
-
-            setPosition(position.add(new Vector2D(0,-velocity)));
-            ImageIcon ii = null;
-            if (spriteNum == 1) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png");
-            }
-            if (spriteNum == 2) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t2.png");
-            }
-            image = ii.getImage();
-            direction = Direction.UP;
-        }  if (key == KeyEvent.VK_S) {
-
-            setPosition(position.add(new Vector2D(0,+velocity)));
-            ImageIcon ii = null;
-            if (spriteNum == 1) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");
-            }
-            if (spriteNum == 2) {
-                ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");
-            }
-            image = ii.getImage();
-            direction = Direction.DOWN;
-        } if (key == KeyEvent.VK_SPACE) { // Bắn khi nhấn phím SPACE
-            shoot();
-        }
-        spriteCounter++;
-        if (spriteCounter > 6) { // animation speed
-            if (spriteNum == 1) {
-                spriteNum = 2;
-            } else if (spriteNum == 2) {
-                spriteNum = 1;
-            }
-            spriteCounter = 0;
-        }
+        keyHandler.keyPressed(e);
+//        int key = e.getKeyCode();
+//        if (key == KeyEvent.VK_A) {
+//
+//            setPosition(position.add(new Vector2D(-velocity,0)));
+//            ImageIcon ii = null;
+//            if (spriteNum == 1) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t1.png");
+//            }
+//            if (spriteNum == 2) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_left_c0_t2.png");
+//            }
+//            image = ii.getImage();
+//            direction = Direction.LEFT;
+//        }  if (key == KeyEvent.VK_D) {
+//
+//            setPosition(position.add(new Vector2D(+velocity,0)));
+//            ImageIcon ii = null;
+//            if (spriteNum == 1) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t1.png");
+//            }
+//            if (spriteNum == 2) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_right_c0_t2.png");
+//            }
+//            image = ii.getImage();
+//            direction = Direction.RIGHT;
+//        }  if (key == KeyEvent.VK_W) {
+//
+//            setPosition(position.add(new Vector2D(0,-velocity)));
+//            ImageIcon ii = null;
+//            if (spriteNum == 1) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png");
+//            }
+//            if (spriteNum == 2) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t2.png");
+//            }
+//            image = ii.getImage();
+//            direction = Direction.UP;
+//        }  if (key == KeyEvent.VK_S) {
+//
+//            setPosition(position.add(new Vector2D(0,+velocity)));
+//            ImageIcon ii = null;
+//            if (spriteNum == 1) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");
+//            }
+//            if (spriteNum == 2) {
+//                ii = new ImageIcon("src/main/resources/images/tank_player1_down_c0_t1.png");
+//            }
+//            image = ii.getImage();
+//            direction = Direction.DOWN;
+//        } if (key == KeyEvent.VK_SPACE) { // Bắn khi nhấn phím SPACE
+//            shoot();
+//        }
+//        spriteCounter++;
+//        if (spriteCounter > 6) { // animation speed
+//            if (spriteNum == 1) {
+//                spriteNum = 2;
+//            } else if (spriteNum == 2) {
+//                spriteNum = 1;
+//            }
+//            spriteCounter = 0;
+//        }
 
 
     }
 
     public void keyReleased(KeyEvent e) {
 
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_A) {
-
-        }
-
-        if (key == KeyEvent.VK_D) {
-
-        }
-
-        if (key == KeyEvent.VK_W) {
-
-        }
-
-        if (key == KeyEvent.VK_S) {
-        }
+        keyHandler.keyReleased(e);
     }
 
 }

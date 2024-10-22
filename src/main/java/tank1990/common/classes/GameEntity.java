@@ -9,7 +9,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
-import tank1990.manager.animation.Game;
+//import tank1990.manager.animation.Game;
 
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
@@ -87,7 +87,7 @@ public abstract class GameEntity extends Component {
 
         if (collisionBox != null) {
             collisionBox.setPosition(position);
-            System.out.println("Position set");
+//            System.out.println("Position set");
         }
     }
 
