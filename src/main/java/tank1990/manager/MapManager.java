@@ -73,7 +73,10 @@ public class MapManager {
             if(tank.getType()== EntityType.PLAYER) {
                 g.setColor(Color.BLUE);
                 g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
-//                System.out.println("Player position: "+ tank.getPosition().x+", " + tank.getPosition().y);
+//                g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
+////                System.out.println("Player position: "+ tank.getPosition().x+", " + tank.getPosition().y);
+//                g.setColor(Color.red);
+//                g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
             }
             else {
                 g.setColor(Color.RED);
