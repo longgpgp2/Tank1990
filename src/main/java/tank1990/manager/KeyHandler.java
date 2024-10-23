@@ -27,6 +27,34 @@ public class KeyHandler {
         }
     }
 
+    public void setPress(int key){
+        if (key == KeyEvent.VK_A) {
+            leftPressed = true;
+            disableVertical();
+            rightPressed=false;
+            tank.direction = Direction.LEFT;
+            updateImage();
+        } else if (key == KeyEvent.VK_D) {
+            rightPressed = true;
+            disableVertical();
+            leftPressed=false;
+            tank.direction = Direction.RIGHT;
+            updateImage();
+        } else if (key == KeyEvent.VK_W) {
+            upPressed = true;
+            disableHorizontal();
+            downPressed=false;
+            tank.direction = Direction.UP;
+            updateImage();
+        } else if (key == KeyEvent.VK_S) {
+            downPressed = true;
+            disableHorizontal();
+            upPressed=false;
+            tank.direction = Direction.DOWN;
+            updateImage();
+        }
+    }
+
     public void disableVertical() {
         if (leftPressed || rightPressed) {
             upPressed = false;
@@ -72,28 +100,8 @@ public class KeyHandler {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_A) {
-            leftPressed = true;
-            disableVertical();
-            tank.direction = Direction.LEFT;
-            updateImage();
-        } else if (key == KeyEvent.VK_D) {
-            rightPressed = true;
-            disableVertical();
-            tank.direction = Direction.RIGHT;
-            updateImage();
-        } else if (key == KeyEvent.VK_W) {
-            upPressed = true;
-            disableHorizontal();
-            tank.direction = Direction.UP;
-            updateImage();
-        } else if (key == KeyEvent.VK_S) {
-            downPressed = true;
-            disableHorizontal();
-            tank.direction = Direction.DOWN;
-            updateImage();
-        }
-        if (key == KeyEvent.VK_SPACE) { // Bắn khi nhấn phím SPACE
+        setPress(key);
+        if (key == KeyEvent.VK_SPACE) {
             tank.shoot();
         }
         updateTankSpriteCounter();

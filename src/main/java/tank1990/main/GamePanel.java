@@ -119,8 +119,8 @@ public class GamePanel extends JPanel implements ActionListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
-        MapManager.drawEnvironments(environments, g, this);
         MapManager.drawTanks(tanks, g, this);
+        MapManager.drawEnvironments(environments, g, this);
         if(powerUps.isEmpty()){
             PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
             powerUps.add(powerUp);

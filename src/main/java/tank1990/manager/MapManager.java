@@ -114,7 +114,7 @@ public class MapManager {
                         break;
                     }
                     case 3:{
-                        //base
+                        env = new Base(envX, envY);
                         break;
                     }
                     case 4:{
@@ -133,7 +133,9 @@ public class MapManager {
                     env.setPosition(new Vector2D(envX, envY));
                     int index = CollisionUtil.getTileIndex(env.getPosition());
 //                    System.out.println(env.getPosition()+" + "+ env.getCollision());
+                    if(!env.crossable && env.getType().equals(EntityType.BASE))env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width*2, env.height*2));
                     if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
+
                     envs.add(env);
                 }
 
@@ -146,7 +148,14 @@ public class MapManager {
     public static void drawEnvironments(List<Environment> envs, Graphics g, ImageObserver observer){
         for (Environment env : envs) {
             g.setColor(Color.GRAY);
-            g.drawImage(env.image, (int) env.getPosition().x, (int) env.getPosition().y, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT, observer);
+            int width = GameConstants.ENTITY_WIDTH;
+            int height = GameConstants.ENTITY_HEIGHT;
+            if(env.getType().equals(EntityType.BASE))
+            {
+                width=width*2;
+                height=height*2;
+            }
+            g.drawImage(env.image, (int) env.getPosition().x, (int) env.getPosition().y, width, height, observer);
 //            g.setColor(Color.white);
 //            int index = CollisionUtil.getTileIndex(env.getPosition());
 //            g.drawString(String.valueOf(index), (int)env.getPosition().x,(int) env.getPosition().y+16);

@@ -44,7 +44,7 @@ public class TankSpawner {
         Tank tank = createEnemyTankByType(enemyType);
         while(true){
             Random random = new Random();
-            int randomIndex = random.nextInt(34,66);
+            int randomIndex = random.nextInt(34,69);
             if(!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) continue;
             Vector2D position = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
             tank.setPosition(position);

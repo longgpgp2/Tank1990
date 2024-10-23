@@ -20,10 +20,11 @@ public class PlayerTank extends Tank {
     private int owner;
     public List<Bullet> bullets = new ArrayList<>();
     public long lastShotTime = 0;
-    public long shotDelay = 300; // delay 0.3s
+    public long shotDelay = 300;
 
     public int maxBullets;
     public int velocity = 5;
+    public int star = 1;
     KeyHandler keyHandler;
 
     public PlayerTank(int owner, int maxBullets) {
