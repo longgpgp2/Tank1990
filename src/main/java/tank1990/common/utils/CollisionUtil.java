@@ -7,30 +7,32 @@ import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
-import tank1990.common.enums.EntityType;
 
 public class CollisionUtil {
   private static final int MAX_WIDTH = GameConstants.MAP_WIDTH + GameConstants.MAP_SHIFT_WIDTH;
   private static final int MAX_HEIGHT = GameConstants.MAP_HEIGHT + GameConstants.MAP_SHIFT_HEIGHT;
 
   public static int getTileIndex(Vector2D position) {
-    int column = (int) (position.x / (GameConstants.ENTITY_WIDTH * 2));
-    int row = (int) (position.y / (GameConstants.ENTITY_HEIGHT * 2));
+    int column = (int) (position.x / (GameConstants.ENTITY_WIDTH));
+    int row = (int) (position.y / (GameConstants.ENTITY_HEIGHT));
 
-    return column + row * (GameConstants.ENTITY_WIDTH * 2);
+    return row + column + row * (GameConstants.ENTITY_WIDTH * 2);
   }
 
   public static Vector2D getPositionByIndex(int index, int tileWidth, int tileHeight) {
-    int column = (int) index % tileWidth;
-    int row = (int) index / tileHeight;
+    int x = (index % 33) * (tileWidth);
+    int y = (index / 33) * (tileHeight);
+    // int column = (int) index % tileWidth;
+    // int row = (int) index / tileHeight;
 
-    return new Vector2D(column * tileWidth, row * tileHeight);
+    // return new Vector2D(column * tileWidth, row * tileHeight);
+    return new Vector2D(x, y);
   }
 
   public static Vector2D getOutOfBoundOffset(GameEntity gameEntity) {
     double dx1 = gameEntity.getCenter().x + gameEntity.width / 2 - MAX_WIDTH;
     double dx2 = GameConstants.MAP_SHIFT_WIDTH - (gameEntity.getCenter().x - gameEntity.width / 2);
-
+    // System.out.println(dx1 + " " + dx2);
     if (dx1 > 0 || dx2 > 0) {
       if (dx1 > 0) {
         return new Vector2D(-dx1, 0);

@@ -18,14 +18,15 @@ import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.Shield;
 
 public class PlayerTank extends Tank {
-    private static int counter=0;
+    private static int counter = 0;
     private int owner;
     public List<Bullet> bullets = new ArrayList<>();
     public long lastShotTime = 0;
-    public long shotDelay = 300; // delay 0.3s
+    public long shotDelay = 300;
 
     public int maxBullets;
     public int velocity = 5;
+    public int star = 1;
     KeyHandler keyHandler;
 
     private boolean isAppear = true;
@@ -40,7 +41,8 @@ public class PlayerTank extends Tank {
         appear = new Appear(100);
         image = appear.getCurrentFrame().getImage();
         setCollision(
-                new CollisionBox(this, new Vector2D(0, 0), GameConstants.TANK_SIZE - 2, GameConstants.TANK_SIZE - 2));
+                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 5,
+                        GameConstants.TANK_SIZE - 5));
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
         startAnimation();
@@ -177,14 +179,14 @@ public class PlayerTank extends Tank {
             // va cham
         }
         ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
-//        System.out.println(GameEntityManager.getPlayerCollisionComponents());
-        if (collidedEntities!=null) {
-            for (Object e :collidedEntities) {
+        // System.out.println(GameEntityManager.getPlayerCollisionComponents());
+        if (collidedEntities != null) {
+            for (Object e : collidedEntities) {
                 System.out.println(e);
             }
             velocity = 0;
-        }
-        else velocity=5;
+        } else
+            velocity = 5;
 
         bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
     }
@@ -194,6 +196,7 @@ public class PlayerTank extends Tank {
             return;
         }
         keyHandler.keyPressed(e);
+
     }
 
     public void keyReleased(KeyEvent e) {

@@ -9,11 +9,10 @@ import tank1990.manager.GameEntityManager;
 import javax.swing.*;
 
 public class BrickWall extends Environment{
-	int[][] health = {{1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}};
 
 	public BrickWall(int x, int y) {
 		super(EntityType.BRICK,false, true, false, x, y);
-		super.health= health;
+		health= 1;
 		image = new ImageIcon("src/main/resources/images/wall_brick.png").getImage();
 
 

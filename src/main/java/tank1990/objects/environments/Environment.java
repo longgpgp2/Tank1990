@@ -10,7 +10,7 @@ public abstract class Environment extends GameEntity {
 	public boolean crossable;
 	public boolean destroyable;
 	public boolean bulletThrough;
-	public int[][] health;
+	public int health;
 	public int x;
 	public int y;
 

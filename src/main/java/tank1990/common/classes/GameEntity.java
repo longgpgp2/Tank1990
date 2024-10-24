@@ -87,7 +87,7 @@ public abstract class GameEntity extends Component {
 
         if (collisionBox != null) {
             collisionBox.setPosition(position);
-//            System.out.println("Position set");
+            // System.out.println("Position set");
         }
     }
 
@@ -137,7 +137,7 @@ public abstract class GameEntity extends Component {
         if (!getCollision().isEnabled()) {
             return null;
         }
-        // CollisionUtil.checkEdgeCollision(this);
+//        CollisionUtil.checkEdgeCollision(this);
 
         ArrayList<GameEntity> collidedGameComponents = new ArrayList<>();
 
