@@ -8,6 +8,7 @@ import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
+import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 import tank1990.objects.tanks.enemy_tanks.BasicTank;
@@ -17,9 +18,13 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class TankSpawner {
+    public static PlayerTank playerTank;
+    public static List<EnemyTank> enemyTanks = new ArrayList<>();
+
     public static Tank spawnPlayer(){
         Tank player = new PlayerTank(1,5);
         player.setPosition(new Vector2D(100, 100));
+        playerTank = (PlayerTank) player;
         return player;
     }
     public static List<Tank> spawnEnemy(Set<Integer> unoccupiedIndices){
@@ -29,6 +34,7 @@ public class TankSpawner {
         for (String type: types) {
             tanks = addAnEnemy(unoccupiedIndices,tanks, type );
         }
+        enemyTanks = tanks;
         return tanks;
     }
     public static List<Tank> addAnEnemy(Set<Integer> unoccupiedIndices, List<Tank> tanks, String enemyType){

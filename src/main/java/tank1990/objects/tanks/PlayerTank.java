@@ -3,19 +3,23 @@ package tank1990.objects.tanks;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 
 import tank1990.common.classes.CollisionBox;
+import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
+import tank1990.main.GamePanel;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.Shield;
+import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
     private static int counter = 0;
@@ -26,7 +30,7 @@ public class PlayerTank extends Tank {
 
     public int maxBullets;
     public int velocity = 5;
-    public int star = 1;
+    private int star = 1;
     KeyHandler keyHandler;
 
     private boolean isAppear = true;
@@ -34,6 +38,9 @@ public class PlayerTank extends Tank {
 
     private Shield shield;
     private boolean isShield = false;
+
+    private int lives = 3;
+
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
         this.owner = owner;
@@ -64,7 +71,7 @@ public class PlayerTank extends Tank {
             startShield();
         }).start();
     }
-    private void startShield() {
+    public void startShield() {
         shield = new Shield(200);
         isShield = true;
 
@@ -178,13 +185,25 @@ public class PlayerTank extends Tank {
             bullet.move();
             // va cham
         }
-        ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
+        HashSet<GameEntity> collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
         // System.out.println(GameEntityManager.getPlayerCollisionComponents());
         if (collidedEntities != null) {
-            for (Object e : collidedEntities) {
+            System.out.println("--------------------");
+            System.out.println(collidedEntities.size());
+            for (GameEntity e : collidedEntities) {
                 System.out.println(e);
+                if (e.getType() == EntityType.POWER_UP) {
+                    // disable collision
+                    e.getCollision().setEnabled(false);
+                    // remove power-up from the field
+                    GameEntityManager.remove(e);
+                    GamePanel.removeEntity(e);
+                    // trigger the effect of power-up
+                    ((PowerUp) e).activate();
+                }
             }
-            velocity = 0;
+//            collidedEntities.clear();
+//            velocity = 0;
         } else
             velocity = 5;
 
@@ -215,4 +234,21 @@ public class PlayerTank extends Tank {
             }
         }
     }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
 }

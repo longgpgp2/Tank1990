@@ -1,14 +1,15 @@
 package tank1990.common.classes;
 
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
+
+import javax.swing.*;
 //import tank1990.manager.animation.Game;
 
 /**
@@ -46,7 +47,7 @@ public abstract class GameEntity extends Component {
 
         GameEntityManager.add(this);
         GameEntityManager.setEnemyCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setPlayerCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setPlayerCollisionComponents(GameConstants.PLAYER_COLLIDABLE_ENTITIES);
         // System.out.println(GameEntityManager.getGameEntities());
     }
 
@@ -132,14 +133,22 @@ public abstract class GameEntity extends Component {
                 + ")";
     }
 
-    public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameComponents, double deltaTime) {
+    /**
+     * Get a set of GameEntity that collided with this GameEntity.
+     * HashSet is used to prevent GameEntity duplication
+     *
+     * @param gameComponents list of player's collidable GameEntity
+     * @param deltaTime time between frame
+     * @return a HashSet that contains all GameEntity that this GameEntity has collided with
+     */
+    public HashSet<GameEntity> checkCollision(ArrayList<GameEntity> gameComponents, double deltaTime) {
 
         if (!getCollision().isEnabled()) {
             return null;
         }
 //        CollisionUtil.checkEdgeCollision(this);
 
-        ArrayList<GameEntity> collidedGameComponents = new ArrayList<>();
+        HashSet<GameEntity> collidedGameComponents = new HashSet<>();
 
         for (GameEntity gameComponent : gameComponents) {
 

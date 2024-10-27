@@ -13,14 +13,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
-import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
-import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
@@ -32,10 +32,11 @@ import tank1990.objects.tanks.PlayerTank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-    java.util.List environments = new ArrayList<Environment>();
-    java.util.List map = new ArrayList<Integer>();
-    java.util.List tanks = new ArrayList<Tank>();
-    java.util.List powerUps= new ArrayList<PowerUp>();
+    List environments = new ArrayList<Environment>();
+    List map = new ArrayList<Integer>();
+    List tanks = new ArrayList<Tank>();
+    static List<PowerUp> powerUps= new ArrayList<PowerUp>();
+
 
     GamePanel() {
 
@@ -90,8 +91,14 @@ public class GamePanel extends JPanel implements ActionListener {
      */
 
     private void updateGame() {
-        for (GameEntity gameEntity : gameEntities) {
-            gameEntity.update(0.01);
+        // ConcurrentModificationException will happen when a GameEntity is removed
+        try {
+            for (GameEntity gameEntity : gameEntities) {
+                gameEntity.update(0.01);
+            }
+        } catch (ConcurrentModificationException e) {
+            System.out.println("An entity is removed.");
+            return;
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
@@ -112,6 +119,13 @@ public class GamePanel extends JPanel implements ActionListener {
             if (bullet.isExplosionFinished()) { // Kiểm tra nếu vụ nổ đã hoàn tất
                 playerTank.getBullets().remove(bullet); // Xóa viên đạn khi vụ nổ hoàn tất
             }
+
+            // Temporary code for testing. Assume that an enemy is defeated.
+            if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
+                PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+                powerUps.add(powerUp);
+                System.out.println("Add a power-up");
+            }
         }
     }
 
@@ -121,14 +135,21 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);
-        if(powerUps.isEmpty()){
-            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
-            powerUps.add(powerUp);
-            System.out.println("Powerup: "+powerUp.getPosition());
-            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
-            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
-//            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
-        } else MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
+//        if(powerUps.isEmpty()){
+//            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+//            powerUps.add(powerUp);
+//            System.out.println("Powerup: "+powerUp.getPosition());
+//            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
+//            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
+////            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
+//        } else MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
+
+        // draw every available power-ups
+        if (!powerUps.isEmpty()) {
+            for (PowerUp powerUp : powerUps) {
+                MapManager.drawPowerUp(powerUp, g, this);
+            }
+        }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         playerTank.draw(g);
@@ -154,6 +175,16 @@ public class GamePanel extends JPanel implements ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
             MapManager.getPlayerTank(tanks).keyPressed(e);
+        }
+    }
+
+    public static void removeEntity(GameEntity gameEntity) {
+        switch (gameEntity.getType()) {
+            case POWER_UP:
+                powerUps.remove((PowerUp) gameEntity);
+                break;
+            default:
+                break;
         }
     }
 }

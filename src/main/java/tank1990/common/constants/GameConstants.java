@@ -2,6 +2,7 @@ package tank1990.common.constants;
 
 import tank1990.common.enums.EntityType;
 
+import java.util.Arrays;
 import java.util.Set;
 
 public class GameConstants {
@@ -19,5 +20,6 @@ public class GameConstants {
     public static final int FPS = 60;
     public static final double deltaTime = 1/FPS;
     public static final String[] PERK_LIST = {"Star", "Grenade", "Helmet", "Tank", "Timer", "Shovel"};
-    public static final EntityType[] IMPASSABLE_ENTITIES = {EntityType.PLAYER, EntityType.ENEMY, EntityType.BASE, EntityType.EDGE, EntityType.BRICK, EntityType.RIVER, EntityType.STEEL};
+    public static final EntityType[] PLAYER_COLLIDABLE_ENTITIES = {EntityType.PLAYER, EntityType.ENEMY, EntityType.BASE, EntityType.EDGE, EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.POWER_UP};
+    public static final EntityType[] IMPASSABLE_ENTITIES = Arrays.copyOfRange(PLAYER_COLLIDABLE_ENTITIES, 0, PLAYER_COLLIDABLE_ENTITIES.length - 1);
 }

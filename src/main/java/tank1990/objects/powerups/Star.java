@@ -1,5 +1,8 @@
 package tank1990.objects.powerups;
 
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.tanks.PlayerTank;
+
 import javax.swing.*;
 
 public class Star extends PowerUp{
@@ -9,7 +12,11 @@ public class Star extends PowerUp{
 	}
 	@Override
 	public void activate(){
-//		System.out.println(this.getName());
+		PlayerTank playerTank = TankSpawner.playerTank;
+		if (playerTank.getStar() < 4) {
+			playerTank.setStar(playerTank.getStar() + 1);
+		}
+		System.out.println("[POWER-UP] Increased power by 1. Current level: " + playerTank.getStar());
 	}
 
 }

@@ -23,12 +23,14 @@ public class GameEntityManager {
       return;
     }
 
-    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
-      GameEntity value = iterator.next();
-      if (value == gameComponent) {
-        iterator.remove();
-      }
-    }
+    gameEntities.remove(gameComponent);
+    playerCollisionComponents.remove(gameComponent);
+//    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
+//      GameEntity value = iterator.next();
+//      if (value == gameComponent) {
+//        iterator.remove();
+//      }
+//    }
   }
 
   public static void add(GameEntity gameComponent) {

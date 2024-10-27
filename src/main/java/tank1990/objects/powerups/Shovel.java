@@ -10,7 +10,7 @@ public class Shovel extends PowerUp{
 
 	@Override
 	public void activate(){
-//		System.out.println(this.getName());
+		System.out.println("[POWER-UP] Rebuild base's walls. This does nothing for now");
 	}
 
 }

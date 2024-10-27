@@ -1,5 +1,8 @@
 package tank1990.objects.powerups;
 
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.tanks.PlayerTank;
+
 import javax.swing.*;
 
 public class Helmet extends PowerUp{
@@ -9,7 +12,8 @@ public class Helmet extends PowerUp{
 	}
 	@Override
 	public void activate(){
-//		System.out.println(this.getName());
+		TankSpawner.playerTank.startShield();
+		System.out.println("[POWER-UP] Shield is activated");
 	}
 
 }
