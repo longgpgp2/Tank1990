@@ -1,6 +1,7 @@
 package tank1990.objects.tanks;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -55,7 +56,6 @@ public class PlayerTank extends Tank {
         startAnimation();
     }
 
-
     private void startAnimation() {
         new Thread(() -> {
             while (!appear.isAnimationFinished()) {
@@ -71,6 +71,7 @@ public class PlayerTank extends Tank {
             startShield();
         }).start();
     }
+
     public void startShield() {
         shield = new Shield(200);
         isShield = true;
@@ -80,7 +81,7 @@ public class PlayerTank extends Tank {
             while (!shield.isAnimationFinished()) {
                 shield.getCurrentFrame();
 
-                if (System.currentTimeMillis() - startTime >= 3000) { //3s
+                if (System.currentTimeMillis() - startTime >= 3000) { // 3s
                     isShield = false;
                     break;
                 }
@@ -173,8 +174,8 @@ public class PlayerTank extends Tank {
         if (isAppear) {
             return;
         }
-//        counter++;
-//        System.out.print(" "+counter);
+        // counter++;
+        // System.out.print(" "+counter);
         keyHandler.updatePosition();
         if (isShield) {
             shield.getCurrentFrame(); // frame của shield
@@ -222,9 +223,10 @@ public class PlayerTank extends Tank {
 
         keyHandler.keyReleased(e);
     }
+
     public void draw(Graphics g) {
         // Vẽ tank
-        g.drawImage(image, (int) position.x, (int) position.y, null);
+        // g.drawImage(image, (int) position.x, (int) position.y, null);
 
         // Nếu shield đang hoạt động, vẽ shield lên tank
         if (isShield) {
