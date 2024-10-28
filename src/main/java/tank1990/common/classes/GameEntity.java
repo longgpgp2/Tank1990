@@ -31,7 +31,7 @@ public abstract class GameEntity extends Component {
 
     protected CollisionBox collisionBox;
     public Image image;
-    // protected GameSprite sprite;
+    protected GameSprite sprite;
 
     public GameEntity(EntityType type, Vector2D position, int width, int height) {
         this.x = (int) position.x;
@@ -45,8 +45,12 @@ public abstract class GameEntity extends Component {
         this.position = new Vector2D(x, y);
 
         GameEntityManager.add(this);
-        GameEntityManager.setEnemyCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setPlayerCollisionComponents(GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+                EntityType.BRICK,
+                EntityType.STEEL,
+        });
         // System.out.println(GameEntityManager.getGameEntities());
     }
 
@@ -115,50 +119,47 @@ public abstract class GameEntity extends Component {
         this.collisionBox = collisionBox;
     }
 
-    // public GameSprite getSprite() {
-    // return this.sprite;
-    // }
+    public GameSprite getSprite() {
+        return this.sprite;
+    }
 
-    // public void setSprite(GameSprite sprite) {
-    // this.sprite = sprite;
-    // }
+    public void setSprite(GameSprite sprite) {
+        this.sprite = sprite;
+    }
 
     public EntityType getType() {
         return type;
     }
 
     public String toString() {
-        return "GameComponent(type=" + type + ", Position=" + getPosition() + ", width=" + width + ", height=" + height
+        return "GameEntity(type=" + type + ", Position=" + getPosition() + ", width=" + width + ", height=" + height
                 + ")";
     }
 
-    public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameComponents, double deltaTime) {
-
+    public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameEntities, double deltaTime) {
         if (!getCollision().isEnabled()) {
             return null;
         }
-//        CollisionUtil.checkEdgeCollision(this);
+        // CollisionUtil.checkEdgeCollision(this);
 
-        ArrayList<GameEntity> collidedGameComponents = new ArrayList<>();
+        ArrayList<GameEntity> collidedGameEntities = new ArrayList<>();
 
-        for (GameEntity gameComponent : gameComponents) {
-
-            if (gameComponent.getCollision() == null ||
-                    !gameComponent.getCollision().isEnabled() ||
-                    gameComponent == this) {
+        for (GameEntity gameEntity : gameEntities) {
+            if (gameEntity.getCollision() == null ||
+                    !gameEntity.getCollision().isEnabled() ||
+                    gameEntity == this) {
                 continue;
             }
 
-            boolean hasCollision = CollisionUtil.checkAABBCollision(this, gameComponent, deltaTime);
+            boolean hasCollision = CollisionUtil.checkAABBCollision(this, gameEntity, deltaTime);
 
-            if (hasCollision) {
-                collidedGameComponents.add(gameComponent);
-                System.out.println(gameComponent);
+            if (hasCollision && !collidedGameEntities.contains(gameEntity)) {
+                collidedGameEntities.add(gameEntity);
             }
         }
 
-        if (collidedGameComponents.size() > 0) {
-            return collidedGameComponents;
+        if (collidedGameEntities.size() > 0) {
+            return collidedGameEntities;
         }
 
         return null;

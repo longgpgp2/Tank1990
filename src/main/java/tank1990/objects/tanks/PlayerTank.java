@@ -181,7 +181,7 @@ public class PlayerTank extends Tank {
             bullet.move();
             // va cham
         }
-        ArrayList collidedEntities = checkCollision(GameEntityManager.getPlayerCollisionComponents(), deltaTime);
+        ArrayList collidedEntities = checkCollision(GameEntityManager.getCollisionEntities(type), deltaTime);
         // System.out.println(GameEntityManager.getPlayerCollisionComponents());
         if (collidedEntities != null) {
             for (Object e : collidedEntities) {
