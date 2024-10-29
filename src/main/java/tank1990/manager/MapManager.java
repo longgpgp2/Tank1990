@@ -125,6 +125,9 @@ public class MapManager {
                         env = new Trees(envX, envY);
                         break;
                     }
+                    case 9: {
+                        env = new BaseWall(envX, envY);
+                    }
                     default:{
                         break;
                     }

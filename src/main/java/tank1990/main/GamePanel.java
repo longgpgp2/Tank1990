@@ -32,7 +32,7 @@ import tank1990.objects.tanks.PlayerTank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-    List environments = new ArrayList<Environment>();
+    static List environments = new ArrayList<Environment>();
     List map = new ArrayList<Integer>();
     List tanks = new ArrayList<Tank>();
     static List<PowerUp> powerUps = new ArrayList<PowerUp>();
@@ -130,14 +130,6 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);
-//        if (powerUps.isEmpty()) {
-//            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
-//            powerUps.add(powerUp);
-//            System.out.println("Powerup: " + powerUp.getPosition());
-//            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
-//            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
-////            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
-//        } else MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 
         // draw every available power-ups
         if (!powerUps.isEmpty()) {
@@ -179,6 +171,10 @@ public class GamePanel extends JPanel implements ActionListener {
         public void keyPressed(KeyEvent e) {
             MapManager.getPlayerTank(tanks).keyPressed(e);
         }
+    }
+
+    public static List<Environment> getEnvironments() {
+        return environments;
     }
 
     public static void removeEntity(GameEntity gameEntity) {

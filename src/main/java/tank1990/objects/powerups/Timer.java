@@ -19,8 +19,12 @@ public class Timer extends PowerUp{
 		for (EnemyTank tank : TankSpawner.enemyTanks) {
 			tank.setMovementSpeed(0);
 			tank.setBulletSpeed(0);
-			// TODO: reset speed after some time
 		}
+		new javax.swing.Timer(5000, e -> {
+			for (EnemyTank tank : TankSpawner.enemyTanks) {
+				tank.resetSpeed();
+			}
+		}).start();
 		System.out.println("[POWER-UP] Freeze all enemy tanks");
 	}
 
