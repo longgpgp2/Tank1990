@@ -1,5 +1,12 @@
 package tank1990.objects.tanks;
 
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.ImageIcon;
+
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
@@ -9,11 +16,6 @@ import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.Shield;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.Random;
 
 public abstract class EnemyTank extends Tank {
     private String name;
@@ -30,13 +32,14 @@ public abstract class EnemyTank extends Tank {
     private Direction lastDirection;
     private Vector2D targetPosition = null;
     public Image[] images;
+
     public EnemyTank(String name, int health, int point, int bulletSpeed, int movementSpeed, String specialTraits) {
         super(EntityType.ENEMY, health, bulletSpeed, movementSpeed, Direction.DOWN);
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;
         setCollision(
-                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 4, GameConstants.TANK_SIZE - 4));
+                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE));
         appear = new Appear(100);
         startAnimation();
         movingDirection = this.direction;
@@ -45,7 +48,9 @@ public abstract class EnemyTank extends Tank {
         images = new Image[4]; // UP, DOWN, LEFT, RIGHT
         loadImages();
     }
+
     protected abstract void loadImages();
+
     private void startAnimation() {
         new Thread(() -> {
             while (!appear.isAnimationFinished()) {
@@ -64,6 +69,7 @@ public abstract class EnemyTank extends Tank {
             startShield();
         }).start();
     }
+
     private void startShield() {
         shield = new Shield(200);
         isShield = true;
@@ -86,6 +92,7 @@ public abstract class EnemyTank extends Tank {
             }
         }).start();
     }
+
     public void update(double deltaTime) {
         if (!isAppear) {
             updatePosition();
@@ -93,16 +100,17 @@ public abstract class EnemyTank extends Tank {
         }
     }
 
-
     private void checkAndChangeDirection() {
         ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
         ArrayList<Direction> availableDirections = checkAvailableDirections(gameEntities);
 
-        if (availableDirections.isEmpty()) return;
+        if (availableDirections.isEmpty())
+            return;
 
         // Collision handling and direction selection
         if (availableDirections.size() > 2) {
-            // More than two directions available, pick one randomly (excluding lastDirection)
+            // More than two directions available, pick one randomly (excluding
+            // lastDirection)
             availableDirections.remove(lastDirection);
             movingDirection = availableDirections.get(random.nextInt(availableDirections.size()));
             updateLastDirection();
@@ -128,17 +136,15 @@ public abstract class EnemyTank extends Tank {
         }
     }
 
-
-
     private boolean checkCollisionWithEntities(Vector2D position, ArrayList<GameEntity> gameEntities) {
         for (GameEntity entity : gameEntities) {
-            if (entity != this && checkCollisionWithEntity(position, entity, this.getCollision().width, this.getCollision().height)) {
+            if (entity != this && checkCollisionWithEntity(position, entity, this.getCollision().width,
+                    this.getCollision().height)) {
                 return true; // Phát hiện va chạm
             }
         }
         return false; // Không có va chạm
     }
-
 
     private void updateLastDirection() {
         if (movingDirection == Direction.UP) {
@@ -152,10 +158,6 @@ public abstract class EnemyTank extends Tank {
         }
     }
 
-
-
-
-
     private ArrayList<Direction> checkAvailableDirections(ArrayList<GameEntity> gameEntities) {
         ArrayList<Direction> availableDirections = new ArrayList<>();
 
@@ -163,13 +165,15 @@ public abstract class EnemyTank extends Tank {
 
         for (Direction direction : directions) {
             Vector2D tempPosition = getPosition().add(direction.getVector().scale(GameConstants.TANK_SIZE));
-            CollisionBox tempCollisionBox = new CollisionBox(this, tempPosition, this.getCollision().width, this.getCollision().height);
+            CollisionBox tempCollisionBox = new CollisionBox(this, tempPosition, this.getCollision().width,
+                    this.getCollision().height);
 
             boolean collisionDetected = false;
 
             for (GameEntity entity : gameEntities) {
                 if (entity != this) {
-                    if (checkCollisionWithEntity(tempPosition, entity, tempCollisionBox.width, tempCollisionBox.height)) {
+                    if (checkCollisionWithEntity(tempPosition, entity, tempCollisionBox.width,
+                            tempCollisionBox.height)) {
                         // Nếu có va chạm với đối tượng không phải TREE hoặc POWER_UP, đánh dấu va chạm
                         if (entity.getType() != EntityType.TREE && entity.getType() != EntityType.POWER_UP) {
                             collisionDetected = true;
@@ -179,18 +183,17 @@ public abstract class EnemyTank extends Tank {
                 }
             }
 
-            // Chỉ thêm hướng nếu không có va chạm với bất kỳ đối tượng nào khác ngoài TREE hoặc POWER_UP
+            // Chỉ thêm hướng nếu không có va chạm với bất kỳ đối tượng nào khác ngoài TREE
+            // hoặc POWER_UP
             if (!collisionDetected) {
                 availableDirections.add(direction);
             }
         }
 
-//        System.out.println(getName() + " Available directions: " + availableDirections);
+        // System.out.println(getName() + " Available directions: " +
+        // availableDirections);
         return availableDirections;
     }
-
-
-
 
     private boolean checkCollisionWithEntity(Vector2D position, GameEntity entity, int width, int height) {
         // Kiểm tra va chạm theo hình chữ nhật
@@ -199,6 +202,7 @@ public abstract class EnemyTank extends Tank {
                 position.y < entity.y + entity.height &&
                 position.y + height > entity.y);
     }
+
     public void updatePosition() {
         // Di chuyển theo hướng đã chọn
         if (movingDirection == Direction.UP) {
@@ -218,7 +222,8 @@ public abstract class EnemyTank extends Tank {
     }
 
     private void moveIfCollisionClear(Vector2D newPosition) {
-        CollisionBox newCollisionBox = new CollisionBox(this, newPosition, this.getCollision().width, this.getCollision().height);
+        CollisionBox newCollisionBox = new CollisionBox(this, newPosition, this.getCollision().width,
+                this.getCollision().height);
         ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
 
         boolean collisionDetected = false;
@@ -283,6 +288,7 @@ public abstract class EnemyTank extends Tank {
                 ", specialTraits=" + specialTraits +
                 '}';
     }
+
     public void draw(Graphics g) {
         if (isAppear) {
             g.drawImage(images[movingDirection.ordinal()], (int) position.x, (int) position.y, null);
