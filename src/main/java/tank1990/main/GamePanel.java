@@ -99,24 +99,22 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
-        ArrayList<Bullet> bulletsToRemove = new ArrayList<>(); // Lưu trữ đạn để xóa
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
         for (Bullet bullet : playerTank.getBullets()) {
-            // bullet.update(); // Cập nhật vị trí viên đạn
 
-            // Kiểm tra nếu đạn đã bị tiêu diệt hoặc ra ngoài biên
             if (bullet.isCollided() || bullet.isOutOfBound()) {
-                bullet.destroyBullet(); // Tạo vụ nổ
-                bulletsToRemove.add(bullet); // Đánh dấu viên đạn để xóa
+                bullet.destroyBullet();
+                bulletsToRemove.add(bullet);
             }
         }
 
-        // Xóa đạn sau khi vụ nổ đã được tạo
         for (Bullet bullet : bulletsToRemove) {
-            if (bullet.isExplosionFinished()) { // Kiểm tra nếu vụ nổ đã hoàn tất
-                playerTank.getBullets().remove(bullet); // Xóa viên đạn khi vụ nổ hoàn tất
+            if (bullet.isExplosionFinished()) {
+                playerTank.getBullets().remove(bullet);
             }
         }
+
     }
 
     @Override

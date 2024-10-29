@@ -31,6 +31,7 @@ public abstract class Tank extends GameEntity {
                 this.direction = direction;
         }
 
+
         public Bullet shoot() {
                 Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);
                 bullets.add(bullet);

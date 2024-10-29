@@ -208,9 +208,6 @@ public class PlayerTank extends Tank {
     }
 
     public void draw(Graphics g) {
-        // Vẽ tank
-        // g.drawImage(image, (int) position.x, (int) position.y, null);
-
         // Nếu shield đang hoạt động, vẽ shield lên tank
         if (isShield) {
             ImageIcon currentShieldFrame = shield.getCurrentFrame();

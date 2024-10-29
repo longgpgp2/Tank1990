@@ -41,9 +41,6 @@ public class BulletExplosion {
 
     public void render(Graphics g) {
         if (frame < images.length-2) {
-            // Vẽ hình ảnh nổ tại vị trí của nó
-            System.out.println(frame);
-            System.out.println(images.length);
             int imgWidth = images[frame].getWidth(null);
             int imgHeight = images[frame].getHeight(null);
             g.drawImage(images[frame], x - imgWidth / 2, y - imgHeight / 2, null);
