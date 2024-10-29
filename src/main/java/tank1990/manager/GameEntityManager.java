@@ -1,6 +1,7 @@
 package tank1990.manager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import tank1990.common.classes.GameEntity;
@@ -8,9 +9,7 @@ import tank1990.common.enums.EntityType;
 
 public class GameEntityManager {
   private static ArrayList<GameEntity> gameEntities = new ArrayList<>();
-  private static ArrayList<GameEntity> playerCollisionComponents = new ArrayList<>();
-  private static ArrayList<GameEntity> bulletCollisionComponents = new ArrayList<>();
-  private static ArrayList<GameEntity> enemyCollisionComponents = new ArrayList<>();
+  private static HashMap<EntityType, ArrayList<GameEntity>> gameCollisionEntites = new HashMap<>();
 
   public void GameEntity() {
   }
@@ -18,24 +17,22 @@ public class GameEntityManager {
   /*
    * This stupid thing might cause an error
    */
-  public static void remove(GameEntity gameComponent) {
-    if (gameComponent == null) {
+  public static void remove(GameEntity gameEntity) {
+    if (gameEntity == null) {
       return;
     }
 
-    gameEntities.remove(gameComponent);
-    playerCollisionComponents.remove(gameComponent);
-//    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
-//      GameEntity value = iterator.next();
-//      if (value == gameComponent) {
-//        iterator.remove();
-//      }
-//    }
+    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
+      GameEntity value = iterator.next();
+      if (value == gameEntity) {
+        iterator.remove();
+      }
+    }
   }
 
-  public static void add(GameEntity gameComponent) {
-    if (gameComponent != null) {
-      gameEntities.add(gameComponent);
+  public static void add(GameEntity gameEntity) {
+    if (gameEntity != null) {
+      gameEntities.add(gameEntity);
     }
   }
 
@@ -46,65 +43,27 @@ public class GameEntityManager {
   public static GameEntity[] getGameEntity(EntityType type) {
     return gameEntities
         .stream()
-        .filter(gameComponent -> gameComponent.getType().equals(type))
+        .filter(gameEntity -> gameEntity.getType().equals(type))
         .toArray(GameEntity[]::new);
   }
 
-  // TODO: make this function more generic
-  /**
-   * Chọn type để player va chạm với các entity thuộc type đó
-   * 
-   * @param gameComponentTypes
-   */
-  public static void setPlayerCollisionComponents(EntityType[] gameComponentTypes) {
-//    System.out.println(getGameEntities());
-    for (EntityType gameComponentType : gameComponentTypes) {
+  public static void setCollisionEntities(
+      EntityType type,
+      EntityType[] gameEntityTypes) {
+    if (gameCollisionEntites.get(type) == null) {
+      gameCollisionEntites.put(type, new ArrayList<GameEntity>());
+    }
 
-      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
-//        System.out.println(gameComponentType);
-//        System.out.println(gameComponent);
-        if (gameComponent.getType() == gameComponentType) {
-          playerCollisionComponents.add(gameComponent);
-
+    for (EntityType gameEntityType : gameEntityTypes) {
+      for (GameEntity gameEntity : gameEntities) {
+        if (gameEntity.getType() == gameEntityType) {
+          gameCollisionEntites.get(type).add(gameEntity);
         }
       }
     }
   }
 
-  /**
-   * Lấy các entities mà player va chạm
-   * 
-   * @return
-   */
-  public static ArrayList<GameEntity> getPlayerCollisionComponents() {
-    return playerCollisionComponents;
-  }
-
-  public static void setBulletCollisionComponents(EntityType[] gameComponentTypes) {
-    for (EntityType gameComponentType : gameComponentTypes) {
-      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
-        if (gameComponent.getType() == gameComponentType) {
-          bulletCollisionComponents.add(gameComponent);
-        }
-      }
-    }
-  }
-
-  public static ArrayList<GameEntity> getBulletCollisionComponents() {
-    return bulletCollisionComponents;
-  }
-
-  public static void setEnemyCollisionComponents(EntityType[] gameComponentTypes) {
-    for (EntityType gameComponentType : gameComponentTypes) {
-      for (GameEntity gameComponent : GameEntityManager.getGameEntities()) {
-        if (gameComponent.getType() == gameComponentType) {
-          enemyCollisionComponents.add(gameComponent);
-        }
-      }
-    }
-  }
-
-  public static ArrayList<GameEntity> getEnemyCollisionComponents() {
-    return enemyCollisionComponents;
+  public static ArrayList<GameEntity> getCollisionEntities(EntityType type) {
+    return gameCollisionEntites.get(type);
   }
 }

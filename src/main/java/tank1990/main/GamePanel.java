@@ -35,8 +35,7 @@ public class GamePanel extends JPanel implements ActionListener {
     List environments = new ArrayList<Environment>();
     List map = new ArrayList<Integer>();
     List tanks = new ArrayList<Tank>();
-    static List<PowerUp> powerUps= new ArrayList<PowerUp>();
-
+    static List<PowerUp> powerUps = new ArrayList<PowerUp>();
 
     GamePanel() {
 
@@ -62,10 +61,9 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         setBackground(Color.BLACK);
 
-
         environments = MapManager.generateEnvironments();
         tanks = TankSpawner.spawnTanks(environments);
-//        powerUps.add(MapManager.createPowerUp(environments, tanks));
+        // powerUps.add(MapManager.createPowerUp(environments, tanks));
         startTimer();
 
     }
@@ -105,7 +103,7 @@ public class GamePanel extends JPanel implements ActionListener {
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>(); // Lưu trữ đạn để xóa
 
         for (Bullet bullet : playerTank.getBullets()) {
-//            bullet.update(); // Cập nhật vị trí viên đạn
+            // bullet.update(); // Cập nhật vị trí viên đạn
 
             // Kiểm tra nếu đạn đã bị tiêu diệt hoặc ra ngoài biên
             if (bullet.isCollided() || bullet.isOutOfBound()) {
@@ -135,10 +133,10 @@ public class GamePanel extends JPanel implements ActionListener {
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);
-//        if(powerUps.isEmpty()){
+//        if (powerUps.isEmpty()) {
 //            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
 //            powerUps.add(powerUp);
-//            System.out.println("Powerup: "+powerUp.getPosition());
+//            System.out.println("Powerup: " + powerUp.getPosition());
 //            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
 //            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 ////            System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
@@ -155,6 +153,14 @@ public class GamePanel extends JPanel implements ActionListener {
         playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
+        }
+
+        try {
+            for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
+                gameEntity.draw((Graphics2D) g);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
         }
 
         g2D.dispose();
