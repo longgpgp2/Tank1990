@@ -185,7 +185,7 @@ public abstract class EnemyTank extends Tank {
             }
         }
 
-        System.out.println(getName() + " Available directions: " + availableDirections);
+//        System.out.println(getName() + " Available directions: " + availableDirections);
         return availableDirections;
     }
 
