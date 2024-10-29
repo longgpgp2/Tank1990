@@ -47,7 +47,7 @@ public abstract class GameEntity extends Component {
 
         GameEntityManager.add(this);
         GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_COLLIDABLE_ENTITIES);
         GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
                 EntityType.BRICK,
                 EntityType.STEEL,

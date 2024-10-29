@@ -102,12 +102,19 @@ public class GamePanel extends JPanel implements ActionListener {
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>(); // Lưu trữ đạn để xóa
 
+//        System.out.println("Size of playerTank.getBullets() " + playerTank.getBullets().size());
         for (Bullet bullet : playerTank.getBullets()) {
             // bullet.update(); // Cập nhật vị trí viên đạn
 
             // Kiểm tra nếu đạn đã bị tiêu diệt hoặc ra ngoài biên
             if (bullet.isCollided() || bullet.isOutOfBound()) {
                 bullet.destroyBullet(); // Tạo vụ nổ
+                // Temporary code for testing. Assume that an enemy is defeated.
+                if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
+                    PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+                    powerUps.add(powerUp);
+                    System.out.println("Add a power-up");
+                }
                 bulletsToRemove.add(bullet); // Đánh dấu viên đạn để xóa
             }
         }
@@ -117,13 +124,12 @@ public class GamePanel extends JPanel implements ActionListener {
             if (bullet.isExplosionFinished()) { // Kiểm tra nếu vụ nổ đã hoàn tất
                 playerTank.getBullets().remove(bullet); // Xóa viên đạn khi vụ nổ hoàn tất
             }
-
             // Temporary code for testing. Assume that an enemy is defeated.
-            if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
-                PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
-                powerUps.add(powerUp);
-                System.out.println("Add a power-up");
-            }
+//            if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
+//                PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+//                powerUps.add(powerUp);
+//                System.out.println("Add a power-up");
+//            }
         }
     }
 

@@ -2,6 +2,7 @@ package tank1990.objects.tanks;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
@@ -59,7 +60,7 @@ public class Bullet extends GameEntity {
 
     public void update(double deltaTime) {
         ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
-        ArrayList<GameEntity> collidedGameEntities = checkCollision(collisionEntities, deltaTime);
+        HashSet<GameEntity> collidedGameEntities = checkCollision(collisionEntities, deltaTime);
 
         if (collidedGameEntities != null && collidedGameEntities.size() > 0) {
             damageComponents(collidedGameEntities);
@@ -157,10 +158,8 @@ public class Bullet extends GameEntity {
         return isCollided;
     }
 
-    private void damageComponents(ArrayList<GameEntity> collidedGameEntities) {
-        for (int i = 0; i < collidedGameEntities.size(); i++) {
-            GameEntity collidedGameEntity = collidedGameEntities.get(i);
-
+    private void damageComponents(HashSet<GameEntity> collidedGameEntities) {
+        for (GameEntity collidedGameEntity : collidedGameEntities) {
             // special case. Could generalize by using health component but lazy
             if (collidedGameEntity instanceof BrickWall) {
                 ((BrickWall) collidedGameEntity).hitComponent(this);
@@ -170,9 +169,11 @@ public class Bullet extends GameEntity {
                 ((DestructibleEntity) collidedGameEntity).hit(damage);
             }
 
-            if (i == collidedGameEntities.size() - 1) {
-                destroy();
-            }
+//            if (i == collidedGameEntities.size() - 1) {
+//                destroy();
+//            }
         }
+
+        destroy();
     }
 }
