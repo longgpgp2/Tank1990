@@ -11,12 +11,14 @@ import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,8 +31,9 @@ public class GamePanel extends JPanel implements ActionListener{
     java.util.List environments = new ArrayList<Environment>();
     java.util.List map = new ArrayList<Integer>();
     java.util.List tanks;
-
-
+    private BufferedImage gameOverImage;
+    private boolean gameOver;
+    private boolean simulateGameOver;
 
     GamePanel() {
 
@@ -60,6 +63,32 @@ public class GamePanel extends JPanel implements ActionListener{
         environments = MapManager.generateEnvironments();
         startTimer();
 
+        simulateGameOver = false;
+
+        gameOver = false;
+        try{
+            gameOverImage = ImageIO.read(new File(".\\src\\main\\resources\\images\\game_over.png"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+    public void triggerGameOver() {
+        simulateGameOver = true;
+        setGameOver();
+    }
+    public void setGameOver() {
+        gameOver = true;
+        timer.stop();
+        repaint();
+    }
+
+    private void drawGameOver(Graphics g) {
+        if (gameOverImage != null) {
+            int x = (getWidth() - gameOverImage.getWidth()) / 2;
+            int y = (getHeight() - gameOverImage.getHeight()) / 2;
+            g.drawImage(gameOverImage, x, y, this);
+        }
     }
 
     public void startTimer() {
@@ -78,7 +107,7 @@ public class GamePanel extends JPanel implements ActionListener{
     /**
      * Cập nhật physic cho từng game entity
      * 
-     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
+//     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
      */
 
     private void updateGame() {
@@ -87,7 +116,15 @@ public class GamePanel extends JPanel implements ActionListener{
         }
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.update(0.1); // Cập nhật vị trí viên đạn
+            bullet.update(0.1);
+        }
+//        if (playerTank.isDestroyed()) {
+//            setGameOver();
+//            return;
+//        }
+        if (simulateGameOver) {
+            setGameOver();
+            return;
         }
     }
 
@@ -101,6 +138,10 @@ public class GamePanel extends JPanel implements ActionListener{
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw(g);
+        }
+        if (gameOver) {
+            drawGameOver(g);
+            return;
         }
         g2D.dispose();
     }
@@ -120,6 +161,11 @@ public class GamePanel extends JPanel implements ActionListener{
         @Override
         public void keyPressed(KeyEvent e) {
             MapManager.getPlayerTank(tanks).keyPressed(e);
+            if (e.getKeyCode() == KeyEvent.VK_G) {
+                triggerGameOver(); // Kích hoạt Game Over khi nhấn phím G
+            }
         }
+
+
     }
 }

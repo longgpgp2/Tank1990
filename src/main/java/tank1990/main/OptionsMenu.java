@@ -1,5 +1,6 @@
 package tank1990.main;
 
+import tank1990.manager.FontManager;
 import tank1990.manager.SoundManager;
 
 import javax.swing.*;
@@ -10,20 +11,26 @@ import java.awt.event.KeyListener;
 public class OptionsMenu extends JPanel implements KeyListener {
     private int currentSelection =0;
     private Image logoImage;
-    private String[] optionsItems = {"Fullscreen", "Sound", "Exit"};
-    private SoundManager backgroundMusic;
-
+    private String[] optionsItems = {"Sound", "Exit"};
+    private SoundManager soundManager, backgroundMusic;
+    private Font customFont;
     private JFrame parentFrame ;
     private GameState gameState;
-    private boolean isFullScreen ;
-    private boolean isSoundOn ;
 
-    public OptionsMenu(JFrame fr, SoundManager backgroundMusic){
+
+    public OptionsMenu(JFrame fr, SoundManager backgroundMusic, GameState gameState){
         this.parentFrame = fr;
-        this.backgroundMusic = backgroundMusic;
-        this.gameState=GameState.getInstance();
-        this.isSoundOn= gameState.isSoundOn();
-        this.isFullScreen=gameState.isFullScreen();
+        this.backgroundMusic =backgroundMusic;
+        this.gameState = GameState.getInstance();
+        FontManager font = new FontManager("/fonts/6809-chargen.regular.ttf", 36f);
+        customFont = font.getCustomFont();
+        this.soundManager = new SoundManager();
+        this.soundManager.soundLoader(".\\src\\main\\resources\\sounds\\changeOption.wav");
+        if (gameState.isSoundOn()) {
+            backgroundMusic.playSound();
+        } else {
+            backgroundMusic.stopSound();
+        }
         setFocusable(true);
         addKeyListener(this);
         ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
@@ -40,10 +47,10 @@ public class OptionsMenu extends JPanel implements KeyListener {
         }
 
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 36));
+        g.setFont(customFont != null ? customFont : new Font("Arial", Font.BOLD, 36));
         g.drawString("Options", getWidth() / 2 - 90, 300);
 
-        g.setFont(new Font("Arial", Font.PLAIN, 28));
+        g.setFont(customFont != null ? customFont : new Font("Arial", Font.PLAIN, 36));
         for (int i = 0; i < optionsItems.length; i++) {
             if (i == currentSelection) {
                 g.setColor(Color.YELLOW);
@@ -54,8 +61,7 @@ public class OptionsMenu extends JPanel implements KeyListener {
         }
 
         g.setColor(Color.WHITE);
-        g.drawString( (isFullScreen ? "On" : "Off"), getWidth() / 2 + 100, 350);
-        g.drawString( (isSoundOn ? "On" : "Off"), getWidth() / 2 +100, 400);
+        g.drawString( (gameState.isSoundOn() ? "On" : "Off"), getWidth() / 2 +100, 350);
     }
     @Override
     public void keyPressed(KeyEvent e) {
@@ -65,26 +71,33 @@ public class OptionsMenu extends JPanel implements KeyListener {
             if (currentSelection < 0) {
                 currentSelection = optionsItems.length - 1;
             }
+            soundManager.resetSound();
+            soundManager.playSound();
         } else if (key == KeyEvent.VK_S) {
             currentSelection++;
             if (currentSelection >= optionsItems.length) {
                 currentSelection = 0;
+                soundManager.resetSound();
+                soundManager.playSound();
             }
         } else if (key == KeyEvent.VK_ENTER) {
+            soundManager.resetSound();
+            soundManager.playSound();
             selectOption();
         }
         repaint();
     }
 
     private void selectOption(){
-        if (currentSelection ==0){
-            isFullScreen =!isFullScreen;
-            gameState.setFullScreen(isFullScreen);
+        if (currentSelection == 0){
+            gameState.setSoundOn(!gameState.isSoundOn());
+            if (gameState.isSoundOn()) {
+                backgroundMusic.playSound();
+            } else {
+                backgroundMusic.stopSound();
+            }
+            System.out.println(gameState.isSoundOn());
         }else if (currentSelection == 1){
-            isSoundOn = !isSoundOn;
-            gameState.setSoundOn(isSoundOn);
-            backgroundMusic.setSoundOn(isSoundOn);
-        }else if (currentSelection == 2){
             System.out.println("Returning to main menu");
             parentFrame.dispose();
             openMainMenu();
@@ -94,6 +107,7 @@ public class OptionsMenu extends JPanel implements KeyListener {
     private void openMainMenu() {
         JFrame menuFrame = new JFrame("Tank 1990");
         Menu menu = new Menu(menuFrame);
+        menu.refreshBackgroundMusic();
         menuFrame.add(menu);
         menuFrame.setSize(800, 600);
         menuFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

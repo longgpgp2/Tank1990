@@ -1,5 +1,6 @@
 package tank1990.main;
 
+import tank1990.manager.FontManager;
 import tank1990.manager.SoundManager;
 
 import javax.swing.*;
@@ -12,22 +13,27 @@ public class Menu extends JPanel implements KeyListener {
     private String[] menuItems = {"Start", "Options", "Exit"};
     private Image logoImage;
     private JFrame parentFrame;
+    private Font customFont;
     private SoundManager soundManager, backgroundMusic;
     private GameState gameState ;
     public Menu(Frame frame){
         this.parentFrame = (JFrame) frame;
-        this.gameState = GameState.getInstance();
+        FontManager font = new FontManager("/fonts/6809-chargen.regular.ttf", 36f);
+        customFont = font.getCustomFont();
         setFocusable(true);
         addKeyListener(this);
+        this.gameState = GameState.getInstance();
         this.backgroundMusic = new SoundManager();
         this.backgroundMusic.soundLoader(".\\src\\main\\resources\\sounds\\menuMusicTheme.wav");
-        this.backgroundMusic.setSoundOn(gameState.isSoundOn());
         this.soundManager = new SoundManager();
         this.soundManager.soundLoader(".\\src\\main\\resources\\sounds\\changeOption.wav");
-
         ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
         logoImage = icon.getImage();
-
+        if (gameState.isSoundOn()) {
+            backgroundMusic.playSound();
+        } else {
+            backgroundMusic.stopSound();
+        }
     }
     @Override
     protected void paintComponent(Graphics g){
@@ -39,7 +45,8 @@ public class Menu extends JPanel implements KeyListener {
         if (logoImage != null){
             g.drawImage(logoImage, getWidth()/ 2 - logoImage.getWidth(null) / 2, 100, null);
         }
-        g.setFont( new Font("Arial", Font.PLAIN, 36));
+
+        g.setFont(customFont != null ? customFont : new Font("Arial", Font.PLAIN, 36));
         for (int i =0; i< menuItems.length; i++){
             if ( i == currentSelection){
                 g.setColor(Color.YELLOW);
@@ -79,7 +86,7 @@ public class Menu extends JPanel implements KeyListener {
             case 0:
                 System.out.println("Start game selected!");
                 parentFrame.dispose();
-                GameObject game = new GameObject();  // Tạo game mới
+                GameObject game = new GameObject();
                 game.startGame();
                 break;
             case 1:
@@ -96,12 +103,17 @@ public class Menu extends JPanel implements KeyListener {
 
     private void openOptionsMenu(){
         JFrame optionsFrame = new JFrame("Options Menu");
-        OptionsMenu optionsMenu = new OptionsMenu(optionsFrame, backgroundMusic);
+        OptionsMenu optionsMenu = new OptionsMenu(optionsFrame, backgroundMusic, gameState);
         optionsFrame.add(optionsMenu);
         optionsFrame.setSize(800, 600);
         optionsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         optionsFrame.setLocationRelativeTo(this);
         optionsFrame.setVisible(true);
+    }
+    public void refreshBackgroundMusic() {
+        if (gameState.isSoundOn()) {
+            backgroundMusic.playSound(); // Chơi nhạc nếu isSoundOn là true
+        }
     }
     @Override
     public void keyReleased(KeyEvent e) {
