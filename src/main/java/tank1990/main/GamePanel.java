@@ -1,9 +1,9 @@
 package tank1990.main;
 
+
 import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.GameEntityManager;
-import tank1990.manager.KeyHandler;
 import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
@@ -14,26 +14,52 @@ import tank1990.objects.tanks.Tank;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class GamePanel extends JPanel implements ActionListener{
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.Vector2D;
+import tank1990.common.constants.GameConstants;
+import tank1990.common.utils.CollisionUtil;
+import tank1990.manager.GameEntityManager;
+import tank1990.manager.MapManager;
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.environments.Environment;
+import tank1990.objects.powerups.PowerUp;
+import tank1990.objects.tanks.Bullet;
+import tank1990.objects.tanks.PlayerTank;
+
+public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     java.util.List environments = new ArrayList<Environment>();
     java.util.List map = new ArrayList<Integer>();
-    java.util.List tanks;
+
     private BufferedImage gameOverImage;
     private boolean gameOver;
     private boolean simulateGameOver;
+
+    java.util.List tanks = new ArrayList<Tank>();
+    java.util.List powerUps = new ArrayList<PowerUp>();
+
 
     GamePanel() {
 
@@ -59,8 +85,9 @@ public class GamePanel extends JPanel implements ActionListener{
         this.setFocusable(true);
         setBackground(Color.BLACK);
 
-        tanks = TankSpawner.spawnTanks();
         environments = MapManager.generateEnvironments();
+        tanks = TankSpawner.spawnTanks(environments);
+        // powerUps.add(MapManager.createPowerUp(environments, tanks));
         startTimer();
 
         simulateGameOver = false;
@@ -95,6 +122,7 @@ public class GamePanel extends JPanel implements ActionListener{
         timer = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 updateGame();
                 repaint();
             }
@@ -106,17 +134,34 @@ public class GamePanel extends JPanel implements ActionListener{
 
     /**
      * Cập nhật physic cho từng game entity
+<<<<<<< HEAD
      * 
 //     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
+=======
+     *
+//     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
+>>>>>>> origin/main
      */
 
     private void updateGame() {
-        for (GameEntity gameEntity : gameEntities) {
-            gameEntity.update(0.1);
+        try {
+            for (GameEntity gameEntity : gameEntities) {
+                gameEntity.update(0.01);
+            }
+
+        } catch (Exception e) {
+            // System.out.println(e);
         }
+
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
+
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.update(0.1);
+
+            if (bullet.isCollided() || bullet.isOutOfBound()) {
+                bullet.destroyBullet();
+                bulletsToRemove.add(bullet);
+            }
         }
 //        if (playerTank.isDestroyed()) {
 //            setGameOver();
@@ -126,6 +171,13 @@ public class GamePanel extends JPanel implements ActionListener{
             setGameOver();
             return;
         }
+
+        for (Bullet bullet : bulletsToRemove) {
+            if (bullet.isExplosionFinished()) {
+                playerTank.getBullets().remove(bullet);
+            }
+        }
+
     }
 
     @Override
@@ -133,16 +185,37 @@ public class GamePanel extends JPanel implements ActionListener{
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
-        MapManager.drawEnvironments(environments, g,this);
+        MapManager.drawEnvironments(environments, g, this);
+        if (powerUps.isEmpty()) {
+            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+            powerUps.add(powerUp);
+            System.out.println("Powerup: " + powerUp.getPosition());
+            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
+            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
+            // System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
+        } else
+            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.draw(g);
+            bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
         }
+
         if (gameOver) {
             drawGameOver(g);
             return;
         }
+
+
+        try {
+            for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
+                gameEntity.draw((Graphics2D) g);
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
         g2D.dispose();
     }
 

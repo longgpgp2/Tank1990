@@ -10,7 +10,10 @@ public class CollisionBox {
     public Vector2D relativePosition; // relative to game component position
     public Vector2D globalPosition;
     public GameEntity gameEntity;
-    public boolean enabled = true;
+
+    private boolean enabled = true;
+    private boolean enableFrontCollisionCheck = true;
+    private boolean enableCollisionResponse = true;
 
     public CollisionBox(GameEntity gameEntity, Vector2D relativePosition, int width, int height) {
         x = relativePosition.add(gameEntity.getPosition()).x;
@@ -35,7 +38,34 @@ public class CollisionBox {
         this.x = globalPosition.x;
         this.y = globalPosition.y;
         this.center = new Vector2D(x + (double) width / 2, y + (double) height / 2);
-        System.out.println("Set position called: " + globalPosition);
+    }
+
+    public void setEnableFrontCollisionCheck(boolean enable) {
+        enableFrontCollisionCheck = enable;
+    }
+
+    public boolean isFrontCollisionChecked() {
+        return enableFrontCollisionCheck;
+    }
+
+    public void setEnabled(boolean enable) {
+        this.enabled = enable;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnableCollisionResponse(boolean enable) {
+        enableCollisionResponse = enable;
+    }
+
+    public boolean isCollisionResponseEnabled() {
+        return enableCollisionResponse;
+    }
+
+    public AABB getAABB() {
+        return new AABB(this);
     }
 
     public String toString() {

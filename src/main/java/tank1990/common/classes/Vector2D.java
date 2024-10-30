@@ -85,4 +85,16 @@ public class Vector2D {
     }
     return Double.POSITIVE_INFINITY;
   }
+  public Vector2D subtract(Vector2D other) {
+    return new Vector2D(this.x - other.x, this.y - other.y);
+  }
+    public Vector2D scale(double factor) {
+      return new Vector2D(this.x * factor, this.y * factor);
+    }
+
+  public double distance(Vector2D other) {
+    double dx = this.x - other.x;
+    double dy = this.y - other.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
 }
