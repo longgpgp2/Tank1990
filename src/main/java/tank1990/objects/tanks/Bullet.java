@@ -12,6 +12,7 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.animation.BulletExplosion;
+import tank1990.objects.environments.BaseWall;
 import tank1990.objects.environments.BrickWall;
 
 import javax.swing.*;

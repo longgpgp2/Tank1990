@@ -15,9 +15,9 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
-import tank1990.main.GamePanel;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
+import tank1990.manager.PowerUpManager;
 import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.Shield;
 import tank1990.objects.powerups.PowerUp;
@@ -41,6 +41,7 @@ public class PlayerTank extends Tank {
     private boolean isShield = false;
 
     private int lives = 3;
+    private int point = 0;
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
@@ -190,17 +191,11 @@ public class PlayerTank extends Tank {
         // System.out.println(GameEntityManager.getPlayerCollisionComponents());
         if (collidedEntities != null) {
             System.out.println("--------------------");
-            System.out.println(collidedEntities.size());
             for (GameEntity e : collidedEntities) {
                 System.out.println(e);
                 if (e.getType() == EntityType.POWER_UP) {
-                    // disable collision
-                    e.getCollision().setEnabled(false);
-                    // remove power-up from the field
-                    GameEntityManager.remove(e);
-                    GamePanel.removeEntity(e);
-                    // trigger the effect of power-up
-                    ((PowerUp) e).activate();
+                    // remove and trigger power-up effect
+                    PowerUpManager.triggerPowerUp((PowerUp) e);
                 }
             }
 //            collidedEntities.clear();
@@ -250,4 +245,11 @@ public class PlayerTank extends Tank {
         this.lives = lives;
     }
 
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
+    }
 }

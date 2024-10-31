@@ -23,19 +23,20 @@ import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
+import tank1990.manager.PowerUpManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
-import tank1990.objects.powerups.Tank;
 import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
+import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     static List environments = new ArrayList<Environment>();
     List map = new ArrayList<Integer>();
-    List tanks = new ArrayList<Tank>();
-    static List<PowerUp> powerUps = new ArrayList<PowerUp>();
+    static List tanks = new ArrayList<Tank>();
+    static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
 
     GamePanel() {
 
@@ -65,7 +66,7 @@ public class GamePanel extends JPanel implements ActionListener {
         tanks = TankSpawner.spawnTanks(environments);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         startTimer();
-
+        PowerUpManager.startPowerUpTimer(environments, tanks);
     }
 
     public void startTimer() {
@@ -96,23 +97,17 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         } catch (ConcurrentModificationException e) {
             System.out.println("An entity is removed.");
-            return;
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
         for (Bullet bullet : playerTank.getBullets()) {
-
             if (bullet.isCollided() || bullet.isOutOfBound()) {
                 bullet.destroyBullet();
                 bulletsToRemove.add(bullet);
                 // Temporary code for testing. Assume that an enemy is defeated.
-                if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
-                    PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
-                    powerUps.add(powerUp);
-                    System.out.println("Add a power-up");
-                }
+                PowerUpManager.addPowerUp(environments, tanks);
             }
         }
 

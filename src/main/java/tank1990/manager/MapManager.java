@@ -127,6 +127,7 @@ public class MapManager {
                     }
                     case 9: {
                         env = new BaseWall(envX, envY);
+                        break;
                     }
                     default:{
                         break;

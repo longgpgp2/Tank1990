@@ -18,8 +18,7 @@ public class BrickWall extends Environment implements DestructibleEntity {
 	private BufferedImage maskImage;
 
 	public BrickWall(int x, int y) {
-		super(EntityType.BRICK, false, false, true, x, y);
-
+		super(EntityType.BRICK, false, true, true, x, y);
 		sprite = new GameSprite("src/main/resources/images/wall_brick.png");
 	}
 
@@ -43,7 +42,8 @@ public class BrickWall extends Environment implements DestructibleEntity {
 	public void destroy() {
 		maskImage = null;
 
-		setCollision(null); // can disable collision box instead
+		// setCollision(null); // can disable collision box instead
+		getCollision().setEnabled(false);
 		setSprite(null);
 
 		GameEntityManager.remove(this);

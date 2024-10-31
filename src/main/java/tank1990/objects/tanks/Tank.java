@@ -22,9 +22,6 @@ public abstract class Tank extends GameEntity {
         public List<Bullet> bullets = new ArrayList<>();
         public int bulletCount = 1;
         public Image image;
-        private final int DEFAULT_BULLET_SPEED;
-        private final int DEFAULT_MOVEMENT_SPEED;
-
 
         public Tank(EntityType type, int health, int bulletSpeed, int movementSpeed, Direction direction) {
                 super(type, new Vector2D(0, 0), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE);
@@ -32,8 +29,6 @@ public abstract class Tank extends GameEntity {
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;
                 this.direction = direction;
-                DEFAULT_BULLET_SPEED = bulletSpeed;
-                DEFAULT_MOVEMENT_SPEED = movementSpeed;
         }
 
 
@@ -121,8 +116,4 @@ public abstract class Tank extends GameEntity {
                 this.bullets = bullets;
         }
 
-        public void resetSpeed() {
-                bulletSpeed = DEFAULT_BULLET_SPEED;
-                movementSpeed = DEFAULT_MOVEMENT_SPEED;
-        }
 }

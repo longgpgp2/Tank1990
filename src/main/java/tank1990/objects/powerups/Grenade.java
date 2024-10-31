@@ -1,12 +1,9 @@
 package tank1990.objects.powerups;
 
-import tank1990.main.GamePanel;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.EnemyTank;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Grenade extends PowerUp{
 	public Grenade(int x, int y) {
@@ -16,6 +13,8 @@ public class Grenade extends PowerUp{
 
 	@Override
 	public void activate(){
+		this.updatePoint();
+
 		for (EnemyTank tank : TankSpawner.enemyTanks) {
 			tank.health = 0;
 		}

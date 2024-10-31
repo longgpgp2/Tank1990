@@ -5,6 +5,8 @@ import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.tanks.PlayerTank;
 
 public abstract class PowerUp extends GameEntity {
     public String name = this.getClass().getSimpleName();
@@ -19,5 +21,14 @@ public abstract class PowerUp extends GameEntity {
 
     public void activate() {
 
+    }
+
+    /**
+     * Increase player's point
+     *
+     */
+    protected void updatePoint() {
+        PlayerTank playerTank = TankSpawner.playerTank;
+        playerTank.setPoint(playerTank.getPoint() + point);
     }
 }

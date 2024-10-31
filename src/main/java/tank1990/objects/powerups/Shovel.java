@@ -15,14 +15,15 @@ public class Shovel extends PowerUp{
 
 	@Override
 	public void activate() {
+		this.updatePoint();
+
 		List<Environment> environments = GamePanel.getEnvironments();
 		for (Environment env : environments) {
 			if (env instanceof BaseWall) {
 				((BaseWall) env).transform();
-				System.out.println("Transformed a wall into steel");
 			}
 		}
-		System.out.println("[POWER-UP] Rebuild base's walls.");
+		System.out.println("[POWER-UP] Base's walls have been rebuilt");
 	}
 
 }

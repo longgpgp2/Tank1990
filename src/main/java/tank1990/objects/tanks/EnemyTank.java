@@ -5,7 +5,7 @@ import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
@@ -299,5 +299,23 @@ public abstract class EnemyTank extends Tank {
                 g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
             }
         }
+    }
+
+    public void freeze() {
+        // save original speed
+        int defaultBulletSpeed = bulletSpeed;
+        int defaultMovementSpeed = movementSpeed;
+
+        // freeze the tank
+        this.bulletSpeed = 0;
+        this.movementSpeed = 0;
+
+        // unfreeze the tank after some time
+        Timer timer = new Timer(5000, e -> {
+            this.bulletSpeed = defaultBulletSpeed;
+            this.movementSpeed = defaultMovementSpeed;
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 }

@@ -12,11 +12,15 @@ public class Star extends PowerUp{
 	}
 	@Override
 	public void activate(){
+		this.updatePoint();
+
 		PlayerTank playerTank = TankSpawner.playerTank;
 		if (playerTank.getStar() < 4) {
 			playerTank.setStar(playerTank.getStar() + 1);
+			System.out.println("[POWER-UP] Increased power by 1. Current level: " + playerTank.getStar());
+		} else {
+			System.out.println("[POWER-UP] Maximum power level reached. Current level: " + playerTank.getStar());
 		}
-		System.out.println("[POWER-UP] Increased power by 1. Current level: " + playerTank.getStar());
 	}
 
 }
