@@ -36,7 +36,7 @@ public abstract class EnemyTank extends Tank {
     private Direction currentDirection = Direction.DOWN;
 
     // (adjustable) After how long can entity change direction
-    private double directionChangeInterval = 0.5;
+    private double directionChangeInterval = 0.1;
     private double directionChangeTimer = 0;
 
     private ArrayList<Direction> availableDirections = new ArrayList<>();
