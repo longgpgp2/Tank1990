@@ -36,7 +36,7 @@ public abstract class EnemyTank extends Tank {
     private Direction currentDirection = Direction.DOWN;
 
     // (adjustable) After how long can entity change direction
-    private double directionChangeInterval = 1;
+    private double directionChangeInterval = 0.5;
     private double directionChangeTimer = 0;
 
     private ArrayList<Direction> availableDirections = new ArrayList<>();
@@ -134,7 +134,13 @@ public abstract class EnemyTank extends Tank {
 
         if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
                 && directionChangeTimer > directionChangeInterval) {
-            changeDirection(availableDirections);
+
+            ArrayList<Direction> newDirections = new ArrayList<>(availableDirections);
+            newDirections.removeAll(prevAvailableDirections);
+
+            changeDirection(prevAvailableDirections, newDirections, 2, 3);
+
+            directionChangeTimer = 0;
         }
 
         prevAvailableDirections = availableDirections;
@@ -142,6 +148,28 @@ public abstract class EnemyTank extends Tank {
     }
 
     public void changeDirection(ArrayList<Direction> availableDirections) {
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        currentDirection = randomDirection;
+    }
+
+    // Add more change to explore new direction
+    public void changeDirection(
+            ArrayList<Direction> prevDirections,
+            ArrayList<Direction> newDirections,
+            int prevDirectionChance,
+            int newDirectionChance) {
+        ArrayList<Direction> availableDirections = new ArrayList<>();
+
+        for (int i = 0; i < prevDirectionChance; i++) {
+            availableDirections.addAll(prevDirections);
+        }
+
+        for (int i = 0; i < newDirectionChance; i++) {
+            availableDirections.addAll(newDirections);
+        }
+
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
 
