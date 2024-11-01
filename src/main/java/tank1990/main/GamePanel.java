@@ -13,12 +13,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
-import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
@@ -26,16 +27,16 @@ import tank1990.manager.MapManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
-import tank1990.objects.powerups.Tank;
 import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
+import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-    java.util.List environments = new ArrayList<Environment>();
-    java.util.List map = new ArrayList<Integer>();
-    java.util.List tanks = new ArrayList<Tank>();
-    java.util.List powerUps = new ArrayList<PowerUp>();
+    List<Environment> environments = new ArrayList<>();
+    List<Integer> map = new ArrayList<>();
+    List<Tank> tanks = new ArrayList<>();
+    List<PowerUp> powerUps = new ArrayList<>();
 
     GamePanel() {
 
@@ -60,9 +61,9 @@ public class GamePanel extends JPanel implements ActionListener {
         this.addKeyListener(new TAdapter());
         this.setFocusable(true);
         setBackground(Color.BLACK);
-
         environments = MapManager.generateEnvironments();
         tanks = TankSpawner.spawnTanks(environments);
+        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         // startTimer();
 
