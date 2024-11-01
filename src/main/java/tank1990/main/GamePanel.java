@@ -66,7 +66,7 @@ public class GamePanel extends JPanel implements ActionListener {
         tanks = TankSpawner.spawnTanks(environments);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         startTimer();
-        PowerUpManager.startPowerUpTimer(environments, tanks);
+        PowerUpManager.startAutoSpawn(environments, tanks);
     }
 
     public void startTimer() {

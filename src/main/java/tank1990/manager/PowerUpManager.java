@@ -6,6 +6,7 @@ import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.Tank;
 
 import javax.swing.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,10 +16,11 @@ import java.util.List;
  */
 public class PowerUpManager {
     private static final int AUTO_SPAWN_DELAY = 10000;
-    private static final int AUTO_REMOVE_DELAY = 5000;
+    private static final int AUTO_REMOVE_DELAY = 15000;
 
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
-    private static Timer autoSpawnTimer = new Timer(AUTO_SPAWN_DELAY, null);
+    private static ActionListener autoSpawnAction = null;
+    private static Timer autoSpawnTimer = new Timer(AUTO_SPAWN_DELAY, autoSpawnAction);
 
     public static ArrayList<PowerUp> getPowerUps() {
         return powerUps;
@@ -34,14 +36,12 @@ public class PowerUpManager {
         if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
             PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
             powerUps.add(powerUp);
-            System.out.println("Add a power-up");
             Timer autoRemoveTimer = new Timer(AUTO_REMOVE_DELAY, e -> {
                 System.out.println("A power-up is removed after " + AUTO_REMOVE_DELAY + "ms");
                 removePowerUp(powerUp);
             });
             autoRemoveTimer.setRepeats(false);
             autoRemoveTimer.start();
-            System.out.println(powerUps.size());
             return true;
         }
         return false;
@@ -78,14 +78,30 @@ public class PowerUpManager {
      * @param environments A List of Environment components
      * @param tanks A List of Tank components
      */
-    public static void startPowerUpTimer(List<Environment> environments, List<Tank> tanks) {
-        autoSpawnTimer.addActionListener(e -> {
-            if (addPowerUp(environments, tanks)) {
-                System.out.println("A new power-up is added after " + AUTO_SPAWN_DELAY + "ms");
-            } else {
-                System.out.println("Power-up list is full. Nothing happened.");
-            }
-        });
-        autoSpawnTimer.start();
+    public static void startAutoSpawn(List<Environment> environments, List<Tank> tanks) {
+        if (autoSpawnAction == null) {
+            autoSpawnAction = e -> {
+                if (addPowerUp(environments, tanks)) {
+                    System.out.println("A new power-up is added after " + AUTO_SPAWN_DELAY + "ms");
+                } else {
+                    System.out.println("Power-up list is full. Nothing happened.");
+                }
+            };
+            autoSpawnTimer.addActionListener(autoSpawnAction);
+            autoSpawnTimer.start();
+        }
+    }
+
+    /**
+     * Turn off auto spawn and clear the list of power-ups
+     *
+     */
+    public static void resetPowerUps() {
+        // stop auto spawn
+        autoSpawnTimer.stop();
+        autoSpawnTimer.removeActionListener(autoSpawnAction);
+        autoSpawnTimer = null;
+        // remove all power-ups
+        powerUps.clear();
     }
 }
