@@ -21,10 +21,10 @@ public class TankSpawner {
 
     public static List<Tank> spawnEnemy(Set<Integer> unoccupiedIndices) {
         List<Tank> tanks = new ArrayList<>();
-        // String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank",
-        // "BasicTank", "FastTank", "ArmorTank",
-        // "PowerTank", "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
-        String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
+        String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank",
+                "BasicTank", "FastTank", "ArmorTank",
+                "PowerTank", "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
+        // String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
 
         for (String type : types) {
             tanks = addAnEnemy(unoccupiedIndices, tanks, type);

@@ -39,7 +39,7 @@ public abstract class EnemyTank extends Tank {
     protected Direction currentDirection = Direction.DOWN;
 
     // (adjustable) After how long can entity change direction
-    private double directionChangeInterval = 1;
+    private double directionChangeInterval = 0.1;
     private double directionChangeTimer = 0;
 
     private ArrayList<Direction> availableDirections = new ArrayList<>();
@@ -137,16 +137,38 @@ public abstract class EnemyTank extends Tank {
                 directionChangeTimer = 0;
             }
 
-            if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
-                    && directionChangeTimer > directionChangeInterval) {
-                changeDirection(availableDirections);
-            }
+        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
+                && directionChangeTimer > directionChangeInterval) {
+            changeDirection(availableDirections);
+        }
 
             prevAvailableDirections = availableDirections;
             directionChangeTimer += deltaTime;
         }
     }
     public void changeDirection(ArrayList<Direction> availableDirections) {
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        currentDirection = randomDirection;
+    }
+
+    // Add more change to explore new direction
+    public void changeDirection(
+            ArrayList<Direction> prevDirections,
+            ArrayList<Direction> newDirections,
+            int prevDirectionChance,
+            int newDirectionChance) {
+        ArrayList<Direction> availableDirections = new ArrayList<>();
+
+        for (int i = 0; i < prevDirectionChance; i++) {
+            availableDirections.addAll(prevDirections);
+        }
+
+        for (int i = 0; i < newDirectionChance; i++) {
+            availableDirections.addAll(newDirections);
+        }
+
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
 
