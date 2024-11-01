@@ -42,6 +42,7 @@ public class Bullet extends GameEntity {
         this.speed = speed;
 
         setCollision(new CollisionBox(this, new Vector2D(0, 0), 5, 5));
+        collisionBox.setEnableFrontCollisionCheck(false);
     }
 
     private void setBulletImage() {

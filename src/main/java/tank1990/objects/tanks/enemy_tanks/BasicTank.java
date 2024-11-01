@@ -7,7 +7,7 @@ import javax.swing.*;
 
 public class BasicTank extends EnemyTank {
     public BasicTank() {
-        super("Basic Tank", 1, 100, 1, 1, "Basic traits");
+        super("Basic Tank", 1, 100, 1, 180, "Basic traits");
         loadImages();
     }
 

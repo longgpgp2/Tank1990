@@ -64,7 +64,7 @@ public class GamePanel extends JPanel implements ActionListener {
         environments = MapManager.generateEnvironments();
         tanks = TankSpawner.spawnTanks(environments);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
-        startTimer();
+        // startTimer();
 
     }
 
@@ -88,14 +88,16 @@ public class GamePanel extends JPanel implements ActionListener {
      * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
      */
 
+    public void draw() {
+        repaint();
+    }
+
     private void updateGame() {
         try {
             for (GameEntity gameEntity : gameEntities) {
                 gameEntity.update(0.01);
             }
-
         } catch (Exception e) {
-            // System.out.println(e);
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
