@@ -19,10 +19,13 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.animation.Appear;
+import tank1990.manager.animation.ExplosionAnimation;
 import tank1990.manager.animation.Shield;
 
 public abstract class EnemyTank extends Tank {
-    public Image[] images;
+    public Image[][] images;
+    private int frameCounter = 0;
+    private final int animationInterval = 100;
 
     private int point;
     private boolean isAppear = true;
@@ -33,7 +36,7 @@ public abstract class EnemyTank extends Tank {
     private Appear appear;
     private Shield shield;
 
-    private Direction currentDirection = Direction.DOWN;
+    protected Direction currentDirection = Direction.DOWN;
 
     // (adjustable) After how long can entity change direction
     private double directionChangeInterval = 1;
@@ -61,7 +64,7 @@ public abstract class EnemyTank extends Tank {
 
         startAnimation();
 
-        images = new Image[4]; // UP, DOWN, LEFT, RIGHT
+        this.images = new Image[4][2]; // UP, DOWN, LEFT, RIGHT
         loadImages();
     }
 
@@ -112,35 +115,37 @@ public abstract class EnemyTank extends Tank {
     public void update(double deltaTime) {
         if (isAppear) {
             return;
+        } else {
+            frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
+            if (frameCounter >= animationInterval) {
+                frameCounter -= animationInterval;
+                int imageIndex = (frameCounter < animationInterval / 2) ? 0 : 1;
+                image = images[currentDirection.ordinal()][imageIndex];
+            }
+
+            ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
+            ArrayList<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
+
+            if (collidedEntities == null) {
+                move(deltaTime);
+            }
+
+            availableDirections = findAvailableDirections(collisionEntities, deltaTime);
+
+            if (collidedEntities != null && directionChangeTimer > directionChangeInterval) {
+                changeDirection(availableDirections);
+                directionChangeTimer = 0;
+            }
+
+            if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
+                    && directionChangeTimer > directionChangeInterval) {
+                changeDirection(availableDirections);
+            }
+
+            prevAvailableDirections = availableDirections;
+            directionChangeTimer += deltaTime;
         }
-
-        if (!isAppear) {
-            image = images[currentDirection.ordinal()];
-        }
-
-        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
-        ArrayList<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
-
-        if (collidedEntities == null) {
-            move(deltaTime);
-        }
-
-        availableDirections = findAvailableDirections(collisionEntities, deltaTime);
-
-        if (collidedEntities != null && directionChangeTimer > directionChangeInterval) {
-            changeDirection(availableDirections);
-            directionChangeTimer = 0;
-        }
-
-        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
-                && directionChangeTimer > directionChangeInterval) {
-            changeDirection(availableDirections);
-        }
-
-        prevAvailableDirections = availableDirections;
-        directionChangeTimer += deltaTime;
     }
-
     public void changeDirection(ArrayList<Direction> availableDirections) {
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
@@ -164,6 +169,9 @@ public abstract class EnemyTank extends Tank {
 
                 for (GameEntity entity : collisionEntities) {
                     if (entity == null || entity.getCollision() == null) {
+                        continue;
+                    }
+                    if (entity.getType() == EntityType.ENEMY) {
                         continue;
                     }
                     if (CollisionUtil.checkIntersection(expectedAABB, entity.getCollision().getAABB())) {
@@ -220,7 +228,24 @@ public abstract class EnemyTank extends Tank {
 
         return potentialAABBs;
     }
+    @Override
+    public void destroy() {
+        // animation nổ
+        ExplosionAnimation explosion = new ExplosionAnimation();
+        explosion.startAnimation(() -> {
+            image = null;
+        }, new ExplosionAnimation.ImageUpdateCallback() {
+            @Override
+            public void updateImage(Image newImage) {
+                image = newImage; // tao new image de thay the tung anh animation
+            }
+        });
 
+        // Xóa CollisionBox
+        if (collisionBox != null) {
+            collisionBox = null;
+        }
+    }
     @Override
     public Bullet shoot() {
         System.out.println(name + " is shooting!");
@@ -251,7 +276,13 @@ public abstract class EnemyTank extends Tank {
     public void setPoint(int point) {
         this.point = point;
     }
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
+    public int getHealth() {
+        return this.health;
+    }
     @Override
     public String toString() {
         return "EnemyTank{" +

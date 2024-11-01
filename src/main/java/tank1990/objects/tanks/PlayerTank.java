@@ -28,7 +28,7 @@ public class PlayerTank extends Tank {
     public long shotDelay = 300;
 
     public int maxBullets;
-    public int speed = 180;
+    public int speed = 80;
     public int star = 1;
     KeyHandler keyHandler;
 
@@ -44,13 +44,14 @@ public class PlayerTank extends Tank {
         this.setColor(Color.YELLOW);
         appear = new Appear(100);
         image = appear.getCurrentFrame().getImage();
+        startAnimation();
         setCollision(
                 new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 5,
                         GameConstants.TANK_SIZE - 5));
 
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
-        startAnimation();
+
         collisionBox.setEnableFrontCollisionCheck(true);
         collisionBox.setCollisionType(CollisionType.RIGID);
     }
@@ -104,7 +105,7 @@ public class PlayerTank extends Tank {
         }
         int bulletX = (int) getPosition().x;
         int bulletY = (int) getPosition().y;
-
+        //vị trí đạn theo hướng
         switch (getDirection()) {
             case LEFT:
                 bulletX -= -20;
@@ -124,7 +125,7 @@ public class PlayerTank extends Tank {
                 break;
         }
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 5);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50,true);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
@@ -182,7 +183,7 @@ public class PlayerTank extends Tank {
         }
 
         for (Bullet bullet : bullets) {
-            bullet.move();
+            bullet.move(deltaTime);
         }
 
         ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);

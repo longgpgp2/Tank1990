@@ -26,8 +26,8 @@ public class Bullet extends GameEntity {
     private boolean destroyed = false;
     private BulletExplosion bulletExplosion;
     private double lastX, lastY;
-
-    public Bullet(int startX, int startY, Direction direction, double speed) {
+    public boolean isFromPlayer;
+    public Bullet(int startX, int startY, Direction direction, double speed, boolean isFromPlayer) {
         super(EntityType.BULLET, new Vector2D(startX, startY), 5, 5);
         this.x = startX;
         this.y = startY;
@@ -40,7 +40,7 @@ public class Bullet extends GameEntity {
         }
         setBulletImage();
         this.speed = speed;
-
+        this.isFromPlayer = isFromPlayer;
         setCollision(new CollisionBox(this, new Vector2D(0, 0), 5, 5));
         collisionBox.setEnableFrontCollisionCheck(false);
     }
@@ -59,24 +59,22 @@ public class Bullet extends GameEntity {
     }
 
     public void update(double deltaTime) {
-        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
-        ArrayList<GameEntity> collidedGameEntities = checkCollision(collisionEntities, deltaTime);
-
-        if (collidedGameEntities != null && collidedGameEntities.size() > 0) {
-            damageComponents(collidedGameEntities);
-            destroyBullet();
-        }
-
         if (!destroyed) {
-            move();
+            ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
+            ArrayList<GameEntity> collidedGameEntities = checkCollision(collisionEntities, deltaTime);
+
+            if (collidedGameEntities != null && collidedGameEntities.size() > 0) {
+                damageComponents(collidedGameEntities);
+                destroyBullet();
+            }
+            move(deltaTime);
             if (checkCollision() || checkBulletOutOfBound()) {
                 destroyBullet();
             }
-        } else if (bulletExplosion != null) {
-            bulletExplosion.update();
+        } else {
+            handleBulletExplosion();
         }
     }
-
     public void update() {
         if (!checkBulletOutOfBound()) {
             double directionValue = 0;
@@ -107,22 +105,37 @@ public class Bullet extends GameEntity {
     private boolean checkCollision() {
         return isCollided;
     }
-
+    private void handleBulletExplosion() {
+        if (bulletExplosion != null) {
+            bulletExplosion.update(() -> {
+                bulletExplosion = null; // xóa animation
+                GameEntityManager.remove(this); // Xóa đạn
+            }, new BulletExplosion.BulletExplosionImageCallback() {
+                @Override
+                public void updateImage(Image newImage) {
+                    image = newImage; // animation
+                }
+            });
+        }
+    }
     public void destroyBullet() {
         destroyed = true;
-        bulletExplosion = new BulletExplosion((int) lastX, (int) lastY); // Create explosion at last position
-        GameEntityManager.remove(this);
+        // Kiểm tra xem bulletExplosion có nên được kích hoạt hay không
+        if (bulletExplosion == null) {
+            // Nếu bắn trúng enemy thì đạn k nổ
+            image = null;
+        }
     }
 
-    public void move() {
+    public void move(double deltaTime) {
         lastX = x;
         lastY = y;
-
+        double distance = speed * deltaTime;
         switch (direction) {
-            case LEFT -> x -= speed;
-            case RIGHT -> x += speed;
-            case UP -> y -= speed;
-            case DOWN -> y += speed;
+            case LEFT -> x -= distance;
+            case RIGHT -> x += distance;
+            case UP -> y -= distance;
+            case DOWN -> y += distance;
         }
 
         setPosition(new Vector2D(x, y));
@@ -132,20 +145,22 @@ public class Bullet extends GameEntity {
         if (!destroyed) {
             g.drawImage(image, (int) x, (int) y, null);
         } else if (bulletExplosion != null) {
-            bulletExplosion.update();
+            bulletExplosion.update(() -> {
+                // Chỉ gán null sau khi animation hoàn tất
+                GameEntityManager.remove(this); // Xóa viên đạn sau khi animation hoàn tất
+            }, new BulletExplosion.BulletExplosionImageCallback() {
+                @Override
+                public void updateImage(Image newImage) {
+                    image = newImage; // Cập nhật ảnh của viên đạn trong quá trình nổ
+                }
+            });
             bulletExplosion.render(g);
-            if (bulletExplosion.isFinished()) {
-                bulletExplosion = null; //
-            }
         }
     }
 
-    public CollisionBox getCollisionBox() {
-        return new CollisionBox(this, new Vector2D(x, y), image.getWidth(null), image.getHeight(null));
-    }
 
     public boolean checkBulletOutOfBound() {
-        if (x < 0 || y < 0 || x > 500 || y > 500)
+        if (x < 0 || y < 0 || x > 600 || y > 600)
             return true;
         return false;
     }
@@ -159,6 +174,7 @@ public class Bullet extends GameEntity {
     }
 
     private void damageComponents(ArrayList<GameEntity> collidedGameEntities) {
+        boolean enemyDestroyed = false;
         for (int i = 0; i < collidedGameEntities.size(); i++) {
             GameEntity collidedGameEntity = collidedGameEntities.get(i);
 
@@ -166,14 +182,30 @@ public class Bullet extends GameEntity {
             if (collidedGameEntity instanceof BrickWall) {
                 ((BrickWall) collidedGameEntity).hitComponent(this);
             }
+            if (collidedGameEntity instanceof EnemyTank) {
+                EnemyTank enemyTank = (EnemyTank) collidedGameEntity;
 
+                enemyTank.setHealth(enemyTank.getHealth() - damage);
+
+                if (enemyTank.getHealth() <= 0) {
+                    enemyTank.destroy();
+                    GameEntityManager.remove(enemyTank); // remove enemy
+                    enemyDestroyed = true;
+                }
+                continue;
+            }
             if (collidedGameEntity instanceof DestructibleEntity) {
                 ((DestructibleEntity) collidedGameEntity).hit(damage);
             }
-
+            if (enemyDestroyed) {
+                destroy(); // Nếu EnemyTank đã bị phá hủy, gọi phương thức destroy()
+            } else {
+                bulletExplosion = new BulletExplosion((int) lastX, (int) lastY); // Tạo vụ nổ tại vị trí cuối cùng
+            }
             if (i == collidedGameEntities.size() - 1) {
                 destroy();
             }
+
         }
     }
 }

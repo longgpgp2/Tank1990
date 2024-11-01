@@ -78,6 +78,7 @@ public class KeyHandler {
         if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
             tank.setVelocity(new Vector2D(0, 0));
         }
+        updateImage();
     }
 
     public void updateImage() {
@@ -95,7 +96,7 @@ public class KeyHandler {
 
     public void updateTankSpriteCounter() {
         tank.spriteCounter++;
-        if (tank.spriteCounter > 6) { // animation speed
+        if (tank.spriteCounter > 2) { // animation speed
             if (tank.spriteNum == 1) {
                 tank.spriteNum = 2;
             } else if (tank.spriteNum == 2) {
@@ -111,7 +112,9 @@ public class KeyHandler {
         if (key == KeyEvent.VK_SPACE) {
             tank.shoot();
         }
+        updateVelocity();
         updateTankSpriteCounter();
+        updateImage();
     }
 
     public void keyReleased(KeyEvent e) {

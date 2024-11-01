@@ -24,7 +24,7 @@ public class TankSpawner {
         // String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank",
         // "BasicTank", "FastTank", "ArmorTank",
         // "PowerTank", "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
-        String[] types = { "BasicTank" };
+        String[] types = { "BasicTank", "FastTank", "ArmorTank", "PowerTank" };
 
         for (String type : types) {
             tanks = addAnEnemy(unoccupiedIndices, tanks, type);
