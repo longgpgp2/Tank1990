@@ -82,6 +82,9 @@ public class KeyHandler {
     }
 
     public void updateImage() {
+        if (tank.isAppear) {
+            return;
+        }
         ImageIcon ii = null;
         if (tank.spriteNum == 1) {
             ii = new ImageIcon(

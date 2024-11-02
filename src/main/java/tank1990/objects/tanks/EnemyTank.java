@@ -123,7 +123,7 @@ public abstract class EnemyTank extends Tank {
     public void update(double deltaTime) {
         if (isAppear) {
             return;
-        } else {
+        }
             frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
             if (frameCounter >= animationInterval) {
                 frameCounter -= animationInterval;
@@ -154,7 +154,7 @@ public abstract class EnemyTank extends Tank {
             prevAvailableDirections = availableDirections;
             directionChangeTimer += deltaTime;
         }
-    }
+
 
     public void changeDirection(ArrayList<Direction> availableDirections) {
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);

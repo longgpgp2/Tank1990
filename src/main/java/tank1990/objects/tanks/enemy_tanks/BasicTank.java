@@ -39,6 +39,9 @@ public class BasicTank extends EnemyTank {
 
     @Override
     public void update(double deltaTime) {
+        if (isAppearing()) {
+            return;
+        }
         super.update(deltaTime);
 
         frameCounter++;

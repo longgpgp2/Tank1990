@@ -32,7 +32,7 @@ public class PlayerTank extends Tank {
     public int star = 1;
     KeyHandler keyHandler;
 
-    private boolean isAppear = true;
+    public boolean isAppear = true;
     private Appear appear;
 
     private Shield shield;
