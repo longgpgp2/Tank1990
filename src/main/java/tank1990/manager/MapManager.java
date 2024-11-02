@@ -80,10 +80,12 @@ public class MapManager {
     public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
         for (Tank tank: tanks) {
                 g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
-//                g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
-//                g.setColor(Color.red);
-//                g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
         }
+        Tank tank = getPlayerTank(tanks);
+        g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
+        g.setColor(Color.red);
+        g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
+
     }
 
     public static PlayerTank getPlayerTank(List<Tank> tanks) {

@@ -46,8 +46,8 @@ public class PlayerTank extends Tank {
         image = appear.getCurrentFrame().getImage();
         startAnimation();
         setCollision(
-                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 5,
-                        GameConstants.TANK_SIZE - 5));
+                new CollisionBox(this, new Vector2D(4, 4), GameConstants.TANK_SIZE - 8,
+                        GameConstants.TANK_SIZE - 8));
 
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
@@ -99,7 +99,7 @@ public class PlayerTank extends Tank {
     @Override
     public Bullet shoot() {
         long currentTime = System.currentTimeMillis();
-
+        System.out.println(bullets.size());
         if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
             return null;
         }

@@ -18,8 +18,10 @@ import javax.swing.Timer;
 
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
+import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.PlayerTank;
@@ -33,6 +35,13 @@ public class TankSpawner {
             @Override
             public void actionPerformed(ActionEvent e) {
                 addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+                GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
+                GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+                GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+                        EntityType.BRICK,
+                        EntityType.STEEL,
+                        EntityType.ENEMY
+                });
                 if (types.peek() == null) {
                     timer.stop();
                 }
