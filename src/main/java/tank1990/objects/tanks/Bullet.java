@@ -108,8 +108,8 @@ public class Bullet extends GameEntity {
     private void handleBulletExplosion() {
         if (bulletExplosion != null) {
             bulletExplosion.update(() -> {
+                isCollided = true;
                 bulletExplosion = null; // xóa animation
-                GameEntityManager.remove(this); // Xóa đạn
             }, new BulletExplosion.BulletExplosionImageCallback() {
                 @Override
                 public void updateImage(Image newImage) {
@@ -122,6 +122,7 @@ public class Bullet extends GameEntity {
         destroyed = true;
         // Kiểm tra xem bulletExplosion có nên được kích hoạt hay không
         if (bulletExplosion == null) {
+            isCollided= true; // check để remove khỏi list bullets
             // Nếu bắn trúng enemy thì đạn k nổ
             image = null;
         }
@@ -146,15 +147,15 @@ public class Bullet extends GameEntity {
             g.drawImage(image, (int) x, (int) y, null);
         } else if (bulletExplosion != null) {
             bulletExplosion.update(() -> {
-                // Chỉ gán null sau khi animation hoàn tất
-                GameEntityManager.remove(this); // Xóa viên đạn sau khi animation hoàn tất
+                isCollided = true;
             }, new BulletExplosion.BulletExplosionImageCallback() {
                 @Override
                 public void updateImage(Image newImage) {
-                    image = newImage; // Cập nhật ảnh của viên đạn trong quá trình nổ
+                    image = newImage;
                 }
             });
             bulletExplosion.render(g);
+
         }
     }
 
@@ -184,6 +185,9 @@ public class Bullet extends GameEntity {
             }
             if (collidedGameEntity instanceof EnemyTank) {
                 EnemyTank enemyTank = (EnemyTank) collidedGameEntity;
+                if (enemyTank.isAppearing()) {
+                    continue; // Skip this collision
+                }
 
                 enemyTank.setHealth(enemyTank.getHealth() - damage);
 

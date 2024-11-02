@@ -99,31 +99,12 @@ public class PlayerTank extends Tank {
     @Override
     public Bullet shoot() {
         long currentTime = System.currentTimeMillis();
-        System.out.println(bullets.size());
         if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
             return null;
         }
-        int bulletX = (int) getPosition().x;
-        int bulletY = (int) getPosition().y;
-        //vị trí đạn theo hướng
-        switch (getDirection()) {
-            case LEFT:
-                bulletX -= -20;
-                bulletY -= -12;
-                break;
-            case RIGHT:
-                bulletX += 8;
-                bulletY -= -12;
-                break;
-            case UP:
-                bulletY -= -15;
-                bulletX += 12;
-                break;
-            case DOWN:
-                bulletY += 10;
-                bulletX += 12;
-                break;
-        }
+
+        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
+        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
 
         Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50,true);
         bullets.add(bullet);
@@ -192,8 +173,14 @@ public class PlayerTank extends Tank {
         if (collidedEntities == null) {
             move(deltaTime);
         }
-
-        bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
+        List<Bullet> bulletsToRemove = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            if (bullet.checkBulletOutOfBound() || bullet.isCollided()) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        bullets.removeAll(bulletsToRemove);
+        //bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
     }
 
     public void move(double deltaTime) {

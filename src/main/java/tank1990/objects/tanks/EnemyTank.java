@@ -111,7 +111,9 @@ public abstract class EnemyTank extends Tank {
             }
         }).start();
     }
-
+    public boolean isAppearing() {
+        return isAppear;
+    }
     public void update(double deltaTime) {
         if (isAppear) {
             return;
