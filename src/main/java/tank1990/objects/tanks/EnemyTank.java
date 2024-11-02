@@ -38,8 +38,14 @@ public abstract class EnemyTank extends Tank {
 
     protected Direction currentDirection = Direction.DOWN;
 
-    // (adjustable) After how long can entity change direction
-    private double directionChangeInterval = 0.1;
+    // (adjustable) The position of 4 potential collision boxes in order from TOP
+    // DOWN LEFT RIGHT. For example if set to 5, 4 future collision boxes are placed
+    // 5 pixels off TOP DOWN LEFT RIGHT respectively from origin collision box.
+    private int directionPixelCheck = 10;
+
+    // (adjustable) After how long before the entity can change direction. Will
+    // reset after each direction change. Measure in second.
+    private double directionChangeInterval = 1;
     private double directionChangeTimer = 0;
 
     private ArrayList<Direction> availableDirections = new ArrayList<>();
@@ -137,15 +143,17 @@ public abstract class EnemyTank extends Tank {
                 directionChangeTimer = 0;
             }
 
-        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
-                && directionChangeTimer > directionChangeInterval) {
-            changeDirection(availableDirections);
-        }
+            if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
+                    && directionChangeTimer > directionChangeInterval) {
+                changeDirection(availableDirections);
+                directionChangeTimer = 0;
+            }
 
             prevAvailableDirections = availableDirections;
             directionChangeTimer += deltaTime;
         }
     }
+
     public void changeDirection(ArrayList<Direction> availableDirections) {
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
@@ -153,7 +161,7 @@ public abstract class EnemyTank extends Tank {
         currentDirection = randomDirection;
     }
 
-    // Add more change to explore new direction
+    // Add more chance to explore new direction
     public void changeDirection(
             ArrayList<Direction> prevDirections,
             ArrayList<Direction> newDirections,
@@ -223,8 +231,7 @@ public abstract class EnemyTank extends Tank {
                 continue;
             }
 
-            // (adjustable): No pixels to check in the future (E.g.: 5 pixels)
-            Vector2D expectedVelocity = (direction.getValue().multiply(6));
+            Vector2D expectedVelocity = (direction.getValue().multiply(directionPixelCheck));
             Vector2D expectedPosition = collisionBox.globalPosition.add(expectedVelocity);
 
             potentialPositions.add(expectedPosition);
@@ -250,6 +257,7 @@ public abstract class EnemyTank extends Tank {
 
         return potentialAABBs;
     }
+
     @Override
     public void destroy() {
         // animation nổ
@@ -268,6 +276,7 @@ public abstract class EnemyTank extends Tank {
             collisionBox = null;
         }
     }
+
     @Override
     public Bullet shoot() {
         System.out.println(name + " is shooting!");
@@ -298,6 +307,7 @@ public abstract class EnemyTank extends Tank {
     public void setPoint(int point) {
         this.point = point;
     }
+
     public void setHealth(int health) {
         this.health = health;
     }
@@ -305,6 +315,7 @@ public abstract class EnemyTank extends Tank {
     public int getHealth() {
         return this.health;
     }
+
     @Override
     public String toString() {
         return "EnemyTank{" +
