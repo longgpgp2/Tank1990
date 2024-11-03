@@ -46,14 +46,6 @@ public abstract class GameEntity extends Component {
         this.position = new Vector2D(x, y);
 
         GameEntityManager.add(this);
-
-         GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                EntityType.BRICK,
-                EntityType.STEEL,
-                EntityType.ENEMY
-        });
         // System.out.println(GameEntityManager.getGameEntities());
     }
 

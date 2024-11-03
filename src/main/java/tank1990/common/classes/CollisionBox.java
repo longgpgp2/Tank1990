@@ -1,5 +1,7 @@
 package tank1990.common.classes;
 
+import tank1990.common.enums.CollisionType;
+
 public class CollisionBox {
     public double x;
     public double y;
@@ -11,8 +13,10 @@ public class CollisionBox {
     public Vector2D globalPosition;
     public GameEntity gameEntity;
 
+    private CollisionType collisionType = CollisionType.STATIC;
+
     private boolean enabled = true;
-    private boolean enableFrontCollisionCheck = true;
+    private boolean enableFrontCollisionCheck = false;
     private boolean enableCollisionResponse = true;
 
     public CollisionBox(GameEntity gameEntity, Vector2D relativePosition, int width, int height) {
@@ -22,8 +26,8 @@ public class CollisionBox {
         this.width = width;
         this.height = height;
 
-        this.center = new Vector2D(x + width / 2, y + height / 2);
-        this.extents = new Vector2D(width / 2, height / 2);
+        this.center = new Vector2D(x + width / 2.0, y + height / 2.0);
+        this.extents = new Vector2D(width / 2.0, height / 2.0);
         this.relativePosition = relativePosition;
         this.globalPosition = gameEntity.getPosition().add(relativePosition);
         this.gameEntity = gameEntity;
@@ -70,5 +74,13 @@ public class CollisionBox {
 
     public String toString() {
         return "CollisionBox(x=" + x + ", y=" + y + ", width=" + width + ", height=" + height + ")";
+    }
+
+    public void setCollisionType(CollisionType collisionType) {
+        this.collisionType = collisionType;
+    }
+
+    public CollisionType getCollisionType() {
+        return collisionType;
     }
 }

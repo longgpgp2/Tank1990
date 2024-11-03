@@ -13,6 +13,7 @@ import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
@@ -30,11 +31,11 @@ public class PlayerTank extends Tank {
     public long shotDelay = 300;
 
     public int maxBullets;
-    public int velocity = 5;
+    public int speed = 80;
     private int star = 1;
     KeyHandler keyHandler;
 
-    private boolean isAppear = true;
+    public boolean isAppear = true;
     private Appear appear;
 
     private Shield shield;
@@ -49,12 +50,16 @@ public class PlayerTank extends Tank {
         this.setColor(Color.YELLOW);
         appear = new Appear(100);
         image = appear.getCurrentFrame().getImage();
+        startAnimation();
         setCollision(
-                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 5,
-                        GameConstants.TANK_SIZE - 5));
+                new CollisionBox(this, new Vector2D(4, 4), GameConstants.TANK_SIZE - 8,
+                        GameConstants.TANK_SIZE - 8));
+
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
-        startAnimation();
+
+        collisionBox.setEnableFrontCollisionCheck(true);
+        collisionBox.setCollisionType(CollisionType.RIGID);
     }
 
     private void startAnimation() {
@@ -68,7 +73,8 @@ public class PlayerTank extends Tank {
                 }
             }
             isAppear = false;
-            image = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png").getImage(); // Hiển thị hình ảnh tank
+            image = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png").getImage(); // Hiển thị hình
+                                                                                                     // ảnh tank
             startShield();
         }).start();
     }
@@ -103,29 +109,11 @@ public class PlayerTank extends Tank {
         if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
             return null;
         }
-        int bulletX = (int) getPosition().x;
-        int bulletY = (int) getPosition().y;
 
-        switch (getDirection()) {
-            case LEFT:
-                bulletX -= -20;
-                bulletY -= -12;
-                break;
-            case RIGHT:
-                bulletX += 8;
-                bulletY -= -12;
-                break;
-            case UP:
-                bulletY -= -15;
-                bulletX += 12;
-                break;
-            case DOWN:
-                bulletY += 10;
-                bulletX += 12;
-                break;
-        }
+        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
+        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 5);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50,true);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
@@ -172,24 +160,26 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
+        keyHandler.updateVelocity();
+
         if (isAppear) {
             return;
         }
-        // counter++;
-        // System.out.print(" "+counter);
-        keyHandler.updatePosition();
+
         if (isShield) {
-            shield.getCurrentFrame(); // frame của shield
+            shield.getCurrentFrame();
         }
 
-        // vị trí đạn
         for (Bullet bullet : bullets) {
-            bullet.move();
-            // va cham
+            bullet.move(deltaTime);
         }
-        HashSet<GameEntity> collidedEntities = checkCollision(GameEntityManager.getCollisionEntities(type), deltaTime);
-        // System.out.println(GameEntityManager.getPlayerCollisionComponents());
-        if (collidedEntities != null) {
+
+        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
+        HashSet<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
+
+        if (collidedEntities == null) {
+            move(deltaTime);
+        } else {
             System.out.println("--------------------");
             for (GameEntity e : collidedEntities) {
                 System.out.println(e);
@@ -198,12 +188,19 @@ public class PlayerTank extends Tank {
                     PowerUpManager.triggerPowerUp((PowerUp) e);
                 }
             }
-//            collidedEntities.clear();
-//            velocity = 0;
-        } else
-            velocity = 5;
+        }
+        List<Bullet> bulletsToRemove = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            if (bullet.checkBulletOutOfBound() || bullet.isCollided()) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        bullets.removeAll(bulletsToRemove);
+        //bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
+    }
 
-        bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
+    public void move(double deltaTime) {
+        setPosition(getPosition().add(getVelocity().multiply(deltaTime)));
     }
 
     public void keyPressed(KeyEvent e) {
@@ -211,11 +208,9 @@ public class PlayerTank extends Tank {
             return;
         }
         keyHandler.keyPressed(e);
-
     }
 
     public void keyReleased(KeyEvent e) {
-
         keyHandler.keyReleased(e);
     }
 

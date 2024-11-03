@@ -27,29 +27,29 @@ public class KeyHandler {
         }
     }
 
-    public void setPress(int key){
+    public void setPress(int key) {
         if (key == KeyEvent.VK_A) {
             leftPressed = true;
             disableVertical();
-            rightPressed=false;
+            rightPressed = false;
             tank.direction = Direction.LEFT;
             updateImage();
         } else if (key == KeyEvent.VK_D) {
             rightPressed = true;
             disableVertical();
-            leftPressed=false;
+            leftPressed = false;
             tank.direction = Direction.RIGHT;
             updateImage();
         } else if (key == KeyEvent.VK_W) {
             upPressed = true;
             disableHorizontal();
-            downPressed=false;
+            downPressed = false;
             tank.direction = Direction.UP;
             updateImage();
         } else if (key == KeyEvent.VK_S) {
             downPressed = true;
             disableHorizontal();
-            upPressed=false;
+            upPressed = false;
             tank.direction = Direction.DOWN;
             updateImage();
         }
@@ -62,18 +62,29 @@ public class KeyHandler {
         }
     }
 
-    public void updatePosition() {
-        if (upPressed)
-            tank.setPosition(tank.getPosition().add(new Vector2D(0, -tank.velocity)));
-        if (downPressed)
-            tank.setPosition(tank.getPosition().add(new Vector2D(0, tank.velocity)));
-        if (leftPressed)
-            tank.setPosition(tank.getPosition().add(new Vector2D(-tank.velocity, 0)));
-        if (rightPressed)
-            tank.setPosition(tank.getPosition().add(new Vector2D(tank.velocity, 0)));
+    public void updateVelocity() {
+        if (upPressed) {
+            tank.setVelocity(new Vector2D(0, -tank.speed));
+        }
+        if (downPressed) {
+            tank.setVelocity(new Vector2D(0, tank.speed));
+        }
+        if (leftPressed) {
+            tank.setVelocity(new Vector2D(-tank.speed, 0));
+        }
+        if (rightPressed) {
+            tank.setVelocity(new Vector2D(tank.speed, 0));
+        }
+        if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
+            tank.setVelocity(new Vector2D(0, 0));
+        }
+        updateImage();
     }
 
     public void updateImage() {
+        if (tank.isAppear) {
+            return;
+        }
         ImageIcon ii = null;
         if (tank.spriteNum == 1) {
             ii = new ImageIcon(
@@ -88,7 +99,7 @@ public class KeyHandler {
 
     public void updateTankSpriteCounter() {
         tank.spriteCounter++;
-        if (tank.spriteCounter > 6) { // animation speed
+        if (tank.spriteCounter > 2) { // animation speed
             if (tank.spriteNum == 1) {
                 tank.spriteNum = 2;
             } else if (tank.spriteNum == 2) {
@@ -104,7 +115,9 @@ public class KeyHandler {
         if (key == KeyEvent.VK_SPACE) {
             tank.shoot();
         }
+        updateVelocity();
         updateTankSpriteCounter();
+        updateImage();
     }
 
     public void keyReleased(KeyEvent e) {

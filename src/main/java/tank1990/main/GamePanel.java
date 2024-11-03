@@ -15,12 +15,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.PowerUpManager;
@@ -33,10 +35,10 @@ import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-    static List environments = new ArrayList<Environment>();
-    List map = new ArrayList<Integer>();
-    static List tanks = new ArrayList<Tank>();
-    static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
+   static List<Environment> environments = new ArrayList<>();
+    List<Integer> map = new ArrayList<>();
+   static List<Tank> tanks = new ArrayList<>();
+   static List<PowerUp> powerUps = new ArrayList<>();
 
     GamePanel() {
 
@@ -61,11 +63,11 @@ public class GamePanel extends JPanel implements ActionListener {
         this.addKeyListener(new TAdapter());
         this.setFocusable(true);
         setBackground(Color.BLACK);
-
         environments = MapManager.generateEnvironments();
         tanks = TankSpawner.spawnTanks(environments);
+        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
-        startTimer();
+        // startTimer();
         PowerUpManager.startAutoSpawn(environments, tanks);
     }
 
@@ -88,6 +90,10 @@ public class GamePanel extends JPanel implements ActionListener {
      *
      * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
      */
+
+    public void draw() {
+        repaint();
+    }
 
     private void updateGame() {
         // ConcurrentModificationException will happen when a GameEntity is removed

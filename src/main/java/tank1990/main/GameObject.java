@@ -1,22 +1,56 @@
 package tank1990.main;
 
-import javax.swing.*;
-
+import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.GameLoop;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.EntityType;
+import tank1990.manager.GameEntityManager;
 
-import java.awt.*;
+public class GameObject extends GameLoop {
+    private GameFrame gameFrame;
 
-public class GameObject extends JFrame {
-    JPanel panel;
+    public GameObject() {
+        gameFrame = new GameFrame();
+    }
 
-    GameObject() {
+    public void startGame() {
+        GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+                EntityType.BRICK,
+                EntityType.STEEL,
+                EntityType.ENEMY
+        });
+        run();
+    }
 
-        panel = new GamePanel();
-        setSize(new Dimension(GameConstants.FRAME_WIDTH, GameConstants.FRAME_HEIGHT));
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.add(panel);
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+    @Override
+    protected void processGameLoop() {
+        long initalFrameTime = System.nanoTime();
+        double lastFrameTime = 0.0;
+
+        while (isGameRunning()) {
+            double currentFrameTime = (System.nanoTime() - initalFrameTime) / 1E9;
+            double deltaTime = currentFrameTime - lastFrameTime;
+
+            update(deltaTime);
+            render();
+
+            lastFrameTime = currentFrameTime;
+        }
+    }
+
+    protected void render() {
+        gameFrame.gamePanel.draw();
+    }
+
+    protected void update(double deltaTime) {
+        try {
+            for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
+                gameEntity.update(deltaTime);
+            }
+        } catch (Exception e) {
+            // System.out.println(e);
+        }
     }
 }

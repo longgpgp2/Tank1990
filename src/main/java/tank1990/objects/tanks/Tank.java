@@ -33,7 +33,7 @@ public abstract class Tank extends GameEntity {
 
 
         public Bullet shoot() {
-                Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10);
+                Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10,false);
                 bullets.add(bullet);
                 System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: "
                                 + getDirection());
