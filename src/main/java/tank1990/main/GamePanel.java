@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements ActionListener {
    static List<Environment> environments = new ArrayList<>();
     List<Integer> map = new ArrayList<>();
    static List<Tank> tanks = new ArrayList<>();
-   static List<PowerUp> powerUps = new ArrayList<>();
+   static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
 
     GamePanel() {
 
@@ -178,13 +178,4 @@ public class GamePanel extends JPanel implements ActionListener {
         return environments;
     }
 
-    public static void removeEntity(GameEntity gameEntity) {
-        switch (gameEntity.getType()) {
-            case POWER_UP:
-                powerUps.remove((PowerUp) gameEntity);
-                break;
-            default:
-                break;
-        }
-    }
 }

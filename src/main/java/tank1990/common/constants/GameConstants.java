@@ -26,7 +26,7 @@ public class GameConstants {
         };
         public static final EntityType[] PLAYER_IMPASSABLE_ENTITIES = {
                         EntityType.ENEMY, EntityType.BASE, EntityType.EDGE,
-                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL
-        , EntityType.POWER_UP};
+                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.POWER_UP
+        };
 
 }

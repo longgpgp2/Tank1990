@@ -3,6 +3,7 @@ package tank1990.objects.tanks;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 import javax.swing.*;
@@ -132,7 +133,7 @@ public abstract class EnemyTank extends Tank {
             }
 
             ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
-            ArrayList<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
+            HashSet<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
 
             if (collidedEntities == null) {
                 move(deltaTime);
@@ -330,17 +331,17 @@ public abstract class EnemyTank extends Tank {
                 '}';
     }
 
-    public void draw(Graphics g) {
-        if (isAppear) {
-            g.drawImage(images[movingDirection.ordinal()], (int) position.x, (int) position.y, null);
-        }
-        if (isShield) {
-            ImageIcon currentShieldFrame = shield.getCurrentFrame();
-            if (currentShieldFrame != null) {
-                g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
-            }
-        }
-    }
+//    public void draw(Graphics g) {
+//        if (isAppear) {
+//            g.drawImage(images[movingDirection.ordinal()], (int) position.x, (int) position.y, null);
+//        }
+//        if (isShield) {
+//            ImageIcon currentShieldFrame = shield.getCurrentFrame();
+//            if (currentShieldFrame != null) {
+//                g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
+//            }
+//        }
+//    }
 
     public void freeze() {
         // save original speed
@@ -355,6 +356,7 @@ public abstract class EnemyTank extends Tank {
         Timer timer = new Timer(5000, e -> {
             this.bulletSpeed = defaultBulletSpeed;
             this.movementSpeed = defaultMovementSpeed;
+            System.out.println("Freeze over");
         });
         timer.setRepeats(false);
         timer.start();

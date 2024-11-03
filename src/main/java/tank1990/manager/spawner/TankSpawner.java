@@ -24,11 +24,14 @@ import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.objects.environments.Environment;
+import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
 public class TankSpawner {
     public static Timer timer;
+    public static PlayerTank playerTank;
+    public static List<EnemyTank> enemyTanks = new ArrayList<>();
 
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
         timer = new Timer(5000, (ActionListener) new ActionListener() {
@@ -61,7 +64,8 @@ public class TankSpawner {
         // for (Tank tank : enemies) {
         // tanks.add(tank);
         // }
-        tanks.add(createPlayer());
+        playerTank = (PlayerTank) createPlayer();
+        tanks.add(playerTank);
         startQueueingEnemies(enemyTypes, tanks, unoccupiedIndices);
         return tanks;
     }
@@ -146,6 +150,7 @@ public class TankSpawner {
                     GameConstants.ENTITY_HEIGHT);
             tank.setPosition(position);
             tanks.add(tank);
+            enemyTanks.add((EnemyTank) tank);
             break;
         }
         return tanks;

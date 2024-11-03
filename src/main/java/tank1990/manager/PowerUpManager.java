@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class PowerUpManager {
     private static final int AUTO_SPAWN_DELAY = 10000;
-    private static final int AUTO_REMOVE_DELAY = 15000;
+    private static final int AUTO_REMOVE_DELAY = 30000;
 
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static ActionListener autoSpawnAction = null;
@@ -57,7 +57,7 @@ public class PowerUpManager {
         powerUp.getCollision().setEnabled(false);
         // remove power-up from the field
         GameEntityManager.remove(powerUp);
-        GamePanel.removeEntity(powerUp);
+        powerUps.remove(powerUp);
     }
 
     /**
