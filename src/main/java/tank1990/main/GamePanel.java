@@ -37,7 +37,7 @@ public class GamePanel extends JPanel implements ActionListener {
     List<Integer> map = new ArrayList<>();
     List<Tank> tanks = new ArrayList<>();
     List<PowerUp> powerUps = new ArrayList<>();
-
+    int currentLevel = 2;
     GamePanel() {
 
         File file = new File(".\\src\\main\\resources\\battlefield.map");
@@ -61,8 +61,8 @@ public class GamePanel extends JPanel implements ActionListener {
         this.addKeyListener(new TAdapter());
         this.setFocusable(true);
         setBackground(Color.BLACK);
-        environments = MapManager.generateEnvironments();
-        tanks = TankSpawner.spawnTanks(environments);
+        environments = MapManager.generateEnvironments(currentLevel);
+        tanks = TankSpawner.spawnTanks(environments, currentLevel);
         Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         // startTimer();
@@ -97,6 +97,7 @@ public class GamePanel extends JPanel implements ActionListener {
         try {
             for (GameEntity gameEntity : gameEntities) {
                 gameEntity.update(0.01);
+
             }
         } catch (Exception e) {
         }
@@ -109,6 +110,7 @@ public class GamePanel extends JPanel implements ActionListener {
             if (bullet.isCollided() || bullet.isOutOfBound()) {
                 bullet.destroyBullet();
                 bulletsToRemove.add(bullet);
+
             }
         }
 
@@ -123,6 +125,8 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (TankSpawner.checkVictory(tanks))
+            System.out.println("Victory");
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);

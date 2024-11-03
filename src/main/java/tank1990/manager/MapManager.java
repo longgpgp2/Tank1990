@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.List;
 
 public class MapManager {
+
+    // truyền 1 set các unoccupied indices vào để check xem index và 3 indices xung quanh có trống hay không
     public static boolean checkIndexAvailability(int index, Set<Integer> unoccupiedIndices){
         Set<Integer> requiredIndices = new HashSet<>();
         requiredIndices.add(index);
@@ -52,9 +54,7 @@ public class MapManager {
         for (int i = 0; i < 33*33; i++) {
             unoccupiedIndices.add(i);
         }
-//        System.out.println(occupiedIndices);
         unoccupiedIndices.removeAll(occupiedIndices);
-//        System.out.println(unoccupiedIndices);
         return unoccupiedIndices;
     }
     public static PowerUp createPowerUp(List<Environment> environments, List<Tank> tanks){
@@ -96,14 +96,13 @@ public class MapManager {
         }
         return null;
     }
-
-    public static List<Environment> generateEnvironments(){
+    // Đọc từ level và tạo ra map tương ứng
+    public static List<Environment> generateEnvironments(int level){
         List<Environment> envs = new ArrayList();
-        List<Integer> map = readLevel();
+        List<Integer> map = readLevel(level);
         for (int i = 0; i < map.size(); i++) {
             int envX =  (i % 33) *(GameConstants.ENTITY_WIDTH);
             int envY =  (i /33) *(GameConstants.ENTITY_HEIGHT);
-//            System.out.println(map);
             if (map.get(i) != 0) {
                 Environment env=null;
                 switch (map.get(i)){
@@ -133,20 +132,16 @@ public class MapManager {
                 }
                 if(env!=null){
                     env.setPosition(new Vector2D(envX, envY));
-                    int index = CollisionUtil.getTileIndex(env.getPosition());
-//                    System.out.println(env.getPosition()+" + "+ env.getCollision());
                     if(!env.crossable && env.getType().equals(EntityType.BASE))env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width*2, env.height*2));
                     if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
-
                     envs.add(env);
                 }
-
             }
-
         }
-
         return envs;
     }
+
+    // Vẽ environment bằng Graphics
     public static void drawEnvironments(List<Environment> envs, Graphics g, ImageObserver observer){
         for (Environment env : envs) {
             g.setColor(Color.GRAY);
@@ -163,9 +158,11 @@ public class MapManager {
 //            g.drawString(String.valueOf(index), (int)env.getPosition().x,(int) env.getPosition().y+16);
         }
     }
-    public static List<Integer> readLevel(){
+
+    // Đọc file battlefield.map của level truyền vào để tạo ra 1 list các integer tương ứng với từng environment object
+    public static List<Integer> readLevel(int level){
         List map = new ArrayList<Integer>();
-        File file = new File(".\\src\\main\\resources\\battlefield.map");
+        File file = new File(".\\src\\main\\resources\\levels\\"+ level +"\\battlefield.map");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = null;

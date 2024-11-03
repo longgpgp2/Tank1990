@@ -8,10 +8,22 @@ import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.CollisionType;
+import tank1990.common.enums.EntityType;
+import tank1990.manager.GameEntityManager;
 
 public class CollisionUtil {
   private static final int MAX_WIDTH = GameConstants.MAP_WIDTH + GameConstants.MAP_SHIFT_WIDTH;
   private static final int MAX_HEIGHT = GameConstants.MAP_HEIGHT + GameConstants.MAP_SHIFT_HEIGHT;
+
+  public static void addCollisionToObjects(){
+    GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
+    GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+    GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+            EntityType.BRICK,
+            EntityType.STEEL,
+            EntityType.ENEMY
+    });
+  }
 
   public static int getTileIndex(Vector2D position) {
     int column = (int) (position.x / (GameConstants.ENTITY_WIDTH));

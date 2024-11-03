@@ -144,7 +144,12 @@ public abstract class EnemyTank extends Tank {
                 changeDirection(availableDirections);
                 directionChangeTimer = 0;
             }
-
+            if (collidedEntities !=null)
+            if(collidedEntities.stream().filter(gameEntity -> gameEntity.getType()==EntityType.ENEMY).count()>=1 && directionChangeTimer > directionChangeInterval){
+                System.out.println(availableDirections);
+                changeDirection(availableDirections);
+                directionChangeTimer = 0;
+            }
             if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
                     && directionChangeTimer > directionChangeInterval) {
                 changeDirection(availableDirections);
@@ -157,6 +162,12 @@ public abstract class EnemyTank extends Tank {
 
 
     public void changeDirection(ArrayList<Direction> availableDirections) {
+        if(availableDirections.size()>=4 && availableDirections.contains(currentDirection.getOpposite()) && availableDirections.contains(currentDirection)) {
+            availableDirections.remove(currentDirection.getOpposite());
+            availableDirections.remove(currentDirection);
+        }
+        if(availableDirections.size()>=3 && availableDirections.contains(currentDirection.getOpposite())) {
+            availableDirections.remove(currentDirection.getOpposite());}
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
 
