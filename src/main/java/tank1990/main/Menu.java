@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Menu extends JPanel implements KeyListener {
+public class Menu extends JPanel implements KeyListener, Runnable {
     private int currentSelection = 0;
     private String[] menuItems = {"Start", "Options", "Exit"};
     private Image logoImage;
@@ -30,7 +30,7 @@ public class Menu extends JPanel implements KeyListener {
         ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
         logoImage = icon.getImage();
         if (gameState.isSoundOn()) {
-            backgroundMusic.playSound();
+            backgroundMusic.playLoop();
         } else {
             backgroundMusic.stopSound();
         }
@@ -54,6 +54,19 @@ public class Menu extends JPanel implements KeyListener {
                 g.setColor(Color.WHITE);
             }
             g.drawString(menuItems[i], getWidth() / 2 - 100, 300 + i * 50);
+        }
+    }
+    @Override
+    public void run() {
+
+
+        while (true) {
+            repaint();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
     @Override
@@ -86,8 +99,8 @@ public class Menu extends JPanel implements KeyListener {
             case 0:
                 System.out.println("Start game selected!");
                 parentFrame.dispose();
-                GameObject game = new GameObject();
-                game.startGame();
+                GameObject game = new GameObject(backgroundMusic);
+                new Thread(game).start();
                 break;
             case 1:
                 System.out.println("Options selected");
@@ -109,10 +122,11 @@ public class Menu extends JPanel implements KeyListener {
         optionsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         optionsFrame.setLocationRelativeTo(this);
         optionsFrame.setVisible(true);
+        new Thread(optionsMenu).start();
     }
     public void refreshBackgroundMusic() {
         if (gameState.isSoundOn()) {
-            backgroundMusic.playSound(); // Chơi nhạc nếu isSoundOn là true
+            backgroundMusic.resetSound(); // Chơi nhạc nếu isSoundOn là true
         }
     }
     @Override

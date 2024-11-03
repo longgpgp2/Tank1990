@@ -32,6 +32,7 @@ public class SoundManager {
     public void stopSound(){
         if (clip != null && clip.isRunning()){
             clip.stop();
+            clip.setFramePosition(0);
         }
     }
     public void resetSound(){

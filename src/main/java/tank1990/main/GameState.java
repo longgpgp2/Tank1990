@@ -2,7 +2,7 @@ package tank1990.main;
 
 public class GameState {
     private static GameState instance;
-    private boolean isSoundOn;
+    private boolean isSoundOn ;
     private GameState(){
         this.isSoundOn= true;
     }

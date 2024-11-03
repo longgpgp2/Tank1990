@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class OptionsMenu extends JPanel implements KeyListener {
+public class OptionsMenu extends JPanel implements KeyListener,Runnable  {
     private int currentSelection =0;
     private Image logoImage;
     private String[] optionsItems = {"Sound", "Exit"};
@@ -26,11 +26,11 @@ public class OptionsMenu extends JPanel implements KeyListener {
         customFont = font.getCustomFont();
         this.soundManager = new SoundManager();
         this.soundManager.soundLoader(".\\src\\main\\resources\\sounds\\changeOption.wav");
-        if (gameState.isSoundOn()) {
-            backgroundMusic.playSound();
-        } else {
-            backgroundMusic.stopSound();
-        }
+//        if (gameState.isSoundOn()) {
+//            backgroundMusic.playSound();
+//        } else {
+//            backgroundMusic.stopSound();
+//        }
         setFocusable(true);
         addKeyListener(this);
         ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
@@ -91,9 +91,10 @@ public class OptionsMenu extends JPanel implements KeyListener {
     private void selectOption(){
         if (currentSelection == 0){
             gameState.setSoundOn(!gameState.isSoundOn());
-            if (gameState.isSoundOn()) {
-                backgroundMusic.playSound();
-            } else {
+//            if (gameState.isSoundOn()) {
+//                backgroundMusic.playSound();
+//            }
+            if(!gameState.isSoundOn()) {
                 backgroundMusic.stopSound();
             }
             System.out.println(gameState.isSoundOn());
@@ -120,4 +121,15 @@ public class OptionsMenu extends JPanel implements KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
+    @Override
+    public void run() {
+        setVisible(true);
+        while (true) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
