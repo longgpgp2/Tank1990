@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.enums.EntityType;
+import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.Bullet;
 
 public class GameEntityManager {
@@ -31,6 +32,8 @@ public class GameEntityManager {
     }
     if (gameEntity instanceof Bullet) {
       playerBullets.remove(gameEntity);
+    } else if (gameEntity instanceof PowerUp) {
+      gameCollisionEntites.get(EntityType.PLAYER).remove(gameEntity);
     }
   }
 
@@ -40,6 +43,8 @@ public class GameEntityManager {
     }
     if (gameEntity instanceof Bullet) {
       playerBullets.add((Bullet) gameEntity);
+    } else if (gameEntity instanceof PowerUp) {
+      gameCollisionEntites.get(EntityType.PLAYER).add(gameEntity);
     }
   }
 

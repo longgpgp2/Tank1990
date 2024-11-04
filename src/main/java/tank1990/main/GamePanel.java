@@ -35,10 +35,10 @@ import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-   static List<Environment> environments = new ArrayList<>();
+    static List<Environment> environments = new ArrayList<>();
     List<Integer> map = new ArrayList<>();
-   static List<Tank> tanks = new ArrayList<>();
-   static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
+    static List<Tank> tanks = new ArrayList<>();
+    static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 2;
     GamePanel() {
 
@@ -178,6 +178,10 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public static List<Environment> getEnvironments() {
         return environments;
+    }
+
+    public static List<Tank> getTanks() {
+        return tanks;
     }
 
 }

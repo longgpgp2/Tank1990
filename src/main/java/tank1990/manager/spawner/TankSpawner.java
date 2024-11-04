@@ -31,16 +31,17 @@ public class TankSpawner {
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
-        addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
-        CollisionUtil.addCollisionToObjects();
+//        addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+//        CollisionUtil.addCollisionToObjects();
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (types.peek() == null) {
                     timer.stop();
+                } else {
+                    addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+                    CollisionUtil.addCollisionToObjects();
                 }
-                addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
-                CollisionUtil.addCollisionToObjects();
             }
         });
         timer.start();
@@ -51,7 +52,8 @@ public class TankSpawner {
         List<Tank> tanks = new ArrayList<>();
         Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         enemyTypes = readTanksFromLevel(level);
-        tanks.add(createPlayer());
+        playerTank = (PlayerTank) createPlayer();
+        tanks.add(playerTank);
         startQueueingEnemies(enemyTypes, tanks, unoccupiedIndices);
         return tanks;
     }

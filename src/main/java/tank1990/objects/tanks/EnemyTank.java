@@ -19,6 +19,7 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.PowerUpManager;
 import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.ExplosionAnimation;
 import tank1990.manager.animation.Shield;
@@ -289,6 +290,8 @@ public abstract class EnemyTank extends Tank {
         if (collisionBox != null) {
             collisionBox = null;
         }
+
+        PowerUpManager.addPowerUp();
     }
 
     @Override

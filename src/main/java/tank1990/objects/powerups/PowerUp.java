@@ -19,9 +19,7 @@ public abstract class PowerUp extends GameEntity {
         setCollision(new CollisionBox(this, new Vector2D(0, 0), GameConstants.POWERUP_SIZE, GameConstants.POWERUP_SIZE));
     }
 
-    public void activate() {
-
-    }
+    public abstract void activate();
 
     /**
      * Increase player's point

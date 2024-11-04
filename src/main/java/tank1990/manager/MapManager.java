@@ -50,6 +50,13 @@ public class MapManager {
             int index = CollisionUtil.getTileIndex(env.getPosition());
             occupiedIndices.add(index);
         }
+        for (PowerUp pow: PowerUpManager.getPowerUps()) {
+            int index = CollisionUtil.getTileIndex(pow.getPosition());
+            occupiedIndices.add(index);
+            occupiedIndices.add(index + 1);
+            occupiedIndices.add(index + 33);
+            occupiedIndices.add(index + 34);
+        }
         Set unoccupiedIndices = new HashSet();
         for (int i = 0; i < 33*33; i++) {
             unoccupiedIndices.add(i);
@@ -59,8 +66,8 @@ public class MapManager {
     }
     public static PowerUp createPowerUp(List<Environment> environments, List<Tank> tanks){
         Set<Integer> unoccupiedIndices = getUnoccupiedIndex(environments, tanks);
+//        System.out.println(unoccupiedIndices);
         Integer[] unoccupiedIndicesAsArray = unoccupiedIndices.toArray(new Integer[0]);
-
         Random random = new Random();
         int randomArrayIndex;
         Integer randomIndex;
@@ -69,8 +76,10 @@ public class MapManager {
             randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
             randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
         } while (
-            (randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
-            (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
+            !checkIndexAvailability(randomIndex, unoccupiedIndices) || (
+                (randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
+                (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
+            )
         );
         Vector2D powerupPosition = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
 

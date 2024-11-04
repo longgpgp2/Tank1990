@@ -1,5 +1,6 @@
 package tank1990.objects.powerups;
 
+import tank1990.manager.GameEntityManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.EnemyTank;
 
@@ -17,6 +18,8 @@ public class Grenade extends PowerUp{
 
 		for (EnemyTank tank : TankSpawner.enemyTanks) {
 			tank.health = 0;
+			tank.destroy();
+			GameEntityManager.remove(tank);
 		}
 		System.out.println("[POWER-UP] Destroy all enemy tanks");
 	}

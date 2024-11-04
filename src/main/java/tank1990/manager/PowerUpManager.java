@@ -32,10 +32,14 @@ public class PowerUpManager {
      * @param environments A List of Environment components
      * @param tanks A List of Tank components
      */
-    public static boolean addPowerUp(List<Environment> environments, List<Tank> tanks) {
-        if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
+    public static boolean addPowerUp() {
+        if (powerUps.size() < 500) { // Limit the number of power-up can be on the field
+            List<Environment> environments = GamePanel.getEnvironments();
+            List<Tank> tanks = GamePanel.getTanks();
             PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
             powerUps.add(powerUp);
+            GameEntityManager.add(powerUp);
+            System.out.println(tanks.size());
             Timer autoRemoveTimer = new Timer(AUTO_REMOVE_DELAY, e -> {
                 System.out.println("A power-up is removed after " + AUTO_REMOVE_DELAY + "ms");
                 removePowerUp(powerUp);
@@ -81,7 +85,7 @@ public class PowerUpManager {
     public static void startAutoSpawn(List<Environment> environments, List<Tank> tanks) {
         if (autoSpawnAction == null) {
             autoSpawnAction = e -> {
-                if (addPowerUp(environments, tanks)) {
+                if (addPowerUp()) {
                     System.out.println("A new power-up is added after " + AUTO_SPAWN_DELAY + "ms");
                 } else {
                     System.out.println("Power-up list is full. Nothing happened.");
