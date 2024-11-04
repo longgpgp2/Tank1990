@@ -1,4 +1,4 @@
-package tank1990.manager.animation;
+package tank1990.objects.animation;
 
 import javax.swing.*;
 import java.awt.*;

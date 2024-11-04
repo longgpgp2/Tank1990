@@ -10,7 +10,7 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 
 import javax.swing.*;
-//import tank1990.manager.animation.Game;
+//import tank1990.objects.animation.Game;
 
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
