@@ -23,6 +23,8 @@ import java.util.*;
 import java.util.List;
 
 public class MapManager {
+
+    // truyền 1 set các unoccupied indices vào để check xem index và 3 indices xung quanh có trống hay không
     public static boolean checkIndexAvailability(int index, Set<Integer> unoccupiedIndices){
         Set<Integer> requiredIndices = new HashSet<>();
         requiredIndices.add(index);
@@ -48,22 +50,37 @@ public class MapManager {
             int index = CollisionUtil.getTileIndex(env.getPosition());
             occupiedIndices.add(index);
         }
+        for (PowerUp pow: PowerUpManager.getPowerUps()) {
+            int index = CollisionUtil.getTileIndex(pow.getPosition());
+            occupiedIndices.add(index);
+            occupiedIndices.add(index + 1);
+            occupiedIndices.add(index + 33);
+            occupiedIndices.add(index + 34);
+        }
         Set unoccupiedIndices = new HashSet();
         for (int i = 0; i < 33*33; i++) {
             unoccupiedIndices.add(i);
         }
-//        System.out.println(occupiedIndices);
         unoccupiedIndices.removeAll(occupiedIndices);
-//        System.out.println(unoccupiedIndices);
         return unoccupiedIndices;
     }
     public static PowerUp createPowerUp(List<Environment> environments, List<Tank> tanks){
         Set<Integer> unoccupiedIndices = getUnoccupiedIndex(environments, tanks);
+//        System.out.println(unoccupiedIndices);
         Integer[] unoccupiedIndicesAsArray = unoccupiedIndices.toArray(new Integer[0]);
-
         Random random = new Random();
-        int randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
-        Integer randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
+        int randomArrayIndex;
+        Integer randomIndex;
+        // the power-up will be within a specific boundary
+        do {
+            randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
+            randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
+        } while (
+            !checkIndexAvailability(randomIndex, unoccupiedIndices) || (
+                (randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
+                (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
+            )
+        );
         Vector2D powerupPosition = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH, GameConstants.ENTITY_HEIGHT);
 
         randomArrayIndex = random.nextInt(GameConstants.PERK_LIST.length);
@@ -80,10 +97,12 @@ public class MapManager {
     public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
         for (Tank tank: tanks) {
                 g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
-//                g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
-//                g.setColor(Color.red);
-//                g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
         }
+        Tank tank = getPlayerTank(tanks);
+        g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
+        g.setColor(Color.red);
+        g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
+
     }
 
     public static PlayerTank getPlayerTank(List<Tank> tanks) {
@@ -94,14 +113,13 @@ public class MapManager {
         }
         return null;
     }
-
-    public static List<Environment> generateEnvironments(){
+    // Đọc từ level và tạo ra map tương ứng
+    public static List<Environment> generateEnvironments(int level){
         List<Environment> envs = new ArrayList();
-        List<Integer> map = readLevel();
+        List<Integer> map = readLevel(level);
         for (int i = 0; i < map.size(); i++) {
             int envX =  (i % 33) *(GameConstants.ENTITY_WIDTH);
             int envY =  (i /33) *(GameConstants.ENTITY_HEIGHT);
-//            System.out.println(map);
             if (map.get(i) != 0) {
                 Environment env=null;
                 switch (map.get(i)){
@@ -125,26 +143,26 @@ public class MapManager {
                         env = new Trees(envX, envY);
                         break;
                     }
+                    case 9: {
+                        env = new BaseWall(envX, envY);
+                        break;
+                    }
                     default:{
                         break;
                     }
                 }
                 if(env!=null){
                     env.setPosition(new Vector2D(envX, envY));
-                    int index = CollisionUtil.getTileIndex(env.getPosition());
-//                    System.out.println(env.getPosition()+" + "+ env.getCollision());
                     if(!env.crossable && env.getType().equals(EntityType.BASE))env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width*2, env.height*2));
                     if(!env.crossable)env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
-
                     envs.add(env);
                 }
-
             }
-
         }
-
         return envs;
     }
+
+    // Vẽ environment bằng Graphics
     public static void drawEnvironments(List<Environment> envs, Graphics g, ImageObserver observer){
         for (Environment env : envs) {
             g.setColor(Color.GRAY);
@@ -161,9 +179,11 @@ public class MapManager {
 //            g.drawString(String.valueOf(index), (int)env.getPosition().x,(int) env.getPosition().y+16);
         }
     }
-    public static List<Integer> readLevel(){
+
+    // Đọc file battlefield.map của level truyền vào để tạo ra 1 list các integer tương ứng với từng environment object
+    public static List<Integer> readLevel(int level){
         List map = new ArrayList<Integer>();
-        File file = new File(".\\src\\main\\resources\\battlefield.map");
+        File file = new File(".\\src\\main\\resources\\levels\\"+ level +"\\battlefield.map");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = null;

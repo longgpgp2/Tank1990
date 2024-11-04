@@ -7,10 +7,23 @@ import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.CollisionType;
+import tank1990.common.enums.EntityType;
+import tank1990.manager.GameEntityManager;
 
 public class CollisionUtil {
   private static final int MAX_WIDTH = GameConstants.MAP_WIDTH + GameConstants.MAP_SHIFT_WIDTH;
   private static final int MAX_HEIGHT = GameConstants.MAP_HEIGHT + GameConstants.MAP_SHIFT_HEIGHT;
+
+  public static void addCollisionToObjects(){
+    GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
+    GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+    GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+            EntityType.BRICK,
+            EntityType.STEEL,
+            EntityType.ENEMY, EntityType.BASE
+    });
+  }
 
   public static int getTileIndex(Vector2D position) {
     int column = (int) (position.x / (GameConstants.ENTITY_WIDTH));
@@ -32,7 +45,6 @@ public class CollisionUtil {
   public static Vector2D getOutOfBoundOffset(GameEntity gameEntity) {
     double dx1 = gameEntity.getCenter().x + gameEntity.width / 2 - MAX_WIDTH;
     double dx2 = GameConstants.MAP_SHIFT_WIDTH - (gameEntity.getCenter().x - gameEntity.width / 2);
-    // System.out.println(dx1 + " " + dx2);
     if (dx1 > 0 || dx2 > 0) {
       if (dx1 > 0) {
         return new Vector2D(-dx1, 0);
@@ -95,6 +107,30 @@ public class CollisionUtil {
     }
   }
 
+  public static boolean checkIntersection(AABB firstAABB, AABB secondAABB) {
+    AABB MinkowskiDiff = secondAABB.minkowskiDifference(firstAABB);
+
+    if (MinkowskiDiff.min.x <= 0 &&
+        MinkowskiDiff.max.x >= 0 &&
+        MinkowskiDiff.min.y <= 0 &&
+        MinkowskiDiff.max.y >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public static boolean checkIntersection(AABB MinkowskiDiff) {
+    if (MinkowskiDiff.min.x <= 0 &&
+        MinkowskiDiff.max.x >= 0 &&
+        MinkowskiDiff.min.y <= 0 &&
+        MinkowskiDiff.max.y >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   /**
    * Check for simple AABB and swept AABB colision.
    * 
@@ -105,54 +141,77 @@ public class CollisionUtil {
    * Note:
    * - Workable but some bugs may still occur
    * 
-   * @param gameComponentA - a GameEntity.
-   * @param gameComponentB - a GameEntity.
-   * @param deltaTime      - time between frames.
+   * @param gameEntityA - a GameEntity.
+   * @param gameEntityB - a GameEntity.
+   * @param deltaTime   - time between frames.
    * @return true if AABB collision happened and false otherwise.
    */
   public static boolean checkAABBCollision(
-      GameEntity gameComponentA,
-      GameEntity gameComponentB,
+      GameEntity gameEntityA,
+      GameEntity gameEntityB,
       double deltaTime) {
 
-    if (gameComponentA.getCollision() == null ||
-        gameComponentB.getCollision() == null) {
+    if (gameEntityA.getCollision() == null ||
+        gameEntityB.getCollision() == null) {
       return false;
     }
 
-    AABB collBoxA_AABB = gameComponentA.getCollision().getAABB();
-    AABB collBoxB_AABB = gameComponentB.getCollision().getAABB();
+    AABB collBoxA_AABB = gameEntityA.getCollision().getAABB();
+    AABB collBoxB_AABB = gameEntityB.getCollision().getAABB();
 
     AABB MinkowskiDiff = collBoxB_AABB.minkowskiDifference(collBoxA_AABB);
 
-    if (MinkowskiDiff.min.x <= 0 &&
-        MinkowskiDiff.max.x >= 0 &&
-        MinkowskiDiff.min.y <= 0 &&
-        MinkowskiDiff.max.y >= 0) {
-      checkStaticCollision(gameComponentA, gameComponentB, deltaTime);
-      if (!gameComponentA.getVelocity().isZero()) {
-        checkRigidCollision(gameComponentA, gameComponentB, deltaTime);
-      }
-
-      if (!gameComponentB.getVelocity().isZero()) {
-        checkRigidCollision(gameComponentB, gameComponentA, deltaTime);
-      }
-      return true;
+    if (checkIntersection(MinkowskiDiff)) {
+      return simpleAABBReponse(gameEntityA, gameEntityB, deltaTime);
     } else {
-      Vector2D relativeMotion = (gameComponentA.getVelocity().minus(gameComponentB.getVelocity())).multiply(deltaTime);
+      return sweptAABBResponse(gameEntityA, gameEntityB, MinkowskiDiff, deltaTime);
+    }
+  }
 
-      Double h = MinkowskiDiff.getRayIntersectionFraction(Vector2D.zero(), relativeMotion);
+  public static boolean simpleAABBReponse(
+      GameEntity gameEntityA,
+      GameEntity gameEntityB,
+      double deltaTime) {
+    if (gameEntityA.getCollision().isCollisionResponseEnabled() == false ||
+        gameEntityB.getCollision().isCollisionResponseEnabled() == false) {
+      return true;
+    }
 
-      if (h < Double.POSITIVE_INFINITY) {
-        Vector2D offsetA = gameComponentA.getVelocity().multiply(deltaTime).multiply(h);
-        Vector2D offsetB = gameComponentB.getVelocity().multiply(deltaTime).multiply(h);
-        gameComponentA.setPosition(gameComponentA.getPosition().add(offsetA));
-        gameComponentB.setPosition(gameComponentB.getPosition().add(offsetB));
+    checkStaticCollision(gameEntityA, gameEntityB, deltaTime);
 
+    if (!gameEntityB.getVelocity().isZero()) {
+      checkRigidCollision(gameEntityB, gameEntityA, deltaTime);
+    }
+
+    if (!gameEntityA.getVelocity().isZero()) {
+      checkRigidCollision(gameEntityA, gameEntityB, deltaTime);
+    }
+
+    return true;
+  }
+
+  public static boolean sweptAABBResponse(
+      GameEntity gameEntityA,
+      GameEntity gameEntityB,
+      AABB MinkowskiDiff,
+      double deltaTime) {
+    Vector2D relativeMotion = (gameEntityA.getVelocity().minus(gameEntityB.getVelocity())).multiply(deltaTime);
+
+    Double h = MinkowskiDiff.getRayIntersectionFraction(Vector2D.zero(), relativeMotion);
+
+    if (h < Double.POSITIVE_INFINITY) {
+      if (gameEntityA.getCollision().isCollisionResponseEnabled() == false ||
+          gameEntityB.getCollision().isCollisionResponseEnabled() == false) {
         return true;
       }
-      return false;
+
+      Vector2D offsetA = gameEntityA.getVelocity().multiply(deltaTime).multiply(h);
+      Vector2D offsetB = gameEntityB.getVelocity().multiply(deltaTime).multiply(h);
+
+      gameEntityA.setPosition(gameEntityA.getPosition().add(offsetA));
+      gameEntityB.setPosition(gameEntityB.getPosition().add(offsetB));
     }
+    return false;
   }
 
   /**
@@ -187,7 +246,9 @@ public class CollisionUtil {
     if (target.getCollision().isEnabled() && hasCollision) {
       Vector2D offset = source.getVelocity().normalized().multiply(-1);
       source.setPosition(source.getPosition().add(offset));
+      source.setVelocity(new Vector2D(0, 0));
     }
+
     return hasCollision;
   }
 
@@ -205,16 +266,22 @@ public class CollisionUtil {
     AABB sourceAABB = source.getCollision().getAABB();
     AABB targetAABB = target.getCollision().getAABB();
 
-    AABB MinkowskiDiff = targetAABB.minkowskiDifference(sourceAABB);
+    AABB sourceMinkowskiDiff = targetAABB.minkowskiDifference(sourceAABB);
 
     // Calculation the offset
-    double offsetX = Math.min(Math.abs(MinkowskiDiff.min.x), Math.abs(MinkowskiDiff.max.x));
-    double offsetY = Math.min(Math.abs(MinkowskiDiff.min.y), Math.abs(MinkowskiDiff.max.y));
+    double sourceOffsetX = Math.min(Math.abs(sourceMinkowskiDiff.min.x), Math.abs(sourceMinkowskiDiff.max.x));
+    double sourceOffsetY = Math.min(Math.abs(sourceMinkowskiDiff.min.y), Math.abs(sourceMinkowskiDiff.max.y));
 
     // Apply direction to offset
-    Vector2D totalOffset = sourceAABB.getOverlappingOffsetDirection(targetAABB, offsetX, offsetY);
+    Vector2D sourceOffset = sourceAABB.getOverlappingOffsetDirection(targetAABB, sourceOffsetX, sourceOffsetY);
 
-    source.setPosition(source.getPosition().add(totalOffset));
+    if (source.getCollision().getCollisionType() == CollisionType.RIGID) {
+      source.setPosition(source.getPosition().add(sourceOffset.multiply(deltaTime)));
+    }
+
+    if (target.getCollision().getCollisionType() == CollisionType.RIGID) {
+      target.setPosition(target.getPosition().add(sourceOffset.multiply(-1).multiply(deltaTime)));
+    }
 
     return true;
   }

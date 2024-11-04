@@ -1,52 +1,88 @@
 package tank1990.objects.tanks;
 
-import java.awt.Graphics;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Arrays;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
+import tank1990.common.classes.AABB;
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
+import tank1990.common.utils.CollisionUtil;
+import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
-import tank1990.manager.animation.Appear;
-import tank1990.manager.animation.Shield;
+import tank1990.manager.PowerUpManager;
+import tank1990.objects.animation.Appear;
+import tank1990.objects.animation.ExplosionAnimation;
+import tank1990.objects.animation.Shield;
+import tank1990.manager.spawner.TankSpawner;
 
 public abstract class EnemyTank extends Tank {
-    private String name;
-    private int point;
-    private String specialTraits;
-    private boolean isAppear = true;
-    private Appear appear;
+    public Image[][] images;
+    private int frameCounter = 0;
+    private final int animationInterval = 100;
 
+    private int point;
+    private boolean isAppear = true;
     private boolean isShield = false;
+
+    private String name;
+    private String specialTraits;
+    private Appear appear;
     private Shield shield;
 
-    private Direction movingDirection;
-    private Random random;
-    private Direction lastDirection;
-    private Vector2D targetPosition = null;
-    public Image[] images;
+    // (adjustable) The position of 4 potential collision boxes in order from TOP
+    // DOWN LEFT RIGHT. For example if set to 5, 4 future collision boxes are placed
+    // 5 pixels off TOP DOWN LEFT RIGHT respectively from origin collision box.
+    private int directionPixelCheck = 10;
+
+    // (adjustable) After how long before the entity can change direction. Will
+    // reset after each direction change. Measures in second.
+    private double directionChangeInterval = 1.3;
+    private double directionChangeTimer = 0;
+
+    // (adjustable) time between attacks.
+    private double attackInterval = 0.25;
+    private double attackIntervalTimer = 0;
+
+    // (adjustable) How long before the tank can attack.
+    private double randomAttackInterval = CommonUtil.randomInteger(4, 5);
+    private double randomAttackIntervalTimer = 0;
+
+    private ArrayList<Direction> availableDirections = new ArrayList<>();
+    private ArrayList<Direction> prevAvailableDirections = new ArrayList<>();
 
     public EnemyTank(String name, int health, int point, int bulletSpeed, int movementSpeed, String specialTraits) {
         super(EntityType.ENEMY, health, bulletSpeed, movementSpeed, Direction.DOWN);
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;
-        setCollision(
-                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE));
-        appear = new Appear(100);
-        startAnimation();
-        movingDirection = this.direction;
-        random = new Random();
 
-        images = new Image[4]; // UP, DOWN, LEFT, RIGHT
+        CollisionBox collisionBox = new CollisionBox(
+                this, new Vector2D(2.5, 2.5),
+                GameConstants.TANK_SIZE - 5,
+                GameConstants.TANK_SIZE - 5);
+
+        setCollision(collisionBox);
+        collisionBox.setEnableFrontCollisionCheck(true);
+        collisionBox.setCollisionType(CollisionType.RIGID);
+
+        appear = new Appear(100);
+
+        startAnimation();
+
+        this.images = new Image[4][2]; // UP, DOWN, LEFT, RIGHT
         loadImages();
+
+        setBulletCount(1);
+        setBulletSpeed(100);
     }
 
     protected abstract void loadImages();
@@ -93,164 +129,245 @@ public abstract class EnemyTank extends Tank {
         }).start();
     }
 
-    public void update(double deltaTime) {
-        if (!isAppear) {
-            updatePosition();
-            checkAndChangeDirection();
-        }
-    }
-
-    private void checkAndChangeDirection() {
-        ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
-        ArrayList<Direction> availableDirections = checkAvailableDirections(gameEntities);
-
-        if (availableDirections.isEmpty())
-            return;
-
-        // Collision handling and direction selection
-        if (availableDirections.size() > 2) {
-            // More than two directions available, pick one randomly (excluding
-            // lastDirection)
-            availableDirections.remove(lastDirection);
-            movingDirection = availableDirections.get(random.nextInt(availableDirections.size()));
-            updateLastDirection();
-        } else {
-            // Existing handling for one or two available directions
-            Vector2D potentialNewPosition = getPosition().add(movingDirection.getVector().scale(movementSpeed));
-            if (checkCollisionWithEntities(potentialNewPosition, gameEntities)) {
-                if (availableDirections.size() == 1) {
-                    movingDirection = availableDirections.get(0);
-                } else if (availableDirections.size() == 2) {
-                    if (availableDirections.contains(movingDirection)) {
-                        // Keep current direction
-                    } else {
-                        movingDirection = availableDirections.get(0).equals(lastDirection)
-                                ? availableDirections.get(1)
-                                : availableDirections.get(0);
-                    }
-                }
-                updateLastDirection();
-            } else {
-                setPosition(potentialNewPosition);
-            }
-        }
-    }
-
-    private boolean checkCollisionWithEntities(Vector2D position, ArrayList<GameEntity> gameEntities) {
-        for (GameEntity entity : gameEntities) {
-            if (entity != this && checkCollisionWithEntity(position, entity, this.getCollision().width,
-                    this.getCollision().height)) {
-                return true; // Phát hiện va chạm
-            }
-        }
-        return false; // Không có va chạm
-    }
-
-    private void updateLastDirection() {
-        if (movingDirection == Direction.UP) {
-            lastDirection = Direction.DOWN;
-        } else if (movingDirection == Direction.DOWN) {
-            lastDirection = Direction.UP;
-        } else if (movingDirection == Direction.LEFT) {
-            lastDirection = Direction.RIGHT;
-        } else if (movingDirection == Direction.RIGHT) {
-            lastDirection = Direction.LEFT;
-        }
-    }
-
-    private ArrayList<Direction> checkAvailableDirections(ArrayList<GameEntity> gameEntities) {
-        ArrayList<Direction> availableDirections = new ArrayList<>();
-
-        Direction[] directions = { Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT };
-
-        for (Direction direction : directions) {
-            Vector2D tempPosition = getPosition().add(direction.getVector().scale(GameConstants.TANK_SIZE));
-            CollisionBox tempCollisionBox = new CollisionBox(this, tempPosition, this.getCollision().width,
-                    this.getCollision().height);
-
-            boolean collisionDetected = false;
-
-            for (GameEntity entity : gameEntities) {
-                if (entity != this) {
-                    if (checkCollisionWithEntity(tempPosition, entity, tempCollisionBox.width,
-                            tempCollisionBox.height)) {
-                        // Nếu có va chạm với đối tượng không phải TREE hoặc POWER_UP, đánh dấu va chạm
-                        if (entity.getType() != EntityType.TREE && entity.getType() != EntityType.POWER_UP) {
-                            collisionDetected = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Chỉ thêm hướng nếu không có va chạm với bất kỳ đối tượng nào khác ngoài TREE
-            // hoặc POWER_UP
-            if (!collisionDetected) {
-                availableDirections.add(direction);
-            }
-        }
-
-        // System.out.println(getName() + " Available directions: " +
-        // availableDirections);
-        return availableDirections;
-    }
-
-    private boolean checkCollisionWithEntity(Vector2D position, GameEntity entity, int width, int height) {
-        // Kiểm tra va chạm theo hình chữ nhật
-        return (position.x < entity.x + entity.width &&
-                position.x + width > entity.x &&
-                position.y < entity.y + entity.height &&
-                position.y + height > entity.y);
-    }
-
-    public void updatePosition() {
-        // Di chuyển theo hướng đã chọn
-        if (movingDirection == Direction.UP) {
-            moveIfCollisionClear(getPosition().add(new Vector2D(0, -movementSpeed)));
-        } else if (movingDirection == Direction.DOWN) {
-            moveIfCollisionClear(getPosition().add(new Vector2D(0, movementSpeed)));
-        } else if (movingDirection == Direction.LEFT) {
-            moveIfCollisionClear(getPosition().add(new Vector2D(-movementSpeed, 0)));
-        } else if (movingDirection == Direction.RIGHT) {
-            moveIfCollisionClear(getPosition().add(new Vector2D(movementSpeed, 0)));
-        }
-
-        // Cập nhật hình ảnh dựa trên hướng di chuyển
-        if (!isAppear) {
-            image = images[movingDirection.ordinal()];
-        }
-    }
-
-    private void moveIfCollisionClear(Vector2D newPosition) {
-        CollisionBox newCollisionBox = new CollisionBox(this, newPosition, this.getCollision().width,
-                this.getCollision().height);
-        ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
-
-        boolean collisionDetected = false;
-
-        // Kiểm tra va chạm với các đối tượng khác
-        for (GameEntity entity : gameEntities) {
-            if (entity != this) {
-                if (checkCollisionWithEntity(newPosition, entity, newCollisionBox.width, newCollisionBox.height)) {
-                    if (entity.getType() != EntityType.TREE && entity.getType() != EntityType.POWER_UP) {
-                        collisionDetected = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Nếu không có va chạm, cập nhật vị trí
-        if (!collisionDetected) {
-            setPosition(newPosition);
-        }
+    public boolean isAppearing() {
+        return isAppear;
     }
 
     @Override
     public Bullet shoot() {
-        System.out.println(name + " is shooting!");
+        if (randomAttackIntervalTimer < randomAttackInterval) {
+            return null;
+        }
 
-        return null;
+        if (attackIntervalTimer < attackInterval) {
+            return null;
+        }
+
+        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
+        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
+
+        Bullet bullet = new Bullet(bulletX, bulletY, direction, bulletSpeed, this);
+        bullets.add(bullet);
+
+        attackIntervalTimer = 0;
+        randomAttackIntervalTimer = 0;
+        randomAttackInterval = CommonUtil.randomInteger(1, 3);
+
+        return bullet;
+    }
+
+    public void update(double deltaTime) {
+        shoot();
+
+        if (isAppear) {
+            return;
+        }
+        frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
+        if (frameCounter >= animationInterval) {
+            frameCounter -= animationInterval;
+            int imageIndex = (frameCounter < animationInterval / 2) ? 0 : 1;
+            image = images[direction.ordinal()][imageIndex];
+        }
+
+        HashSet<GameEntity> collidedEntities = checkCollision(deltaTime);
+
+        if (collidedEntities == null) {
+            move(deltaTime);
+        }
+
+        availableDirections = findAvailableDirections(deltaTime);
+
+        if (collidedEntities != null && directionChangeTimer > directionChangeInterval) {
+            changeDirection(availableDirections);
+            directionChangeTimer = 0;
+        }
+        // if (collidedEntities !=null)
+        // if(collidedEntities.stream().filter(gameEntity ->
+        // gameEntity.getType()==EntityType.ENEMY).count()>=1 && directionChangeTimer >
+        // directionChangeInterval){
+        // System.out.println(availableDirections);
+        // changeDirection(availableDirections);
+        // directionChangeTimer = 0;
+        // }
+        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
+                && directionChangeTimer > directionChangeInterval) {
+            changeDirectionWhenNotCollided(availableDirections);
+            directionChangeTimer = 0;
+        }
+        // if (collidedEntities == null && directionChangeTimer >
+        // directionChangeInterval) {
+        // randomDirection();
+        // directionChangeTimer = 0;
+        // }
+
+        attackIntervalTimer += deltaTime;
+        randomAttackIntervalTimer += deltaTime;
+        directionChangeTimer += deltaTime;
+    }
+
+    public void changeDirection(ArrayList<Direction> availableDirections) {
+        if (availableDirections.size() >= 4 && availableDirections.contains(direction.getOpposite())
+                && availableDirections.contains(direction)) {
+            availableDirections.remove(direction.getOpposite());
+            availableDirections.remove(direction);
+        }
+        if (availableDirections.size() >= 3 && availableDirections.contains(direction.getOpposite())) {
+            availableDirections.remove(direction.getOpposite());
+        }
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        direction = randomDirection;
+    }
+
+    public void changeDirectionWhenNotCollided(ArrayList<Direction> availableDirections) {
+        if (availableDirections.size() >= 2 && availableDirections.contains(direction.getOpposite())) {
+            availableDirections.remove(direction.getOpposite());
+        }
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        direction = randomDirection;
+    }
+
+    public void randomDirection() {
+        int changingChance = CommonUtil.randomInteger(0, 100);
+        if (changingChance < 10) {
+            int randomIndex = CommonUtil.randomInteger(0, 3);
+            ArrayList<Direction> directions = (ArrayList<Direction>) Arrays.asList(Direction.UP, Direction.DOWN,
+                    Direction.LEFT, Direction.RIGHT);
+            Direction randomDirection = directions.get(randomIndex);
+
+            direction = randomDirection;
+        }
+    }
+
+    /**
+     * Add more chance to explore new direction
+     * 
+     * @param prevDirections
+     * @param newDirections
+     * @param prevDirectionChance
+     * @param newDirectionChance
+     */
+    public void changeDirection(
+            ArrayList<Direction> prevDirections,
+            ArrayList<Direction> newDirections,
+            int prevDirectionChance,
+            int newDirectionChance) {
+        ArrayList<Direction> availableDirections = new ArrayList<>();
+
+        for (int i = 0; i < prevDirectionChance; i++) {
+            availableDirections.addAll(prevDirections);
+        }
+
+        for (int i = 0; i < newDirectionChance; i++) {
+            availableDirections.addAll(newDirections);
+        }
+
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        direction = randomDirection;
+    }
+
+    public void move(double deltaTime) {
+        setVelocity(direction.getValue().multiply(movementSpeed));
+        setPosition(getPosition().add(getVelocity().multiply(deltaTime)));
+    }
+
+    public ArrayList<Direction> findAvailableDirections(double deltaTime) {
+        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
+        ArrayList<AABB> potentialAABBs = potentialAABBs(potentialCollisionBoxPosition(deltaTime));
+        ArrayList<Direction> directions = new ArrayList<>();
+
+        try {
+            int index = 0;
+            for (AABB expectedAABB : potentialAABBs) { // TOP >> DOWN >> LEFT >> RIGHT
+                boolean isAvailable = true;
+
+                for (GameEntity entity : collisionEntities) {
+                    if (entity == null || entity.getCollision() == null) {
+                        continue;
+                    }
+                    if (entity.getType() == EntityType.ENEMY) {
+                        continue;
+                    }
+                    if (CollisionUtil.checkIntersection(expectedAABB, entity.getCollision().getAABB())) {
+                        isAvailable = false;
+                        break;
+                    }
+                }
+
+                if (isAvailable) {
+                    directions.add(Direction.values()[index]);
+                }
+                index++;
+            }
+
+        } catch (Exception e) {
+            // System.out.println(e);
+        }
+
+        return directions;
+    }
+
+    public ArrayList<Vector2D> potentialCollisionBoxPosition(double deltaTime) {
+        ArrayList<Vector2D> potentialPositions = new ArrayList<>();
+
+        for (Direction direction : Direction.values()) {
+            if (direction.equals(Direction.NONE)) {
+                continue;
+            }
+
+            Vector2D expectedVelocity = (direction.getValue().multiply(directionPixelCheck));
+            Vector2D expectedPosition = collisionBox.globalPosition.add(expectedVelocity);
+
+            potentialPositions.add(expectedPosition);
+        }
+
+        return potentialPositions;
+    }
+
+    public ArrayList<AABB> potentialAABBs(ArrayList<Vector2D> potentialCollisionPositions) {
+        ArrayList<AABB> potentialAABBs = new ArrayList<>();
+
+        for (Vector2D collBoxPosition : potentialCollisionPositions) {
+            Vector2D expectedCenter = new Vector2D(
+                    collBoxPosition.x + collisionBox.width / 2.0,
+                    collBoxPosition.y + collisionBox.height / 2.0);
+
+            Vector2D expectedExtent = new Vector2D(collisionBox.width / 2.0, collisionBox.height / 2.0);
+
+            AABB expectedAABB = new AABB(expectedCenter, expectedExtent);
+
+            potentialAABBs.add(expectedAABB);
+        }
+
+        return potentialAABBs;
+    }
+
+    @Override
+    public void destroy() {
+        // animation nổ
+        ExplosionAnimation explosion = new ExplosionAnimation();
+        explosion.startAnimation(() -> {
+            image = null;
+        }, new ExplosionAnimation.ImageUpdateCallback() {
+            @Override
+            public void updateImage(Image newImage) {
+                image = newImage; // tao new image de thay the tung anh animation
+            }
+        });
+
+        // Xóa CollisionBox
+        if (collisionBox != null) {
+            collisionBox = null;
+        }
+
+        PowerUpManager.addPowerUp();
+        GameEntityManager.remove(this);
+        TankSpawner.enemyTanks.remove(this);
     }
 
     public String getName() {
@@ -277,6 +394,14 @@ public abstract class EnemyTank extends Tank {
         this.point = point;
     }
 
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return this.health;
+    }
+
     @Override
     public String toString() {
         return "EnemyTank{" +
@@ -289,15 +414,22 @@ public abstract class EnemyTank extends Tank {
                 '}';
     }
 
-    public void draw(Graphics g) {
-        if (isAppear) {
-            g.drawImage(images[movingDirection.ordinal()], (int) position.x, (int) position.y, null);
-        }
-        if (isShield) {
-            ImageIcon currentShieldFrame = shield.getCurrentFrame();
-            if (currentShieldFrame != null) {
-                g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
-            }
-        }
+    public void freeze() {
+        // save original speed
+        int defaultBulletSpeed = bulletSpeed;
+        int defaultMovementSpeed = movementSpeed;
+
+        // freeze the tank
+        this.bulletSpeed = 0;
+        this.movementSpeed = 0;
+
+        // unfreeze the tank after some time
+        Timer timer = new Timer(5000, e -> {
+            this.bulletSpeed = defaultBulletSpeed;
+            this.movementSpeed = defaultMovementSpeed;
+            System.out.println("Freeze over");
+        });
+        timer.setRepeats(false);
+        timer.start();
     }
 }

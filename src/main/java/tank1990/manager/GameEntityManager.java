@@ -6,11 +6,13 @@ import java.util.Iterator;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.enums.EntityType;
+import tank1990.objects.powerups.PowerUp;
+import tank1990.objects.tanks.Bullet;
 
 public class GameEntityManager {
   private static ArrayList<GameEntity> gameEntities = new ArrayList<>();
   private static HashMap<EntityType, ArrayList<GameEntity>> gameCollisionEntites = new HashMap<>();
-
+  private static ArrayList<Bullet> playerBullets = new ArrayList<>();
   public void GameEntity() {
   }
 
@@ -28,11 +30,21 @@ public class GameEntityManager {
         iterator.remove();
       }
     }
+    if (gameEntity instanceof Bullet) {
+      playerBullets.remove(gameEntity);
+    } else if (gameEntity instanceof PowerUp) {
+      gameCollisionEntites.get(EntityType.PLAYER).remove(gameEntity);
+    }
   }
 
   public static void add(GameEntity gameEntity) {
     if (gameEntity != null) {
       gameEntities.add(gameEntity);
+    }
+    if (gameEntity instanceof Bullet) {
+      playerBullets.add((Bullet) gameEntity);
+    } else if (gameEntity instanceof PowerUp) {
+      gameCollisionEntites.get(EntityType.PLAYER).add(gameEntity);
     }
   }
 
@@ -65,5 +77,8 @@ public class GameEntityManager {
 
   public static ArrayList<GameEntity> getCollisionEntities(EntityType type) {
     return gameCollisionEntites.get(type);
+  }
+  public static ArrayList<Bullet> getPlayerBullets() { // Phương thức để lấy danh sách đạn của PlayerTank
+    return playerBullets;
   }
 }

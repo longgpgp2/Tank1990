@@ -4,19 +4,25 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.ImageIcon;
 
 import tank1990.common.classes.CollisionBox;
+import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
-import tank1990.manager.animation.Appear;
-import tank1990.manager.animation.Shield;
+import tank1990.manager.PowerUpManager;
+import tank1990.objects.animation.Appear;
+import tank1990.objects.animation.Shield;
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
     private static int counter = 0;
@@ -26,15 +32,18 @@ public class PlayerTank extends Tank {
     public long shotDelay = 300;
 
     public int maxBullets;
-    public int velocity = 5;
-    public int star = 1;
+    public int speed = 80;
+    private int star = 1;
     KeyHandler keyHandler;
 
-    private boolean isAppear = true;
+    public boolean isAppear = true;
     private Appear appear;
 
     private Shield shield;
-    private boolean isShield = false;
+    public boolean isShield = false;
+
+    private int lives = 3;
+    private int point = 0;
 
     public PlayerTank(int owner, int maxBullets) {
         super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
@@ -42,12 +51,16 @@ public class PlayerTank extends Tank {
         this.setColor(Color.YELLOW);
         appear = new Appear(100);
         image = appear.getCurrentFrame().getImage();
+        startAnimation();
         setCollision(
-                new CollisionBox(this, new Vector2D(2.5, 2.5), GameConstants.TANK_SIZE - 5,
-                        GameConstants.TANK_SIZE - 5));
+                new CollisionBox(this, new Vector2D(4, 4), GameConstants.TANK_SIZE - 8,
+                        GameConstants.TANK_SIZE - 8));
+
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
-        startAnimation();
+
+        collisionBox.setEnableFrontCollisionCheck(true);
+        collisionBox.setCollisionType(CollisionType.RIGID);
     }
 
     private void startAnimation() {
@@ -67,7 +80,7 @@ public class PlayerTank extends Tank {
         }).start();
     }
 
-    private void startShield() {
+    public void startShield() {
         shield = new Shield(200);
         isShield = true;
 
@@ -90,36 +103,33 @@ public class PlayerTank extends Tank {
         }).start();
     }
 
+    public void respawn() {
+        TankSpawner.respawnPlayer();
+        startShield();
+    }
+
+    public void destroy() {
+        GameEntityManager.remove(this);
+        this.collisionBox = null;
+        this.image = null;
+    }
+
     @Override
     public Bullet shoot() {
+        if (this.image == null) {
+            return null;
+        }
+
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
             return null;
         }
-        int bulletX = (int) getPosition().x;
-        int bulletY = (int) getPosition().y;
 
-        switch (getDirection()) {
-            case LEFT:
-                bulletX -= -20;
-                bulletY -= -12;
-                break;
-            case RIGHT:
-                bulletX += 8;
-                bulletY -= -12;
-                break;
-            case UP:
-                bulletY -= -15;
-                bulletX += 12;
-                break;
-            case DOWN:
-                bulletY += 10;
-                bulletX += 12;
-                break;
-        }
+        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
+        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 5);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50, this);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
@@ -166,32 +176,47 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
+        keyHandler.updateVelocity();
+
         if (isAppear) {
             return;
         }
-        // counter++;
-        // System.out.print(" "+counter);
-        keyHandler.updatePosition();
+
         if (isShield) {
-            shield.getCurrentFrame(); // frame của shield
+            shield.getCurrentFrame();
         }
 
-        // vị trí đạn
         for (Bullet bullet : bullets) {
-            bullet.move();
-            // va cham
+            bullet.move(deltaTime);
         }
-        ArrayList collidedEntities = checkCollision(GameEntityManager.getCollisionEntities(type), deltaTime);
-        // System.out.println(GameEntityManager.getPlayerCollisionComponents());
-        if (collidedEntities != null) {
-            for (Object e : collidedEntities) {
-                System.out.println(e);
-            }
-            velocity = 0;
-        } else
-            velocity = 5;
 
-        bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
+        HashSet<GameEntity> collidedEntities = checkCollision(deltaTime);
+
+        if (collidedEntities == null) {
+            move(deltaTime);
+        } else {
+            // System.out.println("--------------------");
+            for (GameEntity e : collidedEntities) {
+                // System.out.println(e);
+                if (e.getType() == EntityType.POWER_UP) {
+                    // remove and trigger power-up effect
+                    PowerUpManager.triggerPowerUp((PowerUp) e);
+                }
+            }
+        }
+        List<Bullet> bulletsToRemove = new ArrayList<>();
+        for (Bullet bullet : bullets) {
+            if (bullet.isOutOfBound() || bullet.isCollided()) {
+                bulletsToRemove.add(bullet);
+            }
+        }
+        bullets.removeAll(bulletsToRemove);
+        // bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() ||
+        // bullet.isCollided());
+    }
+
+    public void move(double deltaTime) {
+        setPosition(getPosition().add(getVelocity().multiply(deltaTime)));
     }
 
     public void keyPressed(KeyEvent e) {
@@ -199,11 +224,9 @@ public class PlayerTank extends Tank {
             return;
         }
         keyHandler.keyPressed(e);
-
     }
 
     public void keyReleased(KeyEvent e) {
-
         keyHandler.keyReleased(e);
     }
 
@@ -215,5 +238,29 @@ public class PlayerTank extends Tank {
                 g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
             }
         }
+    }
+
+    public int getStar() {
+        return star;
+    }
+
+    public void setStar(int star) {
+        this.star = star;
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public void setLives(int lives) {
+        this.lives = lives;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void setPoint(int point) {
+        this.point = point;
     }
 }

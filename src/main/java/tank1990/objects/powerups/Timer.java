@@ -1,5 +1,8 @@
 package tank1990.objects.powerups;
 
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.tanks.EnemyTank;
+
 import javax.swing.*;
 
 public class Timer extends PowerUp{
@@ -10,7 +13,11 @@ public class Timer extends PowerUp{
 
 	@Override
 	public void activate(){
-//		System.out.println(this.getName());
+		this.updatePoint();
+
+		for (EnemyTank tank : TankSpawner.enemyTanks) {
+			tank.freeze();
+		}
 	}
 
 }

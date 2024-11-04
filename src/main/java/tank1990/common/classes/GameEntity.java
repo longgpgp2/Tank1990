@@ -1,15 +1,16 @@
 package tank1990.common.classes;
 
-import java.awt.Component;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
-//import tank1990.manager.animation.Game;
+
+import javax.swing.*;
+//import tank1990.objects.animation.Game;
 
 /**
  * Class cơ bản nhất cho game, extends thằng Component để có thể dùng cho Java
@@ -21,8 +22,8 @@ public abstract class GameEntity extends Component {
     public int width;
     public int height;
 
-    public int spriteCounter = 0;
     public int spriteNum = 1;
+    public int spriteCounter = 0;
 
     protected EntityType type;
     protected Vector2D velocity;
@@ -45,15 +46,6 @@ public abstract class GameEntity extends Component {
         this.position = new Vector2D(x, y);
 
         GameEntityManager.add(this);
-
-         GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                EntityType.BRICK,
-                EntityType.STEEL,
-                EntityType.ENEMY
-        });
-        // System.out.println(GameEntityManager.getGameEntities());
     }
 
     /**
@@ -93,7 +85,6 @@ public abstract class GameEntity extends Component {
 
         if (collisionBox != null) {
             collisionBox.setPosition(position);
-            // System.out.println("Position set");
         }
     }
 
@@ -133,20 +124,61 @@ public abstract class GameEntity extends Component {
         return type;
     }
 
+    public int getX() {
+        return (int) this.x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+        this.position.x = x;
+    }
+
+    public int getY() {
+        return (int) y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+        this.position.y = y;
+    }
+
     public String toString() {
         return "GameEntity(type=" + type + ", Position=" + getPosition() + ", width=" + width + ", height=" + height
                 + ")";
     }
 
-    public ArrayList<GameEntity> checkCollision(ArrayList<GameEntity> gameEntities, double deltaTime) {
+    public boolean equals(GameEntity gameEntity) {
+        if (gameEntity == this) {
+            return true;
+        }
+
+        if (!(gameEntity instanceof GameEntity)) {
+            return false;
+        }
+
+        return this.getType() == gameEntity.getType();
+    }
+
+    /**
+     * Get a set of GameEntity that collided with this GameEntity.
+     * HashSet is used to prevent GameEntity duplication
+     *
+     * @param gameEntities list of player's collidable GameEntity
+     * @param deltaTime    time between frame
+     * @return a HashSet that contains all GameEntity that this GameEntity has
+     *         collided with
+     */
+    public HashSet<GameEntity> checkCollision(double deltaTime) {
+        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
+
         if (!getCollision().isEnabled()) {
             return null;
         }
         // CollisionUtil.checkEdgeCollision(this);
 
-        ArrayList<GameEntity> collidedGameEntities = new ArrayList<>();
+        HashSet<GameEntity> collidedGameEntities = new HashSet<>();
 
-        for (GameEntity gameEntity : gameEntities) {
+        for (GameEntity gameEntity : collisionEntities) {
             if (gameEntity.getCollision() == null ||
                     !gameEntity.getCollision().isEnabled() ||
                     gameEntity == this) {

@@ -1,65 +1,45 @@
 package tank1990.main;
 
-
-import tank1990.common.classes.GameEntity;
-import tank1990.common.constants.GameConstants;
-import tank1990.manager.GameEntityManager;
-import tank1990.manager.MapManager;
-import tank1990.manager.spawner.TankSpawner;
-import tank1990.objects.environments.Environment;
-import tank1990.objects.tanks.Bullet;
-import tank1990.objects.tanks.PlayerTank;
-import tank1990.objects.tanks.Tank;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
-import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
+import tank1990.manager.PowerUpManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.Bullet;
 import tank1990.objects.tanks.PlayerTank;
+import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
-    java.util.List environments = new ArrayList<Environment>();
-    java.util.List map = new ArrayList<Integer>();
-
-    private BufferedImage gameOverImage;
-    private boolean gameOver;
-    private boolean simulateGameOver;
-
-    java.util.List tanks = new ArrayList<Tank>();
-    java.util.List powerUps = new ArrayList<PowerUp>();
-
+    static List<Environment> environments = new ArrayList<>();
+    List<Integer> map = new ArrayList<>();
+    static List<Tank> tanks = new ArrayList<>();
+    static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
+    int currentLevel = 1;
 
     GamePanel() {
 
@@ -84,38 +64,13 @@ public class GamePanel extends JPanel implements ActionListener {
         this.addKeyListener(new TAdapter());
         this.setFocusable(true);
         setBackground(Color.BLACK);
-
-        environments = MapManager.generateEnvironments();
-        tanks = TankSpawner.spawnTanks(environments);
+        environments = MapManager.generateEnvironments(currentLevel);
+        tanks = TankSpawner.spawnTanks(environments, currentLevel);
+        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
-        startTimer();
-
-        simulateGameOver = false;
-
-        gameOver = false;
-        try{
-            gameOverImage = ImageIO.read(new File(".\\src\\main\\resources\\images\\game_over.png"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-    }
-    public void triggerGameOver() {
-        simulateGameOver = true;
-        setGameOver();
-    }
-    public void setGameOver() {
-        gameOver = true;
-        timer.stop();
-        repaint();
-    }
-
-    private void drawGameOver(Graphics g) {
-        if (gameOverImage != null) {
-            int x = (getWidth() - gameOverImage.getWidth()) / 2;
-            int y = (getHeight() - gameOverImage.getHeight()) / 2;
-            g.drawImage(gameOverImage, x, y, this);
-        }
+        // startTimer();
+        // start a timer that spawn a power-up occasionally
+        PowerUpManager.startAutoSpawn();
     }
 
     public void startTimer() {
@@ -132,44 +87,32 @@ public class GamePanel extends JPanel implements ActionListener {
 
     ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
 
-    /**
-     * Cập nhật physic cho từng game entity
-<<<<<<< HEAD
-     * 
-//     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
-=======
-     *
-//     * @param deltaTime khoảng thời gian giữa các tick hoặc giữa các frame
->>>>>>> origin/main
-     */
+
+
+    public void draw() {
+        repaint();
+    }
 
     private void updateGame() {
+        // ConcurrentModificationException will happen when a GameEntity is removed
         try {
             for (GameEntity gameEntity : gameEntities) {
                 gameEntity.update(0.01);
-            }
 
-        } catch (Exception e) {
-            // System.out.println(e);
+            }
+        } catch (ConcurrentModificationException e) {
+            System.out.println("An entity is removed.");
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
         for (Bullet bullet : playerTank.getBullets()) {
-
             if (bullet.isCollided() || bullet.isOutOfBound()) {
-                bullet.destroyBullet();
+                bullet.destroy();
                 bulletsToRemove.add(bullet);
+
             }
-        }
-//        if (playerTank.isDestroyed()) {
-//            setGameOver();
-//            return;
-//        }
-        if (simulateGameOver) {
-            setGameOver();
-            return;
         }
 
         for (Bullet bullet : bulletsToRemove) {
@@ -183,30 +126,24 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        if (TankSpawner.checkVictory(tanks))
+            System.out.println("Victory");
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(tanks, g, this);
         MapManager.drawEnvironments(environments, g, this);
-        if (powerUps.isEmpty()) {
-            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
-            powerUps.add(powerUp);
-            System.out.println("Powerup: " + powerUp.getPosition());
-            System.out.println(CollisionUtil.getTileIndex(powerUp.getPosition()));
-            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
-            // System.out.println(CollisionUtil.getTileIndex(new Vector2D(512, 512)));
-        } else
-            MapManager.drawPowerUp((PowerUp) powerUps.get(0), g, this);
+
+        // draw every available power-ups
+        if (!powerUps.isEmpty()) {
+            for (PowerUp powerUp : powerUps) {
+                MapManager.drawPowerUp(powerUp, g, this);
+            }
+        }
 
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
+            bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
         }
-
-        if (gameOver) {
-            drawGameOver(g);
-            return;
-        }
-
 
         try {
             for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
@@ -234,11 +171,15 @@ public class GamePanel extends JPanel implements ActionListener {
         @Override
         public void keyPressed(KeyEvent e) {
             MapManager.getPlayerTank(tanks).keyPressed(e);
-            if (e.getKeyCode() == KeyEvent.VK_G) {
-                triggerGameOver(); // Kích hoạt Game Over khi nhấn phím G
-            }
         }
-
-
     }
+
+    public static List<Environment> getEnvironments() {
+        return environments;
+    }
+
+    public static List<Tank> getTanks() {
+        return tanks;
+    }
+
 }
