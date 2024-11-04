@@ -2,8 +2,10 @@ package tank1990.objects.tanks;
 
 import java.awt.Graphics;
 import java.awt.Image;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.swing.*;
@@ -47,7 +49,7 @@ public abstract class EnemyTank extends Tank {
 
     // (adjustable) After how long before the entity can change direction. Will
     // reset after each direction change. Measure in second.
-    private double directionChangeInterval = 1;
+    private double directionChangeInterval = 1.3;
     private double directionChangeTimer = 0;
 
     private ArrayList<Direction> availableDirections = new ArrayList<>();
@@ -146,19 +148,21 @@ public abstract class EnemyTank extends Tank {
                 changeDirection(availableDirections);
                 directionChangeTimer = 0;
             }
-            if (collidedEntities !=null)
-            if(collidedEntities.stream().filter(gameEntity -> gameEntity.getType()==EntityType.ENEMY).count()>=1 && directionChangeTimer > directionChangeInterval){
-                System.out.println(availableDirections);
-                changeDirection(availableDirections);
-                directionChangeTimer = 0;
-            }
+//            if (collidedEntities !=null)
+//            if(collidedEntities.stream().filter(gameEntity -> gameEntity.getType()==EntityType.ENEMY).count()>=1 && directionChangeTimer > directionChangeInterval){
+//                System.out.println(availableDirections);
+//                changeDirection(availableDirections);
+//                directionChangeTimer = 0;
+//            }
             if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
                     && directionChangeTimer > directionChangeInterval) {
-                changeDirection(availableDirections);
+                changeDirectionWhenNotCollided(availableDirections);
                 directionChangeTimer = 0;
             }
-
-            prevAvailableDirections = availableDirections;
+//            if (collidedEntities == null && directionChangeTimer > directionChangeInterval) {
+//                randomDirection();
+//                directionChangeTimer = 0;
+//            }
             directionChangeTimer += deltaTime;
         }
 
@@ -174,6 +178,25 @@ public abstract class EnemyTank extends Tank {
         Direction randomDirection = availableDirections.get(randomIndex);
 
         currentDirection = randomDirection;
+    }
+    public void changeDirectionWhenNotCollided(ArrayList<Direction> availableDirections) {
+        if(availableDirections.size()>=2 && availableDirections.contains(currentDirection.getOpposite())) {
+            availableDirections.remove(currentDirection.getOpposite());}
+        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
+        Direction randomDirection = availableDirections.get(randomIndex);
+
+        currentDirection = randomDirection;
+    }
+
+    public void randomDirection(){
+        int changingChance = CommonUtil.randomInteger(0, 100);
+        if (changingChance <10) {
+            int randomIndex = CommonUtil.randomInteger(0, 3);
+            ArrayList<Direction> directions = (ArrayList<Direction>) Arrays.asList(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT);
+            Direction randomDirection = directions.get(randomIndex);
+
+            currentDirection = randomDirection;
+        }
     }
 
     // Add more chance to explore new direction
@@ -344,18 +367,6 @@ public abstract class EnemyTank extends Tank {
                 ", specialTraits=" + specialTraits +
                 '}';
     }
-
-//    public void draw(Graphics g) {
-//        if (isAppear) {
-//            g.drawImage(images[movingDirection.ordinal()], (int) position.x, (int) position.y, null);
-//        }
-//        if (isShield) {
-//            ImageIcon currentShieldFrame = shield.getCurrentFrame();
-//            if (currentShieldFrame != null) {
-//                g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
-//            }
-//        }
-//    }
 
     public void freeze() {
         // save original speed
