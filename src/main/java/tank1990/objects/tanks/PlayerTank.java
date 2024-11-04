@@ -21,6 +21,7 @@ import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
 import tank1990.manager.animation.Appear;
 import tank1990.manager.animation.Shield;
+import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
@@ -39,7 +40,7 @@ public class PlayerTank extends Tank {
     private Appear appear;
 
     private Shield shield;
-    private boolean isShield = false;
+    public boolean isShield = false;
 
     private int lives = 3;
     private int point = 0;
@@ -102,8 +103,23 @@ public class PlayerTank extends Tank {
         }).start();
     }
 
+    public void respawn() {
+        TankSpawner.respawnPlayer();
+        startShield();
+    }
+
+    public void destroy() {
+        GameEntityManager.remove(this);
+        this.collisionBox = null;
+        this.image = null;
+    }
+
     @Override
     public Bullet shoot() {
+        if (this.image == null) {
+            return null;
+        }
+
         long currentTime = System.currentTimeMillis();
 
         if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
@@ -113,7 +129,7 @@ public class PlayerTank extends Tank {
         int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
         int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
 
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50,true);
+        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50, this);
         bullets.add(bullet);
         System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
 
@@ -174,15 +190,14 @@ public class PlayerTank extends Tank {
             bullet.move(deltaTime);
         }
 
-        ArrayList<GameEntity> collisionEntities = GameEntityManager.getCollisionEntities(type);
-        HashSet<GameEntity> collidedEntities = checkCollision(collisionEntities, deltaTime);
+        HashSet<GameEntity> collidedEntities = checkCollision(deltaTime);
 
         if (collidedEntities == null) {
             move(deltaTime);
         } else {
-            System.out.println("--------------------");
+            // System.out.println("--------------------");
             for (GameEntity e : collidedEntities) {
-                System.out.println(e);
+                // System.out.println(e);
                 if (e.getType() == EntityType.POWER_UP) {
                     // remove and trigger power-up effect
                     PowerUpManager.triggerPowerUp((PowerUp) e);
@@ -191,12 +206,13 @@ public class PlayerTank extends Tank {
         }
         List<Bullet> bulletsToRemove = new ArrayList<>();
         for (Bullet bullet : bullets) {
-            if (bullet.checkBulletOutOfBound() || bullet.isCollided()) {
+            if (bullet.isOutOfBound() || bullet.isCollided()) {
                 bulletsToRemove.add(bullet);
             }
         }
         bullets.removeAll(bulletsToRemove);
-        //bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() || bullet.isCollided());
+        // bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() ||
+        // bullet.isCollided());
     }
 
     public void move(double deltaTime) {

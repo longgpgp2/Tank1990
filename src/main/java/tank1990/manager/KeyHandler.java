@@ -32,25 +32,25 @@ public class KeyHandler {
             leftPressed = true;
             disableVertical();
             rightPressed = false;
-            tank.direction = Direction.LEFT;
+            tank.setDirection(Direction.LEFT);
             updateImage();
         } else if (key == KeyEvent.VK_D) {
             rightPressed = true;
             disableVertical();
             leftPressed = false;
-            tank.direction = Direction.RIGHT;
+            tank.setDirection(Direction.RIGHT);
             updateImage();
         } else if (key == KeyEvent.VK_W) {
             upPressed = true;
             disableHorizontal();
             downPressed = false;
-            tank.direction = Direction.UP;
+            tank.setDirection(Direction.UP);
             updateImage();
         } else if (key == KeyEvent.VK_S) {
             downPressed = true;
             disableHorizontal();
             upPressed = false;
-            tank.direction = Direction.DOWN;
+            tank.setDirection(Direction.DOWN);
             updateImage();
         }
     }
@@ -88,11 +88,13 @@ public class KeyHandler {
         ImageIcon ii = null;
         if (tank.spriteNum == 1) {
             ii = new ImageIcon(
-                    "src/main/resources/images/tank_player1_" + tank.direction.toString().toLowerCase() + "_c0_t1.png");
+                    "src/main/resources/images/tank_player1_" + tank.getDirection().toString().toLowerCase()
+                            + "_c0_t1.png");
         }
         if (tank.spriteNum == 2) {
             ii = new ImageIcon(
-                    "src/main/resources/images/tank_player1_" + tank.direction.toString().toLowerCase() + "_c0_t2.png");
+                    "src/main/resources/images/tank_player1_" + tank.getDirection().toString().toLowerCase()
+                            + "_c0_t2.png");
         }
         tank.image = ii.getImage();
     }

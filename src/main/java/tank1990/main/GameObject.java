@@ -19,7 +19,9 @@ public class GameObject extends GameLoop {
         GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
                 EntityType.BRICK,
                 EntityType.STEEL,
-                EntityType.ENEMY
+                EntityType.ENEMY,
+                EntityType.PLAYER
+
         });
         run();
     }

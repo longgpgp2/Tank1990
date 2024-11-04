@@ -31,19 +31,19 @@ public class TankSpawner {
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
-        if(types.peek()!=null) {
+        if (types.peek() != null) {
             addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
             CollisionUtil.addCollisionToObjects();
         }
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isBoardFull = getNumberOfAliveTanks(tanks)>=6;
+                boolean isBoardFull = getNumberOfAliveTanks(tanks) >= 6;
                 if (types.peek() == null) {
                     timer.stop();
                     return;
                 }
-                if(!isBoardFull) {
+                if (!isBoardFull) {
                     addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
                     CollisionUtil.addCollisionToObjects();
                 }
@@ -63,15 +63,15 @@ public class TankSpawner {
         return tanks;
     }
 
-    // truyền list tanks vào để check victory: player còn sống && kẻ địch đã spawn hết && health của tất cả địch = 0
-    public static boolean checkVictory(List<Tank> tanks){
-        boolean isPlayerAlive = MapManager.getPlayerTank(tanks).getHealth()!=0;
-        boolean areEnemiesAllSpawned = enemyTypes.peek()==null;
+    // truyền list tanks vào để check victory: player còn sống && kẻ địch đã spawn
+    // hết && health của tất cả địch = 0
+    public static boolean checkVictory(List<Tank> tanks) {
+        boolean isPlayerAlive = MapManager.getPlayerTank(tanks).getHealth() != 0;
+        boolean areEnemiesAllSpawned = enemyTypes.peek() == null;
         boolean areEnemiesAllDead = tanks.stream()
-                .filter(tank -> tank!=MapManager.getPlayerTank(tanks) && tank.getHealth()!=0)
+                .filter(tank -> tank != MapManager.getPlayerTank(tanks) && tank.getHealth() != 0)
                 .collect(Collectors.toList()).isEmpty();
-        if (isPlayerAlive && areEnemiesAllSpawned && areEnemiesAllDead)
-        {
+        if (isPlayerAlive && areEnemiesAllSpawned && areEnemiesAllDead) {
             return true;
         }
         return false;
@@ -82,6 +82,13 @@ public class TankSpawner {
         Tank player = new PlayerTank(1, 5);
         player.setPosition(new Vector2D(100, 80));
         return player;
+    }
+
+    public static void respawnPlayer() {
+        PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
+        if (playerTank != null) {
+            playerTank.setPosition(new Vector2D(100, 80));
+        }
     }
 
     // Tapk 1 list các enemies
@@ -148,9 +155,9 @@ public class TankSpawner {
         Tank tank = createEnemyTankByType(enemyType);
         while (true) {
             int randomIndex = CommonUtil.randomInteger(63, 63);
-//            if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
-//                continue;
-//            }
+            // if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
+            // continue;
+            // }
             Vector2D position = CollisionUtil.getPositionByIndex(
                     randomIndex,
                     GameConstants.ENTITY_WIDTH,
@@ -163,8 +170,8 @@ public class TankSpawner {
         return tanks;
     }
 
-    public static int getNumberOfAliveTanks(List<Tank> tanks){
-        return (int) tanks.stream().filter(tank -> tank.getHealth()>0).count();
+    public static int getNumberOfAliveTanks(List<Tank> tanks) {
+        return (int) tanks.stream().filter(tank -> tank.getHealth() > 0).count();
     }
 
     // thêm kẻ địch vào list tank

@@ -40,6 +40,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static List<Tank> tanks = new ArrayList<>();
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 1;
+
     GamePanel() {
 
         File file = new File(".\\src\\main\\resources\\battlefield.map");
@@ -112,7 +113,7 @@ public class GamePanel extends JPanel implements ActionListener {
 
         for (Bullet bullet : playerTank.getBullets()) {
             if (bullet.isCollided() || bullet.isOutOfBound()) {
-                bullet.destroyBullet();
+                bullet.destroy();
                 bulletsToRemove.add(bullet);
 
             }
@@ -145,7 +146,7 @@ public class GamePanel extends JPanel implements ActionListener {
         PlayerTank playerTank = MapManager.getPlayerTank(tanks);
         playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
-            bullet.draw(g); // Vẽ viên đạn và vụ nổ nếu có
+            bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
         }
 
         try {

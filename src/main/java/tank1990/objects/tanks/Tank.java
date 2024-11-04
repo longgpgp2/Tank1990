@@ -6,7 +6,6 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,13 +14,12 @@ public abstract class Tank extends GameEntity {
         public int health;
         public int bulletSpeed;
         public int movementSpeed;
-        public Direction direction;
-        public int x;
-        public int y;
-        public Color color;
-        public List<Bullet> bullets = new ArrayList<>();
         public int bulletCount = 1;
+        public Color color;
         public Image image;
+        public List<Bullet> bullets = new ArrayList<>();
+
+        protected Direction direction;
 
         public Tank(EntityType type, int health, int bulletSpeed, int movementSpeed, Direction direction) {
                 super(type, new Vector2D(0, 0), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE);
@@ -31,13 +29,8 @@ public abstract class Tank extends GameEntity {
                 this.direction = direction;
         }
 
-
         public Bullet shoot() {
-                Bullet bullet = new Bullet(getX(), getY(), getDirection(), 10,false);
-                bullets.add(bullet);
-                System.out.println("Bullet fired from: (" + getX() + ", " + getY() + ") with direction: "
-                                + getDirection());
-                return bullet;
+                return null;
         }
 
         public String toString() {
@@ -74,22 +67,6 @@ public abstract class Tank extends GameEntity {
 
         public void setDirection(Direction direction) {
                 this.direction = direction;
-        }
-
-        public int getX() {
-                return x;
-        }
-
-        public void setX(int x) {
-                this.x = x;
-        }
-
-        public int getY() {
-                return y;
-        }
-
-        public void setY(int y) {
-                this.y = y;
         }
 
         public Color getColor() {
