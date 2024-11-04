@@ -37,7 +37,7 @@ public class GamePanel extends JPanel implements ActionListener {
     List<Integer> map = new ArrayList<>();
     List<Tank> tanks = new ArrayList<>();
     List<PowerUp> powerUps = new ArrayList<>();
-    int currentLevel = 2;
+    int currentLevel = 1;
     GamePanel() {
 
         File file = new File(".\\src\\main\\resources\\battlefield.map");

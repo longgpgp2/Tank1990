@@ -29,16 +29,22 @@ public class TankSpawner {
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
-        addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
-        CollisionUtil.addCollisionToObjects();
+        if(types.peek()!=null) {
+            addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+            CollisionUtil.addCollisionToObjects();
+        }
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                boolean isBoardFull = getNumberOfAliveTanks(tanks)>=6;
                 if (types.peek() == null) {
                     timer.stop();
+                    return;
                 }
-                addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
-                CollisionUtil.addCollisionToObjects();
+                if(!isBoardFull) {
+                    addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+                    CollisionUtil.addCollisionToObjects();
+                }
             }
         });
         timer.start();
@@ -138,10 +144,10 @@ public class TankSpawner {
         unoccupiedIndices.removeAll(tanksIndices);
         Tank tank = createEnemyTankByType(enemyType);
         while (true) {
-            int randomIndex = CommonUtil.randomInteger(34, 69);
-            if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
-                continue;
-            }
+            int randomIndex = CommonUtil.randomInteger(63, 63);
+//            if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
+//                continue;
+//            }
             Vector2D position = CollisionUtil.getPositionByIndex(
                     randomIndex,
                     GameConstants.ENTITY_WIDTH,
@@ -151,6 +157,10 @@ public class TankSpawner {
             break;
         }
         return tanks;
+    }
+
+    public static int getNumberOfAliveTanks(List<Tank> tanks){
+        return (int) tanks.stream().filter(tank -> tank.getHealth()>0).count();
     }
 
     // thêm kẻ địch vào list tank
