@@ -77,19 +77,15 @@ public class Menu extends JPanel implements KeyListener, Runnable {
             if (currentSelection <0){
                 currentSelection = menuItems.length-1;
             }
-            soundManager.resetSound();
-            soundManager.playSound();
-
+            selectSoundManager();
         }else if(key == KeyEvent.VK_S){
             currentSelection ++;
             if (currentSelection >= menuItems.length){
                 currentSelection =0;
             }
-            soundManager.resetSound();
-            soundManager.playSound();
+            selectSoundManager();
         }else if(key == KeyEvent.VK_ENTER){
-            soundManager.resetSound();
-            soundManager.playSound();
+            selectSoundManager();
             selectMenuItem();
         }
         repaint();
@@ -98,8 +94,9 @@ public class Menu extends JPanel implements KeyListener, Runnable {
         switch (currentSelection){
             case 0:
                 System.out.println("Start game selected!");
+                backgroundMusic.stopSound();
                 parentFrame.dispose();
-                GameObject game = new GameObject(backgroundMusic);
+                GameObject game = new GameObject();
                 new Thread(game).start();
                 break;
             case 1:
@@ -135,5 +132,15 @@ public class Menu extends JPanel implements KeyListener, Runnable {
 
     @Override
     public void keyTyped(KeyEvent e) {
+    }
+
+    // tắt bật tiếng select
+    public void selectSoundManager(){
+        if (gameState.isSoundOn()){
+            soundManager.resetSound();
+            soundManager.playSound();
+        }else {
+            soundManager.stopSound();
+        }
     }
 }

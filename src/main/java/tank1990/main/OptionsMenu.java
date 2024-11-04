@@ -26,11 +26,6 @@ public class OptionsMenu extends JPanel implements KeyListener,Runnable  {
         customFont = font.getCustomFont();
         this.soundManager = new SoundManager();
         this.soundManager.soundLoader(".\\src\\main\\resources\\sounds\\changeOption.wav");
-//        if (gameState.isSoundOn()) {
-//            backgroundMusic.playSound();
-//        } else {
-//            backgroundMusic.stopSound();
-//        }
         setFocusable(true);
         addKeyListener(this);
         ImageIcon icon = new ImageIcon(".\\src\\main\\resources\\images\\battle_city.png");
@@ -71,18 +66,15 @@ public class OptionsMenu extends JPanel implements KeyListener,Runnable  {
             if (currentSelection < 0) {
                 currentSelection = optionsItems.length - 1;
             }
-            soundManager.resetSound();
-            soundManager.playSound();
+            selectSoundManager();
         } else if (key == KeyEvent.VK_S) {
             currentSelection++;
             if (currentSelection >= optionsItems.length) {
                 currentSelection = 0;
-                soundManager.resetSound();
-                soundManager.playSound();
+                selectSoundManager();
             }
         } else if (key == KeyEvent.VK_ENTER) {
-            soundManager.resetSound();
-            soundManager.playSound();
+            selectSoundManager();
             selectOption();
         }
         repaint();
@@ -130,6 +122,14 @@ public class OptionsMenu extends JPanel implements KeyListener,Runnable  {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    public void selectSoundManager(){
+        if (gameState.isSoundOn()){
+            soundManager.resetSound();
+            soundManager.playSound();
+        }else {
+            soundManager.stopSound();
         }
     }
 }

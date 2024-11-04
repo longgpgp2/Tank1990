@@ -5,6 +5,8 @@ import tank1990.common.constants.GameConstants;
 import tank1990.manager.SoundManager;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,17 +19,18 @@ public class GameObject extends JFrame implements Runnable {
     private SoundManager backgroundMusic;
     private GameState gameState;
 
-    public GameObject(SoundManager backgroundMusic) {
-        gameState = GameState.getInstance();
-        this.backgroundMusic = backgroundMusic;
+    private volatile boolean running; // Biến để kiểm soát trạng thái của thread
+    private Thread gameThread;
 
-        // Khởi động nhạc nền
+    public GameObject() {
+        gameState = GameState.getInstance();
+        this.backgroundMusic = new SoundManager();
+        this.backgroundMusic.soundLoader(".\\src\\main\\resources\\sounds\\gameMusicTheme.wav");
         if (gameState.isSoundOn()) {
             backgroundMusic.playLoop();
         } else {
             backgroundMusic.stopSound();
         }
-
         setTitle("Tank 1990");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(new Dimension(GameConstants.MAP_WIDTH + 114, GameConstants.MAP_HEIGHT + 60));
@@ -39,6 +42,7 @@ public class GameObject extends JFrame implements Runnable {
 
         // khởi tạo giao diện
         initUI();
+        running = true;
     }
 
     private void initUI() {
@@ -147,7 +151,13 @@ public class GameObject extends JFrame implements Runnable {
         menuBar.add(helpMenu);
         this.setJMenuBar(menuBar);
 
-        newGameItem.addActionListener(e -> resetGame());
+        newGameItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                resetGame();
+            }
+        }
+        );
         exitItem.addActionListener(e -> System.exit(0));
         soundItem.addActionListener(e -> toggleSound());
         instructionsItem.addActionListener(e -> showInstructions());
@@ -157,11 +167,10 @@ public class GameObject extends JFrame implements Runnable {
     private void toggleSound() {
         gameState.setSoundOn(!gameState.isSoundOn());
         if (gameState.isSoundOn()) {
-            backgroundMusic.playSound();
+            backgroundMusic.playLoop();
         } else {
             backgroundMusic.stopSound();
         }
-        System.out.println(gameState.isSoundOn());
     }
 
     private void showInstructions() {
@@ -191,9 +200,7 @@ public class GameObject extends JFrame implements Runnable {
 
     @Override
     public void run() {
-
-        while (true) {
-
+        while (running) { // Check running state
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
@@ -240,9 +247,10 @@ public class GameObject extends JFrame implements Runnable {
 
     private void resetGame() {
         System.out.println("Game reset!");
-        this.dispose();
-        GameObject game = new GameObject(backgroundMusic);
-        new Thread(game).start();
+        running = false; // Stop the thread
+        this.dispose(); // Close current game window
+        GameObject game = new GameObject(); // Create a new game instance
+        new Thread(game).start(); // Start the new game thread
     }
 
 }
