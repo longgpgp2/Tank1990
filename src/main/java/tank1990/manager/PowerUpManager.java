@@ -15,12 +15,12 @@ import java.util.List;
  *
  */
 public class PowerUpManager {
-    private static final int AUTO_SPAWN_DELAY = 10000;
-    private static final int AUTO_REMOVE_DELAY = 30000;
+    private static int autoSpawnDelay = 10000;
+    private static int autoRemoveDelay = 30000;
 
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static ActionListener autoSpawnAction = null;
-    private static Timer autoSpawnTimer = new Timer(AUTO_SPAWN_DELAY, autoSpawnAction);
+    private static Timer autoSpawnTimer = new Timer(autoSpawnDelay, autoSpawnAction);
 
     public static ArrayList<PowerUp> getPowerUps() {
         return powerUps;
@@ -40,8 +40,8 @@ public class PowerUpManager {
             powerUps.add(powerUp);
             GameEntityManager.add(powerUp);
             System.out.println(tanks.size());
-            Timer autoRemoveTimer = new Timer(AUTO_REMOVE_DELAY, e -> {
-                System.out.println("A power-up is removed after " + AUTO_REMOVE_DELAY + "ms");
+            Timer autoRemoveTimer = new Timer(autoRemoveDelay, e -> {
+                System.out.println("A power-up is removed after " + autoRemoveDelay + "ms");
                 removePowerUp(powerUp);
             });
             autoRemoveTimer.setRepeats(false);
@@ -86,7 +86,7 @@ public class PowerUpManager {
         if (autoSpawnAction == null) {
             autoSpawnAction = e -> {
                 if (addPowerUp()) {
-                    System.out.println("A new power-up is added after " + AUTO_SPAWN_DELAY + "ms");
+                    System.out.println("A new power-up is added after " + autoSpawnDelay + "ms");
                 } else {
                     System.out.println("Power-up list is full. Nothing happened.");
                 }
@@ -107,5 +107,21 @@ public class PowerUpManager {
         autoSpawnTimer = null;
         // remove all power-ups
         powerUps.clear();
+    }
+
+    public static int getAutoSpawnDelay() {
+        return autoSpawnDelay;
+    }
+
+    public static void setAutoSpawnDelay(int autoSpawnDelay) {
+        PowerUpManager.autoSpawnDelay = autoSpawnDelay;
+    }
+
+    public static int getAutoRemoveDelay() {
+        return autoRemoveDelay;
+    }
+
+    public static void setAutoRemoveDelay(int autoRemoveDelay) {
+        PowerUpManager.autoRemoveDelay = autoRemoveDelay;
     }
 }
