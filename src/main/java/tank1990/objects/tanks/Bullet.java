@@ -12,7 +12,7 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.animation.BulletExplosion;
-import tank1990.objects.environments.BaseWall;
+import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.BrickWall;
 
 import javax.swing.*;
@@ -192,9 +192,12 @@ public class Bullet extends GameEntity {
                 enemyTank.setHealth(enemyTank.getHealth() - damage);
 
                 if (enemyTank.getHealth() <= 0) {
+                    // destroy enemy
                     enemyTank.destroy();
-                    GameEntityManager.remove(enemyTank); // remove enemy
                     enemyDestroyed = true;
+                    // remove enemy
+                    GameEntityManager.remove(enemyTank);
+                    TankSpawner.enemyTanks.remove(enemyTank);
                 }
                 continue;
             }

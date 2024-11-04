@@ -29,17 +29,16 @@ public class PowerUpManager {
     /**
      * Create and add a new PowerUp
      *
-     * @param environments A List of Environment components
-     * @param tanks A List of Tank components
      */
     public static boolean addPowerUp() {
-        if (powerUps.size() < 500) { // Limit the number of power-up can be on the field
+        if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
             List<Environment> environments = GamePanel.getEnvironments();
             List<Tank> tanks = GamePanel.getTanks();
+
             PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
             powerUps.add(powerUp);
             GameEntityManager.add(powerUp);
-            System.out.println(tanks.size());
+
             Timer autoRemoveTimer = new Timer(autoRemoveDelay, e -> {
                 System.out.println("A power-up is removed after " + autoRemoveDelay + "ms");
                 removePowerUp(powerUp);
@@ -79,10 +78,8 @@ public class PowerUpManager {
     /**
      * Occasionally trigger addPowerUp() after some time has passed
      *
-     * @param environments A List of Environment components
-     * @param tanks A List of Tank components
      */
-    public static void startAutoSpawn(List<Environment> environments, List<Tank> tanks) {
+    public static void startAutoSpawn() {
         if (autoSpawnAction == null) {
             autoSpawnAction = e -> {
                 if (addPowerUp()) {
@@ -103,9 +100,14 @@ public class PowerUpManager {
     public static void resetPowerUps() {
         // stop auto spawn
         autoSpawnTimer.stop();
-        autoSpawnTimer.removeActionListener(autoSpawnAction);
-        autoSpawnTimer = null;
+        if (autoSpawnAction != null) {
+            autoSpawnTimer.removeActionListener(autoSpawnAction);
+            autoSpawnTimer = null;
+        }
         // remove all power-ups
+        for (PowerUp powerUp : powerUps) {
+            GameEntityManager.remove(powerUp);
+        }
         powerUps.clear();
     }
 

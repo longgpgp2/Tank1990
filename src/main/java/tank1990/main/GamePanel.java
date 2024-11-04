@@ -68,7 +68,8 @@ public class GamePanel extends JPanel implements ActionListener {
         Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         // startTimer();
-        PowerUpManager.startAutoSpawn(environments, tanks);
+        // start a timer that spawn a power-up occasionally
+        PowerUpManager.startAutoSpawn();
     }
 
     public void startTimer() {

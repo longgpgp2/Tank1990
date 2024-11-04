@@ -18,6 +18,7 @@ public class Grenade extends PowerUp{
 	public void activate(){
 		this.updatePoint();
 
+		// save a list of removed tanks to remove from enemyTanks later
 		List<EnemyTank> removedTanks = new ArrayList<>();
 		for (EnemyTank tank : TankSpawner.enemyTanks) {
 			tank.health = 0;
