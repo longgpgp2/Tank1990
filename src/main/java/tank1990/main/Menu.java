@@ -132,8 +132,6 @@ public class Menu extends JPanel implements KeyListener, Runnable {
     @Override
     public void keyTyped(KeyEvent e) {
     }
-
-    // tắt bật tiếng select
     public void selectSoundManager(){
         if (gameState.isSoundOn()){
             soundManager.resetSound();

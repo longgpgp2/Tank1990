@@ -9,6 +9,8 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
+import tank1990.main.GameState;
+import tank1990.manager.SoundManager;
 import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
 import tank1990.objects.environments.BrickWall;
@@ -20,6 +22,7 @@ public class Bullet extends GameEntity {
     public boolean isCollided = false;
     public boolean isFromPlayer;
     public Direction direction;
+    private SoundManager shootingSound;
 
     private int damage = 1;
     private boolean destroyed = false;
@@ -27,13 +30,16 @@ public class Bullet extends GameEntity {
     private Image image;
     private GameEntity source;
     private BulletExplosion bulletExplosion;
+    private GameState gameState;
 
     public Bullet(int startX, int startY, Direction direction, double speed, GameEntity source) {
         super(EntityType.BULLET, new Vector2D(startX, startY), 5, 5);
         this.direction = direction;
         this.speed = speed;
         this.source = source;
-
+        this.gameState = GameState.getInstance();
+        this.shootingSound = new SoundManager();
+        this.shootingSound.soundLoader(".\\src\\main\\resources\\sounds\\shoot-5-102360.wav");
         switch (direction) {
             case UP -> y -= 15;
             case DOWN -> y += 15;
@@ -156,7 +162,6 @@ public class Bullet extends GameEntity {
                 return;
             }
         }
-
         setPosition(new Vector2D(x, y));
     }
 
@@ -174,6 +179,12 @@ public class Bullet extends GameEntity {
             });
             bulletExplosion.render(graphics2d);
         }
+        if (gameState.isSoundOn()) {
+            shootingSound.playSound();
+        } else {
+            shootingSound.stopSound();
+        }
+
     }
 
     public boolean isOutOfBound() {

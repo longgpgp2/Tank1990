@@ -3,11 +3,11 @@ package tank1990.manager;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
 import java.io.File;
 
 public class SoundManager {
     private Clip clip;
-
     public void soundLoader(String filePath){
         try{
             File sound = new File(filePath);
@@ -47,4 +47,6 @@ public class SoundManager {
             playLoop();
         }
     }
+
+
 }

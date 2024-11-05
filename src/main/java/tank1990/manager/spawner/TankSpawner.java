@@ -18,6 +18,7 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
+import tank1990.manager.SoundManager;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
@@ -28,6 +29,7 @@ public class TankSpawner {
     public static Queue<String> enemyTypes;
     public static PlayerTank playerTank;
     public static List<EnemyTank> enemyTanks = new ArrayList<>();
+
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {

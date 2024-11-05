@@ -26,6 +26,7 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.PowerUpManager;
+import tank1990.manager.SoundManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
@@ -40,6 +41,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static List<Tank> tanks = new ArrayList<>();
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 1;
+
 
     GamePanel() {
 
@@ -111,7 +113,6 @@ public class GamePanel extends JPanel implements ActionListener {
             if (bullet.isCollided() || bullet.isOutOfBound()) {
                 bullet.destroy();
                 bulletsToRemove.add(bullet);
-
             }
         }
 

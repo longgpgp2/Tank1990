@@ -19,6 +19,7 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.PowerUpManager;
+import tank1990.manager.SoundManager;
 import tank1990.objects.animation.Appear;
 import tank1990.objects.animation.ExplosionAnimation;
 import tank1990.objects.animation.Shield;

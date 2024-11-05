@@ -19,6 +19,7 @@ import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
+import tank1990.manager.SoundManager;
 import tank1990.objects.animation.Appear;
 import tank1990.objects.animation.Shield;
 import tank1990.manager.spawner.TankSpawner;
@@ -58,7 +59,6 @@ public class PlayerTank extends Tank {
 
         this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
-
         collisionBox.setEnableFrontCollisionCheck(true);
         collisionBox.setCollisionType(CollisionType.RIGID);
     }

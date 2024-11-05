@@ -1,5 +1,6 @@
 package tank1990.objects.powerups;
 
+import tank1990.main.GameFrame;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.PlayerTank;
 
@@ -17,7 +18,7 @@ public class Tank extends PowerUp{
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;
-		if (playerTank.getLives() < 3) {
+		if (playerTank.getLives() < 9) {
 			playerTank.setLives(playerTank.getLives() + 1);
 			System.out.println("[POWER-UP] Increase lives by 1. Current lives: " + playerTank.getLives());
 		} else {
