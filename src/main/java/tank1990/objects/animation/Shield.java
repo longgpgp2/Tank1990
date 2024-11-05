@@ -1,6 +1,6 @@
 package tank1990.objects.animation;
 
-import javax.swing.ImageIcon;
+import javax.swing.*;
 
 public class Shield {
     private ImageIcon[] frames;
@@ -8,7 +8,9 @@ public class Shield {
     private long lastFrameTime;
     private long frameDuration;
     private int animationLoops;
-    private static final int MAX_ANIMATION_LOOPS = 4;
+    private int maxAnimationLoops = 4;
+    private Timer timer;
+//    private static final int MAX_ANIMATION_LOOPS = 4;
 
     public Shield(long frameDuration) {
         String[] framePaths = {
@@ -26,26 +28,42 @@ public class Shield {
         for (int i = 0; i < framePaths.length; i++) {
             this.frames[i] = new ImageIcon(framePaths[i]);
         }
-    }
 
-    public ImageIcon getCurrentFrame() {
-        if (animationLoops >= MAX_ANIMATION_LOOPS) {
-            return null;
-        }
-
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastFrameTime >= frameDuration) {
-            lastFrameTime = currentTime;
+        timer = new Timer((int) frameDuration, e -> {
             currentFrame++;
             if (currentFrame >= frames.length) {
                 currentFrame = 0;
                 animationLoops++;
+                if (animationLoops >= maxAnimationLoops) {
+                    timer.stop();
+                }
             }
+        });
+        timer.start();
+    }
+
+    public ImageIcon getCurrentFrame() {
+        if (animationLoops >= maxAnimationLoops) {
+            return null;
         }
+
+//        long currentTime = System.currentTimeMillis();
+//        if (currentTime - lastFrameTime >= frameDuration) {
+//            lastFrameTime = currentTime;
+//            currentFrame++;
+//            if (currentFrame >= frames.length) {
+//                currentFrame = 0;
+//                animationLoops++;
+//            }
+//        }
         return frames[currentFrame];
     }
 
     public boolean isAnimationFinished() {
-        return animationLoops >= MAX_ANIMATION_LOOPS;
+        return animationLoops >= maxAnimationLoops;
+    }
+
+    public void setMaxAnimationLoops(int maxAnimationLoops) {
+        this.maxAnimationLoops = maxAnimationLoops;
     }
 }

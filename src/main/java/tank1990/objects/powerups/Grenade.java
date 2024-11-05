@@ -21,7 +21,7 @@ public class Grenade extends PowerUp{
 		// save a list of removed tanks to remove from enemyTanks later
 		List<EnemyTank> removedTanks = new ArrayList<>();
 		for (EnemyTank enemyTank : TankSpawner.enemyTanks) {
-			if (!enemyTank.isAppearing()) {
+			if (!enemyTank.isAppearing() && !enemyTank.isShielded()) {
 				removedTanks.add(enemyTank);
 			}
 		}

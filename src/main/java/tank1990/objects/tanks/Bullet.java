@@ -205,6 +205,11 @@ public class Bullet extends GameEntity {
                     continue;
                 }
 
+                if (enemyTank.isShielded()) {
+                    this.destroy();
+                    continue;
+                }
+
                 if (enemyTank.getHealth() > 0) {
                     enemyTank.setHealth(enemyTank.getHealth() - damage);
                     this.destroy();
@@ -219,6 +224,14 @@ public class Bullet extends GameEntity {
 
             if (collidedGameEntity instanceof PlayerTank) {
                 PlayerTank playerTank = (PlayerTank) collidedGameEntity;
+                if (playerTank.isAppearing()) {
+                    continue;
+                }
+
+                if (playerTank.isShielded()) {
+                    this.destroy();
+                    continue;
+                }
 
                 if (playerTank.getLives() <= 0) {
                     playerTank.destroy();

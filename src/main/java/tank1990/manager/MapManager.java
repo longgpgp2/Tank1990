@@ -8,11 +8,10 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.spawner.PerkSpawner;
 import tank1990.objects.environments.*;
 import tank1990.objects.powerups.PowerUp;
-import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
-import tank1990.objects.tanks.enemy_tanks.BasicTank;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.ImageObserver;
 import java.io.BufferedReader;
@@ -96,7 +95,11 @@ public class MapManager {
     }
     public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
         for (Tank tank: tanks) {
-                g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
+            g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
+            ImageIcon currentShieldFrame;
+            if (tank.isShielded() && (currentShieldFrame = tank.getShield().getCurrentFrame()) != null) {
+                g.drawImage(currentShieldFrame.getImage(), (int) tank.getPosition().x, (int) tank.getPosition().y, null);
+            }
         }
         Tank tank = getPlayerTank(tanks);
         g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );

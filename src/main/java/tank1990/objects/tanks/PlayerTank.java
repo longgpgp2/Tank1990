@@ -36,12 +36,6 @@ public class PlayerTank extends Tank {
     private int star = 1;
     KeyHandler keyHandler;
 
-    public boolean isAppear = true;
-    private Appear appear;
-
-    private Shield shield;
-    public boolean isShield = false;
-
     private int lives = 3;
     private int point = 0;
 
@@ -77,29 +71,6 @@ public class PlayerTank extends Tank {
             image = new ImageIcon("src/main/resources/images/tank_player1_up_c0_t1.png").getImage(); // Hiển thị hình
                                                                                                      // ảnh tank
             startShield();
-        }).start();
-    }
-
-    public void startShield() {
-        shield = new Shield(200);
-        isShield = true;
-
-        new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            while (!shield.isAnimationFinished()) {
-                shield.getCurrentFrame();
-
-                if (System.currentTimeMillis() - startTime >= 3000) { // 3s
-                    isShield = false;
-                    break;
-                }
-
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
         }).start();
     }
 
@@ -180,10 +151,6 @@ public class PlayerTank extends Tank {
 
         if (isAppear) {
             return;
-        }
-
-        if (isShield) {
-            shield.getCurrentFrame();
         }
 
         for (Bullet bullet : bullets) {

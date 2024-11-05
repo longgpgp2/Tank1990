@@ -30,13 +30,9 @@ public abstract class EnemyTank extends Tank {
     private final int animationInterval = 100;
 
     private int point;
-    private boolean isAppear = true;
-    private boolean isShield = false;
 
     private String name;
     private String specialTraits;
-    private Appear appear;
-    private Shield shield;
 
     // (adjustable) The position of 4 potential collision boxes in order from TOP
     // DOWN LEFT RIGHT. For example if set to 5, 4 future collision boxes are placed
@@ -106,33 +102,6 @@ public abstract class EnemyTank extends Tank {
         }).start();
     }
 
-    private void startShield() {
-        shield = new Shield(200);
-        isShield = true;
-
-        new Thread(() -> {
-            long startTime = System.currentTimeMillis();
-            while (!shield.isAnimationFinished()) {
-                shield.getCurrentFrame();
-
-                if (System.currentTimeMillis() - startTime >= 3000) { // 3 giây
-                    isShield = false;
-                    System.out.println("Shield ended for EnemyTank.");
-                    break;
-                }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
-
-    public boolean isAppearing() {
-        return isAppear;
-    }
-
     @Override
     public Bullet shoot() {
         if (
@@ -162,6 +131,7 @@ public abstract class EnemyTank extends Tank {
         if (isAppear) {
             return;
         }
+
         frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
         if (frameCounter >= animationInterval) {
             frameCounter -= animationInterval;
