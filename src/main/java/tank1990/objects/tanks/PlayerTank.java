@@ -19,8 +19,8 @@ import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
-import tank1990.manager.animation.Appear;
-import tank1990.manager.animation.Shield;
+import tank1990.objects.animation.Appear;
+import tank1990.objects.animation.Shield;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.powerups.PowerUp;
 

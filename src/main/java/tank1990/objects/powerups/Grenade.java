@@ -20,13 +20,17 @@ public class Grenade extends PowerUp{
 
 		// save a list of removed tanks to remove from enemyTanks later
 		List<EnemyTank> removedTanks = new ArrayList<>();
-		for (EnemyTank tank : TankSpawner.enemyTanks) {
+		for (EnemyTank enemyTank : TankSpawner.enemyTanks) {
+			if (!enemyTank.isAppearing()) {
+				removedTanks.add(enemyTank);
+			}
+		}
+
+		for (EnemyTank tank : removedTanks) {
 			tank.health = 0;
 			tank.destroy();
 			GameEntityManager.remove(tank);
-			removedTanks.add(tank);
 		}
-		TankSpawner.enemyTanks.removeAll(removedTanks);
 		System.out.println("[POWER-UP] Destroy all enemy tanks");
 	}
 

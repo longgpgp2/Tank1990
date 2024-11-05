@@ -9,7 +9,8 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
-import tank1990.manager.animation.BulletExplosion;
+import tank1990.objects.animation.BulletExplosion;
+import tank1990.objects.environments.Base;
 import tank1990.objects.environments.BrickWall;
 
 import javax.swing.*;
@@ -229,7 +230,11 @@ public class Bullet extends GameEntity {
                     this.destroy();
                 }
             }
-
+            if (collidedGameEntity instanceof Base) {
+                ((Base) collidedGameEntity).hit(damage);
+                this.destroy();
+                return;
+            }
             if (collidedGameEntity instanceof DestructibleEntity) {
                 ((DestructibleEntity) collidedGameEntity).hit(damage);
             }

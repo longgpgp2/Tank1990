@@ -1,12 +1,9 @@
 package tank1990.objects.tanks;
 
-import java.awt.Graphics;
 import java.awt.Image;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Arrays;
-import java.util.Random;
 
 import javax.swing.*;
 
@@ -22,9 +19,9 @@ import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.PowerUpManager;
-import tank1990.manager.animation.Appear;
-import tank1990.manager.animation.ExplosionAnimation;
-import tank1990.manager.animation.Shield;
+import tank1990.objects.animation.Appear;
+import tank1990.objects.animation.ExplosionAnimation;
+import tank1990.objects.animation.Shield;
 import tank1990.manager.spawner.TankSpawner;
 
 public abstract class EnemyTank extends Tank {
@@ -138,11 +135,11 @@ public abstract class EnemyTank extends Tank {
 
     @Override
     public Bullet shoot() {
-        if (randomAttackIntervalTimer < randomAttackInterval) {
-            return null;
-        }
-
-        if (attackIntervalTimer < attackInterval) {
+        if (
+            movementSpeed == 0 || // cannot shoot while frozen
+            randomAttackIntervalTimer < randomAttackInterval ||
+            attackIntervalTimer < attackInterval
+        ) {
             return null;
         }
 
@@ -419,16 +416,13 @@ public abstract class EnemyTank extends Tank {
 
     public void freeze() {
         // save original speed
-        int defaultBulletSpeed = bulletSpeed;
         int defaultMovementSpeed = movementSpeed;
 
         // freeze the tank
-        this.bulletSpeed = 0;
         this.movementSpeed = 0;
 
         // unfreeze the tank after some time
         Timer timer = new Timer(5000, e -> {
-            this.bulletSpeed = defaultBulletSpeed;
             this.movementSpeed = defaultMovementSpeed;
             System.out.println("Freeze over");
         });
