@@ -109,8 +109,8 @@ public class PlayerTank extends Tank {
     }
 
     public void destroy() {
-        GameEntityManager.remove(this);
-        this.collisionBox = null;
+//        GameEntityManager.remove(this);
+        this.collisionBox.setEnabled(false);
         this.image = null;
     }
 
@@ -176,6 +176,7 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
+        if(lives==0)return;
         keyHandler.updateVelocity();
 
         if (isAppear) {

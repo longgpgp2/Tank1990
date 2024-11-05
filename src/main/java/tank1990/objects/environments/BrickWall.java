@@ -45,8 +45,8 @@ public class BrickWall extends Environment implements DestructibleEntity {
 		// setCollision(null); // can disable collision box instead
 		getCollision().setEnabled(false);
 		setSprite(null);
-		System.out.println(GameEntityManager.getGameEntities().stream().filter(gameEntity -> gameEntity.getType().equals(EntityType.BRICK)).count());
-		GameEntityManager.remove(this);
+		getCollision().setEnabled(false);
+		image=null;
 		destroyed = true;
 	}
 
