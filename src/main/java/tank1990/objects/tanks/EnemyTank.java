@@ -21,7 +21,6 @@ import tank1990.manager.GameEntityManager;
 import tank1990.manager.PowerUpManager;
 import tank1990.objects.animation.Appear;
 import tank1990.objects.animation.ExplosionAnimation;
-import tank1990.objects.animation.Shield;
 import tank1990.manager.spawner.TankSpawner;
 
 public abstract class EnemyTank extends Tank {
@@ -98,7 +97,7 @@ public abstract class EnemyTank extends Tank {
             String typeName = className.replace("tank", "");
             image = new ImageIcon("src/main/resources/images/tank_" + typeName + ".png").getImage();
 
-            startShield();
+            // startShield();
         }).start();
     }
 
