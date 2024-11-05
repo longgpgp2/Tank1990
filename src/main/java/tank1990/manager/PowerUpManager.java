@@ -35,7 +35,7 @@ public class PowerUpManager {
             List<Environment> environments = GamePanel.getEnvironments();
             List<Tank> tanks = GamePanel.getTanks();
 
-            PowerUp powerUp = MapManager.createPowerUp(environments, tanks);
+            PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);
             GameEntityManager.add(powerUp);
 

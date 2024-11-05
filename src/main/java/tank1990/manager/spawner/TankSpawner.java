@@ -16,6 +16,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
+import tank1990.main.GamePanel;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.objects.environments.Environment;
@@ -53,9 +54,9 @@ public class TankSpawner {
     }
 
     // trả ra 1 list tất cả các tank|| được dùng để init tanks
-    public static List<Tank> spawnTanks(List<Environment> environments, int level) {
+    public static List<Tank> spawnTanks(int level) {
         List<Tank> tanks = new ArrayList<>();
-        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
+        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex();
         enemyTypes = readTanksFromLevel(level);
         playerTank = (PlayerTank) createPlayer();
         tanks.add(playerTank);
@@ -66,10 +67,10 @@ public class TankSpawner {
     // truyền list tanks vào để check victory: player còn sống && kẻ địch đã spawn
     // hết && health của tất cả địch = 0
     public static boolean checkVictory(List<Tank> tanks) {
-        boolean isPlayerAlive = MapManager.getPlayerTank(tanks).getHealth() != 0;
+        boolean isPlayerAlive = MapManager.getPlayerTank().getHealth() != 0;
         boolean areEnemiesAllSpawned = enemyTypes.peek() == null;
         boolean areEnemiesAllDead = tanks.stream()
-                .filter(tank -> tank != MapManager.getPlayerTank(tanks) && tank.getHealth() != 0)
+                .filter(tank -> tank != MapManager.getPlayerTank() && tank.getHealth() != 0)
                 .collect(Collectors.toList()).isEmpty();
         if (isPlayerAlive && areEnemiesAllSpawned && areEnemiesAllDead) {
             return true;
@@ -187,7 +188,7 @@ public class TankSpawner {
         Tank tank = createEnemyTankByType(enemyType);
         while (true) {
             int randomIndex = CommonUtil.randomInteger(34, 69);
-            if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
+            if (!MapManager.checkIndexAvailability(randomIndex)) {
                 continue;
             }
             Vector2D position = CollisionUtil.getPositionByIndex(
