@@ -16,7 +16,9 @@ public class Timer extends PowerUp{
 		this.updatePoint();
 
 		for (EnemyTank tank : TankSpawner.enemyTanks) {
-			tank.freeze();
+			if (!tank.isAppearing()) {
+				tank.freeze();
+			}
 		}
 	}
 
