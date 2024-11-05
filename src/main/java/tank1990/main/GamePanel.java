@@ -36,37 +36,18 @@ import tank1990.objects.tanks.Tank;
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     static List<Environment> environments = new ArrayList<>();
-    List<Integer> map = new ArrayList<>();
     static List<Tank> tanks = new ArrayList<>();
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 1;
 
     GamePanel() {
-
-        File file = new File(".\\src\\main\\resources\\battlefield.map");
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line = null;
-            while ((line = (br.readLine())) != null) {
-                for (int i = 0; i < line.length(); i++) {
-                    char c = line.charAt(i);
-                    if (Character.isDigit(c)) {
-                        map.add(Integer.parseInt(String.valueOf(c)));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
         this.setPreferredSize(new Dimension(GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT));
         this.setBackground(Color.WHITE);
         this.addKeyListener(new TAdapter());
         this.setFocusable(true);
         setBackground(Color.BLACK);
         environments = MapManager.generateEnvironments(currentLevel);
-        tanks = TankSpawner.spawnTanks(environments, currentLevel);
-        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex(environments, tanks);
+        tanks = TankSpawner.spawnTanks(currentLevel);
         // powerUps.add(MapManager.createPowerUp(environments, tanks));
         // startTimer();
         // start a timer that spawn a power-up occasionally
@@ -108,7 +89,7 @@ public class GamePanel extends JPanel implements ActionListener {
             System.out.println("An entity is removed.");
         }
 
-        PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        PlayerTank playerTank = MapManager.getPlayerTank();
         ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
 
         for (Bullet bullet : playerTank.getBullets()) {
@@ -133,8 +114,8 @@ public class GamePanel extends JPanel implements ActionListener {
         if (TankSpawner.checkVictory(tanks))
             System.out.println("Victory");
         Graphics2D g2D = (Graphics2D) g;
-        MapManager.drawTanks(tanks, g, this);
-        MapManager.drawEnvironments(environments, g, this);
+        MapManager.drawTanks(g, this);
+        MapManager.drawEnvironments(g, this);
 
         // draw every available power-ups
         if (!powerUps.isEmpty()) {
@@ -143,7 +124,7 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        PlayerTank playerTank = MapManager.getPlayerTank(tanks);
+        PlayerTank playerTank = MapManager.getPlayerTank();
 //        playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
@@ -169,12 +150,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            MapManager.getPlayerTank(tanks).keyReleased(e);
+            MapManager.getPlayerTank().keyReleased(e);
         }
 
         @Override
         public void keyPressed(KeyEvent e) {
-            MapManager.getPlayerTank(tanks).keyPressed(e);
+            MapManager.getPlayerTank().keyPressed(e);
         }
     }
 

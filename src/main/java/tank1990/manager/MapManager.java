@@ -5,6 +5,7 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
+import tank1990.main.GamePanel;
 import tank1990.manager.spawner.PerkSpawner;
 import tank1990.objects.environments.*;
 import tank1990.objects.powerups.PowerUp;
@@ -24,7 +25,8 @@ import java.util.List;
 public class MapManager {
 
     // truyền 1 set các unoccupied indices vào để check xem index và 3 indices xung quanh có trống hay không
-    public static boolean checkIndexAvailability(int index, Set<Integer> unoccupiedIndices){
+    public static boolean checkIndexAvailability(int index){
+        Set<Integer> unoccupiedIndices = getUnoccupiedIndex();
         Set<Integer> requiredIndices = new HashSet<>();
         requiredIndices.add(index);
         requiredIndices.add(index+1);
@@ -36,7 +38,9 @@ public class MapManager {
         }
         return true;
     }
-    public static Set<Integer> getUnoccupiedIndex(List<Environment> environments, List<Tank> tanks){
+    public static Set<Integer> getUnoccupiedIndex(){
+        List<Environment> environments = GamePanel.getEnvironments();
+        List<Tank> tanks = GamePanel.getTanks();
 //        Need a GameEntity function that checks for the entity's occupied index
         Set<Integer> occupiedIndices = new HashSet<>();
         if(tanks!=null)
@@ -63,9 +67,8 @@ public class MapManager {
         unoccupiedIndices.removeAll(occupiedIndices);
         return unoccupiedIndices;
     }
-    public static PowerUp createPowerUp(List<Environment> environments, List<Tank> tanks){
-        Set<Integer> unoccupiedIndices = getUnoccupiedIndex(environments, tanks);
-//        System.out.println(unoccupiedIndices);
+    public static PowerUp createPowerUp(){
+        Set<Integer> unoccupiedIndices = getUnoccupiedIndex();
         Integer[] unoccupiedIndicesAsArray = unoccupiedIndices.toArray(new Integer[0]);
         Random random = new Random();
         int randomArrayIndex;
@@ -75,7 +78,7 @@ public class MapManager {
             randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
             randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
         } while (
-            !checkIndexAvailability(randomIndex, unoccupiedIndices) || (
+            !checkIndexAvailability(randomIndex) || (
                 (randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
                 (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
             )
@@ -93,7 +96,8 @@ public class MapManager {
     public static void drawPowerUp(PowerUp powerUp, Graphics g, ImageObserver observer){
         g.drawImage(powerUp.image, (int) (powerUp.getPosition().x), (int) (powerUp.getPosition().y), powerUp.width, powerUp.height, observer);
     }
-    public static void drawTanks(List<Tank> tanks, Graphics g, ImageObserver observer){
+    public static void drawTanks(Graphics g, ImageObserver observer){
+        List<Tank> tanks = GamePanel.getTanks();
         for (Tank tank: tanks) {
             g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
             ImageIcon currentShieldFrame;
@@ -101,14 +105,15 @@ public class MapManager {
                 g.drawImage(currentShieldFrame.getImage(), (int) tank.getPosition().x, (int) tank.getPosition().y, null);
             }
         }
-        Tank tank = getPlayerTank(tanks);
+        Tank tank = getPlayerTank();
         g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
         g.setColor(Color.red);
         g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
 
     }
 
-    public static PlayerTank getPlayerTank(List<Tank> tanks) {
+    public static PlayerTank getPlayerTank() {
+        List<Tank> tanks = GamePanel.getTanks();
         for (Tank tank : tanks) {
             if (tank.getType() == EntityType.PLAYER) {
                 return (PlayerTank) tank;
@@ -166,7 +171,8 @@ public class MapManager {
     }
 
     // Vẽ environment bằng Graphics
-    public static void drawEnvironments(List<Environment> envs, Graphics g, ImageObserver observer){
+    public static void drawEnvironments(Graphics g, ImageObserver observer){
+        List<Environment> envs = GamePanel.getEnvironments();
         for (Environment env : envs) {
             g.setColor(Color.GRAY);
             int width = GameConstants.ENTITY_WIDTH;
