@@ -16,7 +16,6 @@ public abstract class Tank extends GameEntity {
         public int health;
         public int bulletSpeed;
         public int movementSpeed;
-        public int bulletCount = 1;
         public Color color;
         public Image image;
         public List<Bullet> bullets = new ArrayList<>();
@@ -27,14 +26,17 @@ public abstract class Tank extends GameEntity {
         protected boolean isAppear = true;
         protected Appear appear;
 
+        protected int bulletCount = 1;
         protected Direction direction;
 
-        public Tank(EntityType type, int health, int bulletSpeed, int movementSpeed, Direction direction) {
+        public Tank(EntityType type, int health, int bulletSpeed, int bulletCount, int movementSpeed,
+                        Direction direction) {
                 super(type, new Vector2D(0, 0), GameConstants.TANK_SIZE, GameConstants.TANK_SIZE);
                 this.health = health;
                 this.bulletSpeed = bulletSpeed;
                 this.movementSpeed = movementSpeed;
                 this.direction = direction;
+                this.bulletCount = bulletCount;
         }
 
         // default shield
@@ -63,8 +65,52 @@ public abstract class Tank extends GameEntity {
                 }).start();
         }
 
-        public Bullet shoot() {
-                return null;
+        /**
+         * Return bullet which is not moving in the list of available bullets.
+         * 
+         * @return Bullet
+         */
+        public Bullet getBullet() {
+                Bullet[] availableBullets = bullets
+                                .stream().filter((bullet -> bullet.getVelocity().isZero()))
+                                .toArray(Bullet[]::new);
+                if (availableBullets.length == 0) {
+                        return null;
+                }
+
+                return availableBullets[0];
+        }
+
+        /**
+         * Generate bullets based on bullets count.
+         */
+        public void initalizeBullets() {
+                for (int i = 0; i < bulletCount; i++) {
+                        int x = (int) Bullet.DEFAULT_POSITION.x;
+                        int y = (int) Bullet.DEFAULT_POSITION.y;
+
+                        Bullet bullet = new Bullet(x, y, this);
+
+                        bullet.setVelocity(new Vector2D(0, 0));
+                        bullet.getCollision().setEnabled(false);
+                        bullets.add(bullet);
+                }
+        }
+
+        public void createBullet(Direction direction) {
+                Bullet bullet = getBullet();
+
+                if (bullet == null) {
+                        return;
+
+                }
+                Vector2D offset = new Vector2D(4, 4);
+
+                bullet.destroyed = false;
+                bullet.setSpeed(bulletSpeed);
+                bullet.setDirection(direction);
+                bullet.setPosition(this.center.minus(offset));
+                bullet.getCollision().setEnabled(true);
         }
 
         public String toString() {
@@ -84,6 +130,10 @@ public abstract class Tank extends GameEntity {
         }
 
         public void setBulletSpeed(int bulletSpeed) {
+                for (Bullet bullet : bullets) {
+                        bullet.setSpeed(bulletSpeed);
+                }
+
                 this.bulletSpeed = bulletSpeed;
         }
 

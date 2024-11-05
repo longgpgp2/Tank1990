@@ -11,7 +11,7 @@ public class FastTank extends EnemyTank {
         private final int animationInterval = 10;
 
         public FastTank() {
-                super("Fast Tank", 1, 200, 2, 80, "Fast traits");
+                super("Fast Tank", 1, 200, 200, 80, 100, "Fast traits");
                 loadImages();
         }
 

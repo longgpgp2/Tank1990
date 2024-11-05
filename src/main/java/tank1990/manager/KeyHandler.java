@@ -82,7 +82,7 @@ public class KeyHandler {
     }
 
     public void updateImage() {
-        if (tank.isAppearing()) {
+        if (tank.isAppearing() && tank.isAppear) {
             return;
         }
         ImageIcon ii = null;

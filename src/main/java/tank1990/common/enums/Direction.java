@@ -25,7 +25,7 @@ public enum Direction {
             return UP;
         }
         if (vector2d.x == 0 && vector2d.y > 0) {
-            return UP;
+            return DOWN;
         }
         if (vector2d.x < 0 && vector2d.y == 0) {
             return LEFT;

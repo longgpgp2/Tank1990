@@ -11,7 +11,7 @@ public class BasicTank extends EnemyTank {
         private final int animationInterval = 10;
 
         public BasicTank() {
-                super("Basic Tank", 1, 100, 1, 60, "Basic traits");
+                super("Basic Tank", 1, 100, 100, 1, 60, "Basic traits");
                 loadImages();
         }
 
