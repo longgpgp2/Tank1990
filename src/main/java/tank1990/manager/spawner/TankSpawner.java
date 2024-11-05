@@ -80,7 +80,7 @@ public class TankSpawner {
 
     // Tạo 1 player với position cố định // sẽ bỏ hàm này
     public static Tank createPlayer() {
-        Tank player = new PlayerTank(1, 5);
+        Tank player = new PlayerTank(1);
         player.setPosition(new Vector2D(100, 80));
         return player;
     }

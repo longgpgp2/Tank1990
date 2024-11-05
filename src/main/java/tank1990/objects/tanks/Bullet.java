@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.GameEntity;
+import tank1990.common.classes.GameSprite;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
@@ -13,33 +14,27 @@ import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
 import tank1990.objects.environments.BrickWall;
 
-import javax.swing.*;
-
 public class Bullet extends GameEntity {
-    public double speed;
-    public boolean isCollided = false;
+    public static final Vector2D DEFAULT_POSITION = new Vector2D(-360, -360);
     public boolean isFromPlayer;
-    public Direction direction;
+    public boolean destroyed = false;
 
     private int damage = 1;
-    private boolean destroyed = false;
+    private double speed;
     private double lastX, lastY;
     private Image image;
+    private Direction direction = Direction.DOWN;
     private GameEntity source;
     private BulletExplosion bulletExplosion;
 
-    public Bullet(int startX, int startY, Direction direction, double speed, GameEntity source) {
-        super(EntityType.BULLET, new Vector2D(startX, startY), 5, 5);
-        this.direction = direction;
-        this.speed = speed;
-        this.source = source;
+    private GameSprite leftSprite = new GameSprite("src/main/resources/images/bullet_left.png");
+    private GameSprite rightSprite = new GameSprite("src/main/resources/images/bullet_right.png");
+    private GameSprite upSprite = new GameSprite("src/main/resources/images/bullet_up.png");
+    private GameSprite downSprite = new GameSprite("src/main/resources/images/bullet_down.png");
 
-        switch (direction) {
-            case UP -> y -= 15;
-            case DOWN -> y += 15;
-            case LEFT -> x -= 15;
-            case RIGHT -> x += 15;
-        }
+    public Bullet(int startX, int startY, GameEntity source) {
+        super(EntityType.BULLET, new Vector2D(startX, startY), 5, 5);
+        this.source = source;
 
         setBulletImage();
         setCollision(new CollisionBox(this, new Vector2D(0, 0), 5, 5));
@@ -47,79 +42,35 @@ public class Bullet extends GameEntity {
         collisionBox.setEnableCollisionResponse(false);
     }
 
-    private void setBulletImage() {
+    public void setBulletImage() {
         switch (direction) {
-            case LEFT -> image = new ImageIcon("src/main/resources/images/bullet_left.png").getImage();
-            case RIGHT -> image = new ImageIcon("src/main/resources/images/bullet_right.png").getImage();
-            case UP -> image = new ImageIcon("src/main/resources/images/bullet_up.png").getImage();
-            case DOWN -> image = new ImageIcon("src/main/resources/images/bullet_down.png").getImage();
+            case LEFT -> image = leftSprite.getBufferedImage();
+            case RIGHT -> image = rightSprite.getBufferedImage();
+            case UP -> image = upSprite.getBufferedImage();
+            case DOWN -> image = downSprite.getBufferedImage();
             case NONE -> {
                 return;
             }
         }
     }
 
-    public boolean isExplosionFinished() {
-        return bulletExplosion != null && bulletExplosion.isFinished();
-    }
-
     public void update(double deltaTime) {
-        if (destroyed) {
-            handleBulletExplosion();
-            return;
-        }
-
         HashSet<GameEntity> collidedGameEntities = checkCollision(deltaTime);
 
         if (collidedGameEntities != null) {
             damageEntities(collidedGameEntities);
         }
 
-        if (checkCollision() || isOutOfBound()) {
+        if (isOutOfBound() && collisionBox.isEnabled()) {
             destroy();
         }
 
         move(deltaTime);
     }
 
-    public void update() {
-        if (!isOutOfBound()) {
-            double directionValue = 0;
-            switch (direction) {
-                case UP: {
-                    directionValue = 3 * Math.PI / 2;
-                    break;
-                }
-                case DOWN: {
-                    directionValue = Math.PI / 2;
-                    break;
-                }
-                case LEFT: {
-                    directionValue = Math.PI;
-                    break;
-                }
-                case RIGHT: {
-                    directionValue = 0;
-                    break;
-                }
-                case NONE: {
-                    break;
-                }
-
-            }
-            x += speed * Math.cos(directionValue);
-            y += speed * Math.sin(directionValue);
-        }
-    }
-
-    private boolean checkCollision() {
-        return isCollided;
-    }
-
     private void handleBulletExplosion() {
         if (bulletExplosion != null) {
             bulletExplosion.update(() -> {
-                isCollided = true;
                 bulletExplosion = null; // xóa animation
             }, new BulletExplosion.BulletExplosionImageCallback() {
                 @Override
@@ -135,37 +86,31 @@ public class Bullet extends GameEntity {
      * enemy thì đạn k nổ check để remove khỏi list bullets
      */
     public void destroy() {
+        image = null;
         destroyed = true;
-        if (bulletExplosion == null) {
-            isCollided = true;
-            image = null;
-        }
         collisionBox.setEnabled(false);
+        speed = 0;
+        velocity = new Vector2D(0, 0);
+        position = DEFAULT_POSITION;
+        handleBulletExplosion();
     }
 
     public void move(double deltaTime) {
         lastX = x;
         lastY = y;
-        double distance = speed * deltaTime;
-        switch (direction) {
-            case LEFT -> x -= distance;
-            case RIGHT -> x += distance;
-            case UP -> y -= distance;
-            case DOWN -> y += distance;
-            case NONE -> {
-                return;
-            }
-        }
 
-        setPosition(new Vector2D(x, y));
+        setVelocity(direction.getValue().multiply(speed));
+        setBulletImage();
+        setPosition(position.add(velocity.multiply(deltaTime)));
     }
 
     public void draw(Graphics2D graphics2d) {
         if (!destroyed) {
             graphics2d.drawImage(image, (int) x, (int) y, null);
-        } else if (bulletExplosion != null) {
+        }
+
+        if (destroyed && bulletExplosion != null) {
             bulletExplosion.update(() -> {
-                isCollided = true;
             }, new BulletExplosion.BulletExplosionImageCallback() {
                 @Override
                 public void updateImage(Image newImage) {
@@ -183,14 +128,14 @@ public class Bullet extends GameEntity {
         return false;
     }
 
-    public boolean isCollided() {
-        return isCollided;
-    }
-
     private void damageEntities(HashSet<GameEntity> collidedGameEntities) {
         boolean enemyDestroyed = false;
 
         for (GameEntity collidedGameEntity : collidedGameEntities) {
+            if (collidedGameEntity.getCollision() == null) {
+                continue;
+            }
+
             if (collidedGameEntity.equals(source)) {
                 continue;
             }
@@ -256,8 +201,15 @@ public class Bullet extends GameEntity {
                 bulletExplosion = new BulletExplosion((int) lastX, (int) lastY);
             }
 
-            destroy();
-
+            this.destroy();
         }
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
     }
 }

@@ -55,8 +55,9 @@ public abstract class EnemyTank extends Tank {
     private ArrayList<Direction> availableDirections = new ArrayList<>();
     private ArrayList<Direction> prevAvailableDirections = new ArrayList<>();
 
-    public EnemyTank(String name, int health, int point, int bulletSpeed, int movementSpeed, String specialTraits) {
-        super(EntityType.ENEMY, health, bulletSpeed, movementSpeed, Direction.DOWN);
+    public EnemyTank(String name, int health, int point, int bulletSpeed, int bulletCount, int movementSpeed,
+            String specialTraits) {
+        super(EntityType.ENEMY, health, bulletSpeed, bulletCount, movementSpeed, Direction.DOWN);
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;
@@ -72,13 +73,12 @@ public abstract class EnemyTank extends Tank {
 
         appear = new Appear(100);
 
-        startAnimation();
-
         this.images = new Image[4][2]; // UP, DOWN, LEFT, RIGHT
         loadImages();
 
-        setBulletCount(1);
-        setBulletSpeed(100);
+        initalizeBullets();
+
+        startAnimation();
     }
 
     protected abstract void loadImages();
@@ -102,27 +102,24 @@ public abstract class EnemyTank extends Tank {
         }).start();
     }
 
-    @Override
-    public Bullet shoot() {
-        if (
-            movementSpeed == 0 || // cannot shoot while frozen
-            randomAttackIntervalTimer < randomAttackInterval ||
-            attackIntervalTimer < attackInterval
-        ) {
-            return null;
+    public boolean isAppearing() {
+        return isAppear;
+    }
+
+    public void shoot() {
+        if (randomAttackIntervalTimer < randomAttackInterval) {
+            return;
         }
 
-        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
-        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
+        if (attackIntervalTimer < attackInterval) {
+            return;
+        }
 
-        Bullet bullet = new Bullet(bulletX, bulletY, direction, bulletSpeed, this);
-        bullets.add(bullet);
+        createBullet(direction);
 
         attackIntervalTimer = 0;
         randomAttackIntervalTimer = 0;
         randomAttackInterval = CommonUtil.randomInteger(1, 3);
-
-        return bullet;
     }
 
     public void update(double deltaTime) {

@@ -11,7 +11,7 @@ public class ArmorTank extends EnemyTank {
         private final int animationInterval = 20;
 
         public ArmorTank() {
-                super("Armor Tank", 4, 400, 2, 50, "Armor traits");
+                super("Armor Tank", 4, 400, 200, 1, 50, "Armor traits");
                 loadImages();
         }
 

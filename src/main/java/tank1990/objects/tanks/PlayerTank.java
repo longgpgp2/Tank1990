@@ -3,9 +3,7 @@ package tank1990.objects.tanks;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -25,36 +23,48 @@ import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
-    private static int counter = 0;
     private int owner;
-    public List<Bullet> bullets = new ArrayList<>();
     public long lastShotTime = 0;
     public long shotDelay = 300;
 
     public int maxBullets;
     public int speed = 80;
-    private int star = 1;
-    KeyHandler keyHandler;
+    public boolean isShield = false;
+    public boolean isAppear = true;
 
+    public KeyHandler keyHandler;
+
+    private int star = 1;
     private int lives = 3;
     private int point = 0;
+    private Appear appear;
+    private Shield shield;
 
-    public PlayerTank(int owner, int maxBullets) {
-        super(EntityType.PLAYER, 1, 1, 1, Direction.UP);
-        this.owner = owner;
-        this.setColor(Color.YELLOW);
+    // (adjustable) How long before the tank can attack.
+    private double attackInterval = 0;
+    private double attackIntervalTimer = 0.5;
+
+    public PlayerTank(int tankOwner) {
+        super(EntityType.PLAYER, 1, 1000, 100, 1, Direction.UP);
+
+        owner = tankOwner;
         appear = new Appear(100);
         image = appear.getCurrentFrame().getImage();
-        startAnimation();
-        setCollision(
-                new CollisionBox(this, new Vector2D(4, 4), GameConstants.TANK_SIZE - 8,
-                        GameConstants.TANK_SIZE - 8));
-
-        this.maxBullets = maxBullets;
         keyHandler = new KeyHandler(this);
 
+        setColor(Color.YELLOW);
+
+        CollisionBox collisionBox = new CollisionBox(this,
+                new Vector2D(4, 4),
+                GameConstants.TANK_SIZE - 8,
+                GameConstants.TANK_SIZE - 8);
+        setCollision(collisionBox);
         collisionBox.setEnableFrontCollisionCheck(true);
         collisionBox.setCollisionType(CollisionType.RIGID);
+
+        initalizeBullets();
+
+        startAnimation();
     }
 
     private void startAnimation() {
@@ -80,82 +90,34 @@ public class PlayerTank extends Tank {
     }
 
     public void destroy() {
-//        GameEntityManager.remove(this);
+        // GameEntityManager.remove(this);
         this.collisionBox.setEnabled(false);
         this.image = null;
     }
 
-    @Override
-    public Bullet shoot() {
+    public void shoot() {
         if (this.image == null) {
-            return null;
+            return;
         }
 
-        long currentTime = System.currentTimeMillis();
-
-        if (currentTime - lastShotTime < shotDelay || bullets.size() >= maxBullets) {
-            return null;
+        if (attackIntervalTimer > attackInterval) {
+            createBullet(direction);
+            attackIntervalTimer = 0;
         }
-
-        int bulletX = (int) (getPosition().x + collisionBox.width / 2.0);
-        int bulletY = (int) (getPosition().y + collisionBox.height / 2.0);
-
-        Bullet bullet = new Bullet(bulletX, bulletY, getDirection(), 50, this);
-        bullets.add(bullet);
-        System.out.println("Bullet fired from: (" + bulletX + ", " + bulletY + ") with direction: " + getDirection());
-
-        lastShotTime = currentTime;
-        return bullet;
-    }
-
-    public int getOwner() {
-        return owner;
-    }
-
-    public void setOwner(int owner) {
-        this.owner = owner;
-    }
-
-    @Override
-    public String toString() {
-        return "PlayerTank{" +
-                "owner=" + owner +
-                ", health=" + this.getHealth() +
-                ", bulletSpeed=" + this.getBulletSpeed() +
-                ", movementSpeed=" + this.getMovementSpeed() +
-                ", color='" + this.getColor() + '\'' +
-                '}';
-    }
-
-    @Override
-    public Direction getDirection() {
-        return direction;
-    }
-
-    @Override
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public List<Bullet> getBullets() {
-        return bullets;
-    }
-
-    public void setBullets(List<Bullet> bullets) {
-        this.bullets = bullets;
     }
 
     @Override
     public void update(double deltaTime) {
-        if(lives==0)return;
+        if (lives == 0)
+            return;
         keyHandler.updateVelocity();
 
         if (isAppear) {
             return;
         }
 
-        for (Bullet bullet : bullets) {
-            bullet.move(deltaTime);
+        if (isShield) {
+            shield.getCurrentFrame();
         }
 
         HashSet<GameEntity> collidedEntities = checkCollision(deltaTime);
@@ -172,15 +134,8 @@ public class PlayerTank extends Tank {
                 }
             }
         }
-        List<Bullet> bulletsToRemove = new ArrayList<>();
-        for (Bullet bullet : bullets) {
-            if (bullet.isOutOfBound() || bullet.isCollided()) {
-                bulletsToRemove.add(bullet);
-            }
-        }
-        bullets.removeAll(bulletsToRemove);
-        // bullets.removeIf(bullet -> bullet.checkBulletOutOfBound() ||
-        // bullet.isCollided());
+
+        attackIntervalTimer += deltaTime;
     }
 
     public void move(double deltaTime) {
@@ -231,4 +186,15 @@ public class PlayerTank extends Tank {
     public void setPoint(int point) {
         this.point = point;
     }
+
+    @Override
+    public String toString() {
+        return "PlayerTank{" +
+                ", health=" + this.getHealth() +
+                ", bulletSpeed=" + this.getBulletSpeed() +
+                ", movementSpeed=" + this.getMovementSpeed() +
+                ", color='" + this.getColor() + '\'' +
+                '}';
+    }
+
 }

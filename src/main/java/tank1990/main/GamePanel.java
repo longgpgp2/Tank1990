@@ -54,18 +54,6 @@ public class GamePanel extends JPanel implements ActionListener {
         PowerUpManager.startAutoSpawn();
     }
 
-    public void startTimer() {
-        timer = new Timer(16, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                updateGame();
-                repaint();
-            }
-        });
-        timer.start();
-    }
-
     ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
 
     /**
@@ -76,36 +64,6 @@ public class GamePanel extends JPanel implements ActionListener {
 
     public void draw() {
         repaint();
-    }
-
-    private void updateGame() {
-        // ConcurrentModificationException will happen when a GameEntity is removed
-        try {
-            for (GameEntity gameEntity : gameEntities) {
-                gameEntity.update(0.01);
-
-            }
-        } catch (ConcurrentModificationException e) {
-            System.out.println("An entity is removed.");
-        }
-
-        PlayerTank playerTank = MapManager.getPlayerTank();
-        ArrayList<Bullet> bulletsToRemove = new ArrayList<>();
-
-        for (Bullet bullet : playerTank.getBullets()) {
-            if (bullet.isCollided() || bullet.isOutOfBound()) {
-                bullet.destroy();
-                bulletsToRemove.add(bullet);
-
-            }
-        }
-
-        for (Bullet bullet : bulletsToRemove) {
-            if (bullet.isExplosionFinished()) {
-                playerTank.getBullets().remove(bullet);
-            }
-        }
-
     }
 
     @Override
@@ -125,7 +83,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank();
-//        playerTank.draw(g);
+        // playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
         }
