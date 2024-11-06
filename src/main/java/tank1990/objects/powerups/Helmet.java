@@ -14,7 +14,7 @@ public class Helmet extends PowerUp{
 	public void activate(){
 		this.updatePoint();
 
-		TankSpawner.playerTank.startShield(50);
+		TankSpawner.playerTank.startShield(25);
 		System.out.println("[POWER-UP] Shield is activated");
 	}
 

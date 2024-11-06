@@ -41,7 +41,7 @@ public abstract class Tank extends GameEntity {
 
         // default shield
         public void startShield() {
-                startShield(15);
+                startShield(5);
         }
 
         public void startShield(int maxAnimationLoops) {
