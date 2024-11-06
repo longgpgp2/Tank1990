@@ -10,6 +10,7 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
+import tank1990.manager.MapManager;
 import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
 import tank1990.objects.environments.BrickWall;
@@ -163,6 +164,12 @@ public class Bullet extends GameEntity {
                 if (enemyTank.getHealth() <= 0) {
                     enemyDestroyed = true;
                     enemyTank.destroy();
+                    System.out.println(source);
+                    if(source instanceof PlayerTank) {
+                        PlayerTank playerTank = MapManager.getPlayerTank();
+                        playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
+                        System.out.println(playerTank.getPoint());
+                    }
                     this.destroy();
                 }
             }
@@ -211,5 +218,13 @@ public class Bullet extends GameEntity {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public boolean isFromPlayer() {
+        return isFromPlayer;
+    }
+
+    public void setFromPlayer(boolean fromPlayer) {
+        isFromPlayer = fromPlayer;
     }
 }
