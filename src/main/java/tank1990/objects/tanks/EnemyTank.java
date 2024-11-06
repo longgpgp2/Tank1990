@@ -122,11 +122,11 @@ public abstract class EnemyTank extends Tank {
     }
 
     public void update(double deltaTime) {
-        shoot();
-
-        if (isAppear) {
+        if (isAppear || movementSpeed == 0) {
             return;
         }
+
+        shoot();
 
         frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
         if (frameCounter >= animationInterval) {
