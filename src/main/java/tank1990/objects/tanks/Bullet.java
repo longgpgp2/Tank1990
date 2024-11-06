@@ -164,8 +164,12 @@ public class Bullet extends GameEntity {
                 if (enemyTank.getHealth() <= 0) {
                     enemyDestroyed = true;
                     enemyTank.destroy();
-                    PlayerTank playerTank = MapManager.getPlayerTank();
-                    playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
+                    System.out.println(source);
+                    if(source instanceof PlayerTank) {
+                        PlayerTank playerTank = MapManager.getPlayerTank();
+                        playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
+                        System.out.println(playerTank.getPoint());
+                    }
                     this.destroy();
                 }
             }

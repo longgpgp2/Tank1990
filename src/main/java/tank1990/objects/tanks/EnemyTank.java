@@ -115,7 +115,7 @@ public abstract class EnemyTank extends Tank {
             return;
         }
 
-        createBullet(direction, false);
+        createBullet(direction);
 
         attackIntervalTimer = 0;
         randomAttackIntervalTimer = 0;

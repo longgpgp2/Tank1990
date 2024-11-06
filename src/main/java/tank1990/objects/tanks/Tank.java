@@ -97,7 +97,7 @@ public abstract class Tank extends GameEntity {
                 }
         }
 
-        public void createBullet(Direction direction, Boolean isFromPlayer) {
+        public void createBullet(Direction direction) {
                 Bullet bullet = getBullet();
 
                 if (bullet == null) {
@@ -107,7 +107,6 @@ public abstract class Tank extends GameEntity {
                 Vector2D offset = new Vector2D(4, 4);
 
                 bullet.destroyed = false;
-                bullet.setFromPlayer(isFromPlayer);
                 bullet.setSpeed(bulletSpeed);
                 bullet.setDirection(direction);
                 bullet.setPosition(this.center.minus(offset));
