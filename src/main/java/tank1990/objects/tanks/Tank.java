@@ -130,9 +130,9 @@ public abstract class Tank extends GameEntity {
         }
 
         public void setBulletSpeed(int bulletSpeed) {
-                for (Bullet bullet : bullets) {
-                        bullet.setSpeed(bulletSpeed);
-                }
+//                for (Bullet bullet : bullets) {
+//                        bullet.setSpeed(bulletSpeed);
+//                }
 
                 this.bulletSpeed = bulletSpeed;
         }
