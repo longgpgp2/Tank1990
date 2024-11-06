@@ -101,7 +101,7 @@ public class PlayerTank extends Tank {
         }
 
         if (attackIntervalTimer > attackInterval) {
-            createBullet(direction);
+            createBullet(direction, true);
             attackIntervalTimer = 0;
         }
     }
