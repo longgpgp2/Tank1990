@@ -27,18 +27,19 @@ public class Star extends PowerUp{
 		switch (playerTank.getStar()) {
 			case 2:
 				playerTank.setBulletSpeed(playerTank.getBulletSpeed() * 2);
-				System.out.println("[POWER-UP] Doubled bullet speed");
+				System.out.println("[POWER-UP] Increased bullet speed");
 				break;
 			case 3:
 				playerTank.setBulletCount(playerTank.getBulletCount() + 1);
 				playerTank.getBullets().clear();
 				playerTank.initalizeBullets();
-				System.out.println("[POWER-UP] Doubled bullet speed");
+				System.out.println("[POWER-UP] Increased number of bullets");
 				break;
 			case 4:
 				for (Bullet bullet : playerTank.getBullets()) {
 					bullet.setDamage(2);
 				}
+				System.out.println("[POWER-UP] Increased bullet damage");
 				break;
 			default:
 				break;
