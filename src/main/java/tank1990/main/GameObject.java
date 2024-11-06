@@ -43,7 +43,7 @@ public class GameObject extends GameLoop {
     }
 
     protected void render() {
-        gameFrame.gamePanel.draw();
+        gameFrame.draw();
     }
 
     protected void update(double deltaTime) {
