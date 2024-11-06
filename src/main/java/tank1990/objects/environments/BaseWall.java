@@ -50,7 +50,7 @@ public class BaseWall extends BrickWall {
     @Override
     public void hit(int damage) {
         // consider both BrickWall and SteelWall cases
-        if (destroyable || TankSpawner.playerTank.getStar() == 4) {
+        if (destroyable) {
             health -= damage;
         }
     }

@@ -45,7 +45,7 @@ public class PlayerTank extends Tank {
     private double attackIntervalTimer = 0.5;
 
     public PlayerTank(int tankOwner) {
-        super(EntityType.PLAYER, 1, 1000, 100, 1, Direction.UP);
+        super(EntityType.PLAYER, 1, 150, 1, 1, Direction.UP);
 
         owner = tankOwner;
         appear = new Appear(100);

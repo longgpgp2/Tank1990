@@ -215,6 +215,10 @@ public class Bullet extends GameEntity {
         this.direction = direction;
     }
 
+    public void setDamage(int damage) {
+        this.damage = damage;
+    }
+
     public boolean isFromPlayer() {
         return isFromPlayer;
     }
