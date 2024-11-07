@@ -12,7 +12,6 @@ import tank1990.common.constants.GameConstants;
 import tank1990.manager.SoundManager;
 import tank1990.objects.tanks.PlayerTank;
 
-
 public class GameFrame extends JFrame {
 
   private SoundManager backgroundMusic;
@@ -20,13 +19,12 @@ public class GameFrame extends JFrame {
   JPanel panel, infoPanel, enemyPanel, livePanel, levelPanel, leveloutSide, pointPanel;
   private JLabel livesLabel, levelLabel, levelIconLabel, pointLabel;
   private List<JLabel> enemyLabels;
-  private int points =0;
+  private int points = 0;
   private int lives;
   private int level;
   private PlayerTank playerTank;
-  JMenu gameMenu,optionsMenu,helpMenu;
-  JMenuItem newGameItem,exitItem,soundItem,instructionsItem,aboutItem;
-
+  JMenu gameMenu, optionsMenu, helpMenu;
+  JMenuItem newGameItem, exitItem, soundItem, instructionsItem, aboutItem;
 
   public GameFrame() {
     gameState = GameState.getInstance();
@@ -50,6 +48,7 @@ public class GameFrame extends JFrame {
     // khởi tạo giao diện
     initUI();
   }
+
   private void initUI() {
     panel = new GamePanel();
     panel.setBackground(Color.BLACK);
@@ -90,6 +89,7 @@ public class GameFrame extends JFrame {
     enemyPanel.add(column2);
     infoPanel.add(enemyPanel);
   }
+
   private void initPointPanel() {
     pointPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
     pointPanel.setBackground(Color.GRAY);
@@ -146,15 +146,15 @@ public class GameFrame extends JFrame {
 
   private void createMenuBar() {
     JMenuBar menuBar = new JMenuBar();
-     gameMenu = new JMenu("Game");
-     optionsMenu = new JMenu("Options");
-     helpMenu = new JMenu("Help");
+    gameMenu = new JMenu("Game");
+    optionsMenu = new JMenu("Options");
+    helpMenu = new JMenu("Help");
 
     newGameItem = new JMenuItem("New Game");
-     exitItem = new JMenuItem("Exit");
-     soundItem = new JMenuItem("Sound");
-     instructionsItem = new JMenuItem("Instructions");
-     aboutItem = new JMenuItem("About");
+    exitItem = new JMenuItem("Exit");
+    soundItem = new JMenuItem("Sound");
+    instructionsItem = new JMenuItem("Instructions");
+    aboutItem = new JMenuItem("About");
 
     gameMenu.add(newGameItem);
     gameMenu.add(exitItem);
@@ -170,10 +170,9 @@ public class GameFrame extends JFrame {
     newGameItem.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-                                      resetGame();
-                                    }
-    }
-    );
+        resetGame();
+      }
+    });
     exitItem.addActionListener(e -> System.exit(0));
     soundItem.addActionListener(e -> toggleSound());
     instructionsItem.addActionListener(e -> showInstructions());
@@ -191,29 +190,28 @@ public class GameFrame extends JFrame {
 
   private void showInstructions() {
     String instructions = "<html>"
-            + "<h2>Instructions: </h2>"
-            + "<p>Movement buttons:</p>"
-            + "<ul>"
-            + "<li><strong>W</strong>: UP</li>"
-            + "<li><strong>A</strong>: LEFT</li>"
-            + "<li><strong>S</strong>: DOWN</li>"
-            + "<li><strong>D</strong>: RIGHT</li>"
-            + "</ul>"
-            + "<p>Click <strong>Space</strong> to shoot!</p>"
-            + "</html>";
+        + "<h2>Instructions: </h2>"
+        + "<p>Movement buttons:</p>"
+        + "<ul>"
+        + "<li><strong>W</strong>: UP</li>"
+        + "<li><strong>A</strong>: LEFT</li>"
+        + "<li><strong>S</strong>: DOWN</li>"
+        + "<li><strong>D</strong>: RIGHT</li>"
+        + "</ul>"
+        + "<p>Click <strong>Space</strong> to shoot!</p>"
+        + "</html>";
     JOptionPane.showMessageDialog(this, instructions, "Instruction", JOptionPane.INFORMATION_MESSAGE);
   }
 
   private void showAbout() {
     String message = "<html><h2>Group 8</h2>"
-            + "2101040009: Trần Đình Khánh An<br>"
-            + "2101040088: Phạm Đức Hiếu<br>"
-            + "2101040115: Nguyễn Thành Long<br>"
-            + "2101040166: Bùi Trọng Thành<br>"
-            + "2101040192: Nguyễn Nhật Trang</html>";
+        + "2101040009: Trần Đình Khánh An<br>"
+        + "2101040088: Phạm Đức Hiếu<br>"
+        + "2101040115: Nguyễn Thành Long<br>"
+        + "2101040166: Bùi Trọng Thành<br>"
+        + "2101040192: Nguyễn Nhật Trang</html>";
     JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE);
   }
-
 
   public void removeEnemyIcon() {
     if (!enemyLabels.isEmpty()) {
@@ -256,6 +254,7 @@ public class GameFrame extends JFrame {
     GameObject gameObject = GameObject.getInstance();
     gameObject.stop();
   }
+
   public void draw() {
     repaint();
   }
