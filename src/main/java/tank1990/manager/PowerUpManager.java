@@ -35,7 +35,7 @@ public class PowerUpManager {
     public static boolean addPowerUp() {
         if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
             List<Environment> environments = GamePanel.getEnvironments();
-            List<Tank> tanks = GamePanel.getTanks();
+            List<Tank> tanks = GameEntityManager.getTanks();
 
             PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);

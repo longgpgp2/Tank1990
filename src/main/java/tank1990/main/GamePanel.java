@@ -36,7 +36,7 @@ import tank1990.objects.tanks.Tank;
 public class GamePanel extends JPanel implements ActionListener {
     Timer timer;
     static List<Environment> environments = new ArrayList<>();
-    static List<Tank> tanks = new ArrayList<>();
+    static List<Tank> tanks;
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 3;
 
@@ -69,8 +69,6 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (TankSpawner.checkVictory(tanks))
-            System.out.println("Victory");
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(g, this);
         MapManager.drawEnvironments(g, this);
@@ -121,8 +119,5 @@ public class GamePanel extends JPanel implements ActionListener {
         return environments;
     }
 
-    public static List<Tank> getTanks() {
-        return tanks;
-    }
 
 }

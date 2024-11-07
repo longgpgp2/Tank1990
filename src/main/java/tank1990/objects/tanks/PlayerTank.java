@@ -14,6 +14,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
+import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
@@ -28,6 +29,8 @@ public class PlayerTank extends Tank {
     public long shotDelay = 300;
 
     public int maxBullets;
+
+
     public int speed = 80;
     // public boolean isShield = false;
     // public boolean isAppear = true;
@@ -160,6 +163,22 @@ public class PlayerTank extends Tank {
             if (currentShieldFrame != null) {
                 g.drawImage(currentShieldFrame.getImage(), (int) position.x, (int) position.y, null);
             }
+        }
+    }
+
+    public void disablePlayer(){
+        enabled=false;
+        if(collisionBox!=null) {
+            collisionBox.setEnabled(false);
+            setPosition(GameConstants.TANK_DISABLED_POSITION);
+        }
+        image=null;
+    }
+    public void enablePlayer(){
+        enabled=true;
+        if(collisionBox!=null) {
+            collisionBox.setEnabled(true);
+            setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
         }
     }
 

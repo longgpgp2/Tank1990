@@ -40,7 +40,7 @@ public class MapManager {
     }
     public static Set<Integer> getUnoccupiedIndex(){
         List<Environment> environments = GamePanel.getEnvironments();
-        List<Tank> tanks = GamePanel.getTanks();
+        List<Tank> tanks = GameEntityManager.getTanks();
         Set<Integer> occupiedIndices = new HashSet<>();
         if(tanks!=null)
         for (Tank tank:tanks) {
@@ -96,7 +96,7 @@ public class MapManager {
         g.drawImage(powerUp.image, (int) (powerUp.getPosition().x), (int) (powerUp.getPosition().y), powerUp.width, powerUp.height, observer);
     }
     public static void drawTanks(Graphics g, ImageObserver observer){
-        List<Tank> tanks = GamePanel.getTanks();
+        List<Tank> tanks = GameEntityManager.getTanks();
         for (Tank tank: tanks) {
             g.drawImage(tank.image, (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height, observer);
             ImageIcon currentShieldFrame;
@@ -112,7 +112,7 @@ public class MapManager {
     }
 
     public static PlayerTank getPlayerTank() {
-        List<Tank> tanks = GamePanel.getTanks();
+        List<Tank> tanks = GameEntityManager.getTanks();
         for (Tank tank : tanks) {
             if (tank.getType() == EntityType.PLAYER) {
                 return (PlayerTank) tank;

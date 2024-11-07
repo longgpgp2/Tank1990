@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Tank extends GameEntity {
+        public boolean enabled = true;
         public int health;
         public int bulletSpeed;
         public int movementSpeed;
@@ -184,4 +185,5 @@ public abstract class Tank extends GameEntity {
         public boolean isAppearing() {
                 return isAppear;
         }
+
 }

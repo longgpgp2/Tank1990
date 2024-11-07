@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
+import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.PlayerTank;
 
 public class KeyHandler {
@@ -113,6 +114,20 @@ public class KeyHandler {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
+        if(key==KeyEvent.VK_1) {
+            TankSpawner.removeEnemies();
+            TankSpawner.disableEnemySpawner();
+        }
+        if(key==KeyEvent.VK_2) {
+            TankSpawner.removePlayer();
+        }
+        if(key==KeyEvent.VK_3) {
+            TankSpawner.spawnPlayer();
+        }
+        if(key==KeyEvent.VK_4) {
+            TankSpawner.enableEnemySpawner(1);
+        }
+        if(!tank.enabled) return;
         setPress(key);
         if (key == KeyEvent.VK_SPACE) {
             tank.shoot();
@@ -123,6 +138,13 @@ public class KeyHandler {
     }
 
     public void keyReleased(KeyEvent e) {
+        if(!tank.enabled){
+            upPressed=false;
+            downPressed=false;
+            leftPressed=false;
+            rightPressed=false;
+            return;}
+
         int code = e.getKeyCode();
 
         if (code == KeyEvent.VK_W) {

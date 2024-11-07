@@ -130,6 +130,7 @@ public abstract class EnemyTank extends Tank {
     }
 
     public void update(double deltaTime) {
+        if(!enabled) return;
         if (isAppear || movementSpeed == 0) {
             return;
         }
@@ -329,6 +330,7 @@ public abstract class EnemyTank extends Tank {
         }
 
         PowerUpManager.addPowerUp();
+
         GameEntityManager.remove(this);
         TankSpawner.enemyTanks.remove(this);
     }

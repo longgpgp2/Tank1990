@@ -42,7 +42,7 @@ public class TankSpawner {
 
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
-    public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
+    public static void startQueueingEnemies(Queue<String> types) {
 //        if (types.peek() != null) {
 //            addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
 //            CollisionUtil.addCollisionToObjects();
@@ -50,13 +50,13 @@ public class TankSpawner {
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean isBoardFull = getNumberOfAliveTanks(tanks) >= 6;
+                boolean isBoardFull = getNumberOfAliveTanks(GameEntityManager.getTanks()) >= 6;
                 if (types.peek() == null) {
                     timer.stop();
                     return;
                 }
                 if (!isBoardFull) {
-                    addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
+                    addAnEnemyToList(MapManager.getUnoccupiedIndex(), GameEntityManager.getTanks(), types.poll());
                     CollisionUtil.addCollisionToObjects();
                 }
             }
@@ -69,6 +69,54 @@ public class TankSpawner {
         timer.stop();
     }
 
+    // Xoá tank trên map và tank trong queue
+//    public static void removeAllTanks(){
+//        enemyTypes = null;
+//        stopQueueingEnemies();
+////        GameEntityManager.getTanks().stream().forEach(tank -> tank = null);
+//        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().getFirst();
+//        removePlayer();
+//        spawnPlayer();
+//    }
+
+    public static void removePlayer(){
+        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().getFirst();
+        tank.enabled=false;
+        if(tank.getCollision()!=null) {
+            tank.getCollision().setEnabled(false);
+            tank.setPosition(GameConstants.TANK_DISABLED_POSITION);
+        }
+        tank.image=null;
+    }
+    public static void spawnPlayer(){
+        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().getFirst();
+        tank.enabled=true;
+        if(tank.getCollision()!=null) {
+            tank.getCollision().setEnabled(true);
+            tank.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
+        }
+    }
+
+    public static void removeEnemies(){GameEntityManager.getTanks().stream()
+                .filter(tank -> tank.getType().equals(EntityType.ENEMY))
+                .forEach(tank -> {
+                    tank.enabled = false;
+                    tank.getCollision().setEnabled(false);
+                    tank.setPosition(GameConstants.TANK_DISABLED_POSITION);
+                    GameEntityManager.remove(tank);
+                });
+
+    }
+
+    public static void enableEnemySpawner(int level){
+        enemyTypes = readTanksFromLevel(level);
+        startQueueingEnemies(enemyTypes);
+    }
+
+    public static void disableEnemySpawner(){
+        timer.stop();
+    }
+
     // trả ra 1 list tất cả các tank|| được dùng để init tanks
     public static List<Tank> spawnTanks(int level) {
         List<Tank> tanks = new ArrayList<>();
@@ -76,8 +124,7 @@ public class TankSpawner {
         enemyTypes = readTanksFromLevel(level);
         playerTank = (PlayerTank) createPlayer();
         tanks.add(playerTank);
-        startQueueingEnemies(enemyTypes, tanks, unoccupiedIndices);
-        stopQueueingEnemies();
+        startQueueingEnemies(enemyTypes);
         return tanks;
     }
 
@@ -85,7 +132,10 @@ public class TankSpawner {
     // hết && health của tất cả địch = 0
     public static boolean checkVictory(List<Tank> tanks) {
         boolean isPlayerAlive = MapManager.getPlayerTank().getHealth() != 0;
-        boolean areEnemiesAllSpawned = enemyTypes.peek() == null;
+        boolean areEnemiesAllSpawned = true;
+        if(enemyTypes!=null) {
+            areEnemiesAllSpawned= enemyTypes.peek() == null;
+        }
         boolean areEnemiesAllDead = tanks.stream()
                 .filter(tank -> tank != MapManager.getPlayerTank() && tank.getHealth() != 0)
                 .collect(Collectors.toList()).isEmpty();
@@ -98,7 +148,7 @@ public class TankSpawner {
     // Tạo 1 player với position cố định // sẽ bỏ hàm này
     public static Tank createPlayer() {
         Tank player = new PlayerTank(1);
-        player.setPosition(CollisionUtil.getPositionByIndex(1002, 16,16));
+        player.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16,16));
         if (gameState.isSoundOn()) {
             playerSound.resetSound();
             playerSound.playSound();
@@ -174,12 +224,8 @@ public class TankSpawner {
         unoccupiedIndices.removeAll(tanksIndices);
         Tank tank = createEnemyTankByType(enemyType);
         while (true) {
-            int randomIndex = CommonUtil.randomInteger(63, 63);
-            // if (!MapManager.checkIndexAvailability(randomIndex, unoccupiedIndices)) {
-            // continue;
-            // }
             Vector2D position = CollisionUtil.getPositionByIndex(
-                    randomIndex,
+                    GameConstants.ENEMY_SPAWNING_INDEX,
                     GameConstants.ENTITY_WIDTH,
                     GameConstants.ENTITY_HEIGHT);
             tank.setPosition(position);

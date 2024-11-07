@@ -1,11 +1,11 @@
 package tank1990.manager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.enums.EntityType;
+import tank1990.objects.tanks.PlayerTank;
+import tank1990.objects.tanks.Tank;
 
 public class GameEntityManager {
   private static ArrayList<GameEntity> gameEntities = new ArrayList<>();
@@ -45,6 +45,17 @@ public class GameEntityManager {
         .stream()
         .filter(gameEntity -> gameEntity.getType().equals(type))
         .toArray(GameEntity[]::new);
+  }
+
+  public static List<Tank> getTanks(){
+    List<Tank> tanks = new ArrayList<>();
+    Arrays.asList(GameEntityManager.getGameEntity(EntityType.PLAYER))
+            .stream()
+            .forEach(gameEntity -> tanks.add((Tank) gameEntity));
+    Arrays.asList(GameEntityManager.getGameEntity(EntityType.ENEMY))
+            .stream()
+            .forEach(gameEntity -> tanks.add((Tank) gameEntity));
+    return tanks;
   }
 
   public static void setCollisionEntities(

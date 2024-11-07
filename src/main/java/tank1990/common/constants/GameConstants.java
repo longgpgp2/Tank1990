@@ -1,5 +1,6 @@
 package tank1990.common.constants;
 
+import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.EntityType;
 
 import java.util.Arrays;
@@ -14,6 +15,9 @@ public class GameConstants {
         public static final int ENTITY_WIDTH = 16;
         public static final int ENTITY_HEIGHT = 16;
         public static final int TANK_SIZE = 32;
+        public static final int PLAYER_SPAWNING_INDEX = 1002;
+        public static final int ENEMY_SPAWNING_INDEX = 63;
+        public static final Vector2D TANK_DISABLED_POSITION = new Vector2D(-100, -100);
         public static final int POWERUP_SIZE = 32;
         public static final int MAP_SHIFT_WIDTH = 50;
         public static final int MAP_SHIFT_HEIGHT = 50;
