@@ -11,6 +11,7 @@ import tank1990.main.GamePanel;
 import tank1990.main.GameState;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
+import tank1990.objects.tanks.Tank;
 
 /**
  * PowerUpManager manages how power-ups are added and removed from the current

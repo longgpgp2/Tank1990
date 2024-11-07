@@ -135,7 +135,7 @@ public abstract class EnemyTank extends Tank {
             return;
         }
 
-        // shoot();
+         shoot();
 
         frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
         if (frameCounter >= animationInterval) {
