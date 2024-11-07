@@ -92,7 +92,7 @@ public class TankSpawner {
     // Tạo 1 player với position cố định // sẽ bỏ hàm này
     public static Tank createPlayer() {
         Tank player = new PlayerTank(1);
-        player.setPosition(new Vector2D(100, 80));
+        player.setPosition(CollisionUtil.getPositionByIndex(1002, 16,16));
         if (gameState.isSoundOn()) {
             playerSound.resetSound();
             playerSound.playSound();
@@ -115,7 +115,7 @@ public class TankSpawner {
         }
     }
 
-    // Tapk 1 list các enemies
+    // Tạo 1 list các enemies
     public static List<Tank> createEnemies(Set<Integer> unoccupiedIndices) {
         List<Tank> tanks = new ArrayList<>();
         // String[] types = readTanksFromLevel(1);
@@ -127,16 +127,6 @@ public class TankSpawner {
         return tanks;
     }
 
-    // xếp enemies vào 1 queue
-    public static Queue<Tank> queueEnemies(Set<Integer> unoccupiedIndices) {
-        Queue<String> types = readTanksFromLevel(1);
-        Queue<Tank> queue = new LinkedList<>();
-
-        for (String type : types) {
-            queue = addAnEnemyToQueue(unoccupiedIndices, queue, type);
-        }
-        return queue;
-    }
 
     // Tạo instance của enemy tank dựa trên className
     public static Tank createEnemyTankByType(String className) {
@@ -204,36 +194,4 @@ public class TankSpawner {
         return (int) tanks.stream().filter(tank -> tank.getHealth() > 0).count();
     }
 
-    // thêm kẻ địch vào list tank
-    public static Queue<Tank> addAnEnemyToQueue(Set<Integer> unoccupiedIndices, Queue<Tank> tanks, String enemyType) {
-        Set<Integer> tanksIndices = new HashSet<>();
-        if (!tanks.isEmpty()) {
-            for (Tank tank : tanks) {
-                tanksIndices.add(CollisionUtil.getTileIndex(tank.getPosition()));
-            }
-        }
-
-        unoccupiedIndices.removeAll(tanksIndices);
-        Tank tank = createEnemyTankByType(enemyType);
-        while (true) {
-            int randomIndex = CommonUtil.randomInteger(34, 69);
-            if (!MapManager.checkIndexAvailability(randomIndex)) {
-                continue;
-            }
-            Vector2D position = CollisionUtil.getPositionByIndex(
-                    randomIndex,
-                    GameConstants.ENTITY_WIDTH,
-                    GameConstants.ENTITY_HEIGHT);
-            tank.setPosition(position);
-            tanks.add(tank);
-            if (gameState.isSoundOn()) {
-                enemySound.resetSound();
-                enemySound.playSound();
-            } else {
-                enemySound.stopSound();
-            }
-            break;
-        }
-        return tanks;
-    }
 }

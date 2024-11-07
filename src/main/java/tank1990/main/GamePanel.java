@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static List<Environment> environments = new ArrayList<>();
     static List<Tank> tanks = new ArrayList<>();
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
-    int currentLevel = 1;
+    int currentLevel = 3;
 
     GamePanel() {
         this.setPreferredSize(new Dimension(GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT));

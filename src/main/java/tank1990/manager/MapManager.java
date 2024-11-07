@@ -41,7 +41,6 @@ public class MapManager {
     public static Set<Integer> getUnoccupiedIndex(){
         List<Environment> environments = GamePanel.getEnvironments();
         List<Tank> tanks = GamePanel.getTanks();
-//        Need a GameEntity function that checks for the entity's occupied index
         Set<Integer> occupiedIndices = new HashSet<>();
         if(tanks!=null)
         for (Tank tank:tanks) {
