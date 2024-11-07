@@ -5,6 +5,7 @@ import tank1990.common.classes.GameLoop;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.PowerUpManager;
 
 public class GameObject extends GameLoop {
     private static GameObject instance;
@@ -66,8 +67,8 @@ public class GameObject extends GameLoop {
     }
 
     public void resetGame() {
-        gameFrame = null;
         GameEntityManager.removeAll();
+        PowerUpManager.resetPowerUps();
         stop();
     }
 }

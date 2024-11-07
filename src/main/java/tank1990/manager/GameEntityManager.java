@@ -31,6 +31,11 @@ public class GameEntityManager {
       if (value.getCollision() != null) {
         value.setCollision(null);
       }
+
+      if (value.image != null) {
+        value.image = null;
+      }
+
       iterator.remove();
     }
   }

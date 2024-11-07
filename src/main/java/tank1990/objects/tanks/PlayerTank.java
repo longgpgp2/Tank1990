@@ -110,7 +110,6 @@ public class PlayerTank extends Tank {
     @Override
     public void update(double deltaTime) {
         if (lives == 0) {
-            System.out.println("Game Over");
             GameObject.getInstance().resetGame();
         }
         keyHandler.updateVelocity();
