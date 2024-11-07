@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -75,7 +76,9 @@ public class GamePanel extends JPanel implements ActionListener {
 
         // draw every available power-ups
         if (!powerUps.isEmpty()) {
-            for (PowerUp powerUp : powerUps) {
+            Iterator<PowerUp> iterator = powerUps.iterator();
+            while (iterator.hasNext()) {
+                PowerUp powerUp = iterator.next();
                 MapManager.drawPowerUp(powerUp, g, this);
             }
         }
