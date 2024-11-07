@@ -1,6 +1,7 @@
 package tank1990.manager;
 
 import tank1990.main.GamePanel;
+import tank1990.main.GameState;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.Tank;
@@ -25,6 +26,7 @@ public class PowerUpManager {
     public static ArrayList<PowerUp> getPowerUps() {
         return powerUps;
     }
+    private static GameState gameState = GameState.getInstance();
 
     /**
      * Create and add a new PowerUp
@@ -38,6 +40,14 @@ public class PowerUpManager {
             PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);
             GameEntityManager.add(powerUp);
+            // tạo sound mỗi khi 1 powerup được spawn
+            SoundManager spawnSound = new SoundManager();
+            spawnSound.soundLoader(".\\src\\main\\resources\\sounds\\spawn-sound-powerup.wav");
+            if (gameState.isSoundOn()){
+                spawnSound.playSound();
+            }else {
+                spawnSound.stopSound();
+            }
 
             Timer autoRemoveTimer = new Timer(autoRemoveDelay, e -> {
                 System.out.println("A power-up is removed after " + autoRemoveDelay + "ms");

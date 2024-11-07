@@ -17,8 +17,10 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
 import tank1990.main.GamePanel;
+import tank1990.main.GameState;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
+import tank1990.manager.SoundManager;
 import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
@@ -29,6 +31,15 @@ public class TankSpawner {
     public static Queue<String> enemyTypes;
     public static PlayerTank playerTank;
     public static List<EnemyTank> enemyTanks = new ArrayList<>();
+    private static SoundManager enemySound = new SoundManager();
+    private static SoundManager playerSound = new SoundManager();
+    private static GameState gameState = GameState.getInstance();
+
+    static {
+        enemySound.soundLoader(".\\src\\main\\resources\\sounds\\appearance-effect.wav");
+        playerSound.soundLoader(".\\src\\main\\resources\\sounds\\tank-spawn.wav");
+    }
+
 
     // Tạo 1 timer để queue từng enemy trong Queue vào vào list
     public static void startQueueingEnemies(Queue<String> types, List<Tank> tanks, Set<Integer> unoccupiedIndices) {
@@ -82,6 +93,12 @@ public class TankSpawner {
     public static Tank createPlayer() {
         Tank player = new PlayerTank(1);
         player.setPosition(new Vector2D(100, 80));
+        if (gameState.isSoundOn()) {
+            playerSound.resetSound();
+            playerSound.playSound();
+        } else {
+            playerSound.stopSound();
+        }
         return player;
     }
 
@@ -89,6 +106,12 @@ public class TankSpawner {
         PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
         if (playerTank != null) {
             playerTank.setPosition(new Vector2D(100, 80));
+            if (gameState.isSoundOn()) {
+                playerSound.resetSound();
+                playerSound.playSound();
+            } else {
+                playerSound.stopSound();
+            }
         }
     }
 
@@ -166,6 +189,12 @@ public class TankSpawner {
             tank.setPosition(position);
             tanks.add(tank);
             enemyTanks.add((EnemyTank) tank);
+            if (gameState.isSoundOn()) {
+                enemySound.resetSound();
+                enemySound.playSound();
+            } else {
+                enemySound.stopSound();
+            }
             break;
         }
         return tanks;
@@ -197,6 +226,12 @@ public class TankSpawner {
                     GameConstants.ENTITY_HEIGHT);
             tank.setPosition(position);
             tanks.add(tank);
+            if (gameState.isSoundOn()) {
+                enemySound.resetSound();
+                enemySound.playSound();
+            } else {
+                enemySound.stopSound();
+            }
             break;
         }
         return tanks;
