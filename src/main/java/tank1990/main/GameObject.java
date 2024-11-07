@@ -7,6 +7,7 @@ import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 
 public class GameObject extends GameLoop {
+    private static GameObject instance;
     private GameFrame gameFrame;
 
     public GameObject() {
@@ -21,11 +22,16 @@ public class GameObject extends GameLoop {
                 EntityType.STEEL,
                 EntityType.ENEMY,
                 EntityType.PLAYER
-
         });
         run();
     }
 
+    public static GameObject getInstance() {
+        if (instance == null) {
+            instance = new GameObject();
+        }
+        return instance;
+    }
     @Override
     protected void processGameLoop() {
         long initalFrameTime = System.nanoTime();
@@ -55,4 +61,5 @@ public class GameObject extends GameLoop {
             // System.out.println(e);
         }
     }
+
 }

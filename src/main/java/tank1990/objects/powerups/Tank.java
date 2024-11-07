@@ -10,7 +10,7 @@ import javax.swing.*;
  * Số lượng mạng tối đa của PlayerTank là 3.
  * 
  */
-public class Tank extends PowerUp{
+public class Tank extends PowerUp {
 	/**
 	 * Constructor
 	 * 
@@ -18,7 +18,7 @@ public class Tank extends PowerUp{
 	 * @param y tung độ
 	 */
 	public Tank(int x, int y) {
-		super(x ,y);
+		super(x, y);
 		image = new ImageIcon("src/main/resources/images/powerup_tank.png").getImage();
 	}
 
@@ -29,7 +29,7 @@ public class Tank extends PowerUp{
 	 * 
 	 */
 	@Override
-	public void activate(){
+	public void activate() {
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;
@@ -37,7 +37,7 @@ public class Tank extends PowerUp{
 			playerTank.setLives(playerTank.getLives() + 1);
 			System.out.println("[POWER-UP] Increase lives by 1. Current lives: " + playerTank.getLives());
 		} else {
-			System.out.println("[POWER-UP] Maximum lives reached. Current lives: " + playerTank.getLives());
+			System.out.println("[POWER-UP] Maximum lives reached. Current lives: " + playerTank.getHealth());
 		}
 	}
 

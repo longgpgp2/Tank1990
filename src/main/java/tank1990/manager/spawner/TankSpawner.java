@@ -104,7 +104,7 @@ public class TankSpawner {
 
     public static void respawnPlayer() {
         PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
-        if (playerTank != null) {
+        if (playerTank != null && playerTank.getHealth() != 0) {
             playerTank.setPosition(new Vector2D(100, 80));
             if (gameState.isSoundOn()) {
                 playerSound.resetSound();

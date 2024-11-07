@@ -10,10 +10,11 @@ import javax.swing.*;
 
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.SoundManager;
+import tank1990.objects.tanks.PlayerTank;
 
 
 public class GameFrame extends JFrame {
-  public GamePanel gamePanel;
+
   private SoundManager backgroundMusic;
   private GameState gameState;
   JPanel panel, infoPanel, enemyPanel, livePanel, levelPanel, leveloutSide, pointPanel;
@@ -22,6 +23,9 @@ public class GameFrame extends JFrame {
   private int points =0;
   private int lives;
   private int level;
+  private PlayerTank playerTank;
+  JMenu gameMenu,optionsMenu,helpMenu;
+  JMenuItem newGameItem,exitItem,soundItem,instructionsItem,aboutItem;
 
 
   public GameFrame() {
@@ -41,6 +45,7 @@ public class GameFrame extends JFrame {
     setResizable(false);
     setBackground(Color.GRAY);
     setVisible(true);
+    this.playerTank = new PlayerTank(1);
 
     // khởi tạo giao diện
     initUI();
@@ -108,7 +113,7 @@ public class GameFrame extends JFrame {
     JLabel pLabel = new JLabel("P", SwingConstants.CENTER);
     ImageIcon livesIcon = new ImageIcon(".\\src\\main\\resources\\images\\lives.png");
     JLabel livesIconLabel = new JLabel(livesIcon);
-    lives = 3;
+    lives = playerTank.getHealth();
     livesLabel = new JLabel(String.valueOf(lives), SwingConstants.CENTER);
     livesLabel.setForeground(Color.BLACK);
     columnlive1.add(iLabel);
@@ -141,15 +146,15 @@ public class GameFrame extends JFrame {
 
   private void createMenuBar() {
     JMenuBar menuBar = new JMenuBar();
-    JMenu gameMenu = new JMenu("Game");
-    JMenu optionsMenu = new JMenu("Options");
-    JMenu helpMenu = new JMenu("Help");
+     gameMenu = new JMenu("Game");
+     optionsMenu = new JMenu("Options");
+     helpMenu = new JMenu("Help");
 
-    JMenuItem newGameItem = new JMenuItem("New Game");
-    JMenuItem exitItem = new JMenuItem("Exit");
-    JMenuItem soundItem = new JMenuItem("Sound");
-    JMenuItem instructionsItem = new JMenuItem("Instructions");
-    JMenuItem aboutItem = new JMenuItem("About");
+    newGameItem = new JMenuItem("New Game");
+     exitItem = new JMenuItem("Exit");
+     soundItem = new JMenuItem("Sound");
+     instructionsItem = new JMenuItem("Instructions");
+     aboutItem = new JMenuItem("About");
 
     gameMenu.add(newGameItem);
     gameMenu.add(exitItem);
@@ -163,11 +168,11 @@ public class GameFrame extends JFrame {
     this.setJMenuBar(menuBar);
 
     newGameItem.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
                                       resetGame();
                                     }
-                                  }
+    }
     );
     exitItem.addActionListener(e -> System.exit(0));
     soundItem.addActionListener(e -> toggleSound());
@@ -209,6 +214,7 @@ public class GameFrame extends JFrame {
     JOptionPane.showMessageDialog(this, message, "About", JOptionPane.INFORMATION_MESSAGE);
   }
 
+
   public void removeEnemyIcon() {
     if (!enemyLabels.isEmpty()) {
       JLabel enemyLabel = enemyLabels.remove(enemyLabels.size() - 1);
@@ -233,7 +239,7 @@ public class GameFrame extends JFrame {
   }
 
   private void updateLivesLabel() {
-    livesLabel.setText(String.valueOf(lives));
+    livesLabel.setText(String.valueOf(playerTank.getLives()));
   }
 
   public void increaseLevel() {
@@ -246,8 +252,9 @@ public class GameFrame extends JFrame {
   }
 
   private void resetGame() {
-    System.out.println("Game reset!");
-
+    System.out.println("Reset Game");
+    GameObject gameObject = GameObject.getInstance();
+    gameObject.stop();
   }
   public void draw() {
     repaint();
