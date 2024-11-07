@@ -3,7 +3,9 @@ package tank1990.objects.tanks;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.*;
 
@@ -36,11 +38,19 @@ public abstract class EnemyTank extends Tank {
     // (adjustable) The position of 4 potential collision boxes in order from TOP
     // DOWN LEFT RIGHT. For example if set to 5, 4 future collision boxes are placed
     // 5 pixels off TOP DOWN LEFT RIGHT respectively from origin collision box.
-    private int directionPixelCheck = 10;
+    private int directionPixelCheck = 5;
+
+    // (adjustable) how many times can a tank use the same x axis or y axis. For
+    // example if LEFT and RIGHT is used more than 5 times,
+    // once new direction is detected either UP or DOWN, the tank will immediately
+    // change direction
+    private int singleDirectionAxisThreshold = 3;
+    private boolean isRepeatingSingleAxis = false;
+    private Map<Direction, Integer> directionRepeatedAmount = new HashMap<>();
 
     // (adjustable) After how long before the entity can change direction. Will
     // reset after each direction change. Measures in second.
-    private double directionChangeInterval = 1.3;
+    private double directionChangeInterval = 0.2;
     private double directionChangeTimer = 0;
 
     // (adjustable) time between attacks.
@@ -60,6 +70,8 @@ public abstract class EnemyTank extends Tank {
         this.name = name;
         this.point = point;
         this.specialTraits = specialTraits;
+        this.appear = new Appear(100);
+        this.images = new Image[4][2]; // UP, DOWN, LEFT, RIGHT
 
         CollisionBox collisionBox = new CollisionBox(
                 this, new Vector2D(2.5, 2.5),
@@ -70,14 +82,10 @@ public abstract class EnemyTank extends Tank {
         collisionBox.setEnableFrontCollisionCheck(true);
         collisionBox.setCollisionType(CollisionType.RIGID);
 
-        appear = new Appear(100);
-
-        this.images = new Image[4][2]; // UP, DOWN, LEFT, RIGHT
         loadImages();
-
         initalizeBullets();
-
         startAnimation();
+        resetDirectionRepeatedAmount();
     }
 
     protected abstract void loadImages();
@@ -126,7 +134,7 @@ public abstract class EnemyTank extends Tank {
             return;
         }
 
-        shoot();
+        // shoot();
 
         frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
         if (frameCounter >= animationInterval) {
@@ -143,68 +151,61 @@ public abstract class EnemyTank extends Tank {
 
         availableDirections = findAvailableDirections(deltaTime);
 
-        if (collidedEntities != null && directionChangeTimer > directionChangeInterval) {
+        if (collidedEntities != null) {
             changeDirection(availableDirections);
-            directionChangeTimer = 0;
         }
-        // if (collidedEntities !=null)
-        // if(collidedEntities.stream().filter(gameEntity ->
-        // gameEntity.getType()==EntityType.ENEMY).count()>=1 && directionChangeTimer >
-        // directionChangeInterval){
-        // System.out.println(availableDirections);
-        // changeDirection(availableDirections);
-        // directionChangeTimer = 0;
-        // }
-        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()
-                && directionChangeTimer > directionChangeInterval) {
-            changeDirectionWhenNotCollided(availableDirections);
-            directionChangeTimer = 0;
+
+        if (collidedEntities == null && availableDirections.size() > prevAvailableDirections.size()) {
+            checkRepeatedDirection();
+            changeDirection(prevAvailableDirections, availableDirections, 1, 2);
         }
-        // if (collidedEntities == null && directionChangeTimer >
-        // directionChangeInterval) {
-        // randomDirection();
-        // directionChangeTimer = 0;
-        // }
 
         attackIntervalTimer += deltaTime;
         randomAttackIntervalTimer += deltaTime;
         directionChangeTimer += deltaTime;
+        prevAvailableDirections = availableDirections;
+    }
+
+    private void checkRepeatedDirection() {
+        for (Map.Entry<Direction, Integer> entry : directionRepeatedAmount.entrySet()) {
+            Direction direction = entry.getKey();
+            Integer repeatedAmount = entry.getValue();
+
+            if (repeatedAmount > singleDirectionAxisThreshold) {
+                isRepeatingSingleAxis = true;
+
+                if (availableDirections.contains(direction)) {
+                    availableDirections.remove(direction);
+                }
+
+                if (availableDirections.contains(direction.getOpposite())) {
+                    availableDirections.remove(direction.getOpposite());
+                }
+
+                changeDirection(availableDirections);
+                break;
+            }
+        }
     }
 
     public void changeDirection(ArrayList<Direction> availableDirections) {
-        if (availableDirections.size() >= 4 && availableDirections.contains(direction.getOpposite())
-                && availableDirections.contains(direction)) {
-            availableDirections.remove(direction.getOpposite());
-            availableDirections.remove(direction);
+        if (directionChangeTimer < directionChangeInterval) {
+            return;
         }
-        if (availableDirections.size() >= 3 && availableDirections.contains(direction.getOpposite())) {
-            availableDirections.remove(direction.getOpposite());
-        }
+
         int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
         Direction randomDirection = availableDirections.get(randomIndex);
 
-        direction = randomDirection;
-    }
-
-    public void changeDirectionWhenNotCollided(ArrayList<Direction> availableDirections) {
-        if (availableDirections.size() >= 2 && availableDirections.contains(direction.getOpposite())) {
-            availableDirections.remove(direction.getOpposite());
+        if (randomDirection.getOpposite().equals(direction)) {
+            updateDirectionRepeatedAmount(randomDirection);
+        } else {
+            resetDirectionRepeatedAmount();
         }
-        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
-        Direction randomDirection = availableDirections.get(randomIndex);
 
         direction = randomDirection;
-    }
 
-    public void randomDirection() {
-        int changingChance = CommonUtil.randomInteger(0, 100);
-        if (changingChance < 10) {
-            int randomIndex = CommonUtil.randomInteger(0, 3);
-            ArrayList<Direction> directions = (ArrayList<Direction>) Arrays.asList(Direction.UP, Direction.DOWN,
-                    Direction.LEFT, Direction.RIGHT);
-            Direction randomDirection = directions.get(randomIndex);
-
-            direction = randomDirection;
+        if (!isRepeatingSingleAxis) {
+            directionChangeTimer = 0;
         }
     }
 
@@ -212,15 +213,18 @@ public abstract class EnemyTank extends Tank {
      * Add more chance to explore new direction
      * 
      * @param prevDirections
-     * @param newDirections
+     * @param plannedDirections
      * @param prevDirectionChance
      * @param newDirectionChance
      */
     public void changeDirection(
             ArrayList<Direction> prevDirections,
-            ArrayList<Direction> newDirections,
+            ArrayList<Direction> plannedDirections,
             int prevDirectionChance,
             int newDirectionChance) {
+        ArrayList<Direction> newDirections = new ArrayList<>(plannedDirections);
+        newDirections.removeAll(prevAvailableDirections);
+
         ArrayList<Direction> availableDirections = new ArrayList<>();
 
         for (int i = 0; i < prevDirectionChance; i++) {
@@ -230,11 +234,7 @@ public abstract class EnemyTank extends Tank {
         for (int i = 0; i < newDirectionChance; i++) {
             availableDirections.addAll(newDirections);
         }
-
-        int randomIndex = CommonUtil.randomInteger(0, availableDirections.size() - 1);
-        Direction randomDirection = availableDirections.get(randomIndex);
-
-        direction = randomDirection;
+        changeDirection(availableDirections);
     }
 
     public void move(double deltaTime) {
@@ -253,10 +253,7 @@ public abstract class EnemyTank extends Tank {
                 boolean isAvailable = true;
 
                 for (GameEntity entity : collisionEntities) {
-                    if (entity == null || entity.getCollision() == null) {
-                        continue;
-                    }
-                    if (entity.getType() == EntityType.ENEMY) {
+                    if (entity == null || entity.getCollision() == null || !entity.getCollision().isEnabled()) {
                         continue;
                     }
                     if (CollisionUtil.checkIntersection(expectedAABB, entity.getCollision().getAABB())) {
@@ -366,6 +363,22 @@ public abstract class EnemyTank extends Tank {
 
     public int getHealth() {
         return this.health;
+    }
+
+    private void resetDirectionRepeatedAmount() {
+        directionRepeatedAmount.put(Direction.LEFT, 0);
+        directionRepeatedAmount.put(Direction.RIGHT, 0);
+        directionRepeatedAmount.put(Direction.UP, 0);
+        directionRepeatedAmount.put(Direction.DOWN, 0);
+
+        isRepeatingSingleAxis = false;
+    }
+
+    private void updateDirectionRepeatedAmount(Direction direction) {
+
+        int amount = directionRepeatedAmount.get(direction).intValue();
+
+        directionRepeatedAmount.put(direction, amount + 1);
     }
 
     @Override

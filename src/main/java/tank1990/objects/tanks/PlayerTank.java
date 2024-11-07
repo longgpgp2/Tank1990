@@ -29,16 +29,16 @@ public class PlayerTank extends Tank {
 
     public int maxBullets;
     public int speed = 80;
-//    public boolean isShield = false;
-//    public boolean isAppear = true;
+    // public boolean isShield = false;
+    // public boolean isAppear = true;
 
     public KeyHandler keyHandler;
 
     private int star = 1;
     private int lives = 3;
     private int point = 0;
-//    private Appear appear;
-//    private Shield shield;
+    // private Appear appear;
+    // private Shield shield;
 
     // (adjustable) How long before the tank can attack.
     private double attackInterval = 0;
