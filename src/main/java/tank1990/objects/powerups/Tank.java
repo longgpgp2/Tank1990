@@ -17,11 +17,11 @@ public class Tank extends PowerUp{
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;
-		if (playerTank.getLives() < 3) {
-			playerTank.setLives(playerTank.getLives() + 1);
-			System.out.println("[POWER-UP] Increase lives by 1. Current lives: " + playerTank.getLives());
+		if (playerTank.getHealth() < 3) {
+			playerTank.setHealth(playerTank.getHealth() + 1);
+			System.out.println("[POWER-UP] Increase lives by 1. Current lives: " + playerTank.getHealth());
 		} else {
-			System.out.println("[POWER-UP] Maximum lives reached. Current lives: " + playerTank.getLives());
+			System.out.println("[POWER-UP] Maximum lives reached. Current lives: " + playerTank.getHealth());
 		}
 	}
 
