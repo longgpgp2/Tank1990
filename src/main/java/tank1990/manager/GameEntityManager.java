@@ -24,9 +24,21 @@ public class GameEntityManager {
 
     for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
       GameEntity value = iterator.next();
-      if (value == gameEntity) {
-        iterator.remove();
+      if (value != gameEntity) {
+        continue;
       }
+
+      if (value.getCollision() != null) {
+        value.setCollision(null);
+      }
+      iterator.remove();
+    }
+  }
+
+  public static void removeAll() {
+    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
+      remove(iterator.next());
+      ;
     }
   }
 

@@ -14,6 +14,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
+import tank1990.main.GameObject;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
@@ -35,7 +36,7 @@ public class PlayerTank extends Tank {
     public KeyHandler keyHandler;
 
     private int star = 1;
-    private int lives = 3;
+    private int lives = 1; // FOR TESTING /// MUST REMOVE OR CHANGE
     private int point = 0;
     // private Appear appear;
     // private Shield shield;
@@ -108,8 +109,10 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
-        if (lives == 0)
-            return;
+        if (lives == 0) {
+            System.out.println("Game Over");
+            GameObject.getInstance().resetGame();
+        }
         keyHandler.updateVelocity();
 
         if (isAppear) {

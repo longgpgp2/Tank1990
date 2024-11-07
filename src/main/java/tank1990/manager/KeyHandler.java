@@ -52,6 +52,8 @@ public class KeyHandler {
             upPressed = false;
             tank.setDirection(Direction.DOWN);
             updateImage();
+        } else if (key == KeyEvent.VK_0) { // FOR TESTING
+            tank.setLives(0);
         }
     }
 

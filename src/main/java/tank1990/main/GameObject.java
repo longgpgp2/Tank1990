@@ -32,6 +32,7 @@ public class GameObject extends GameLoop {
         }
         return instance;
     }
+
     @Override
     protected void processGameLoop() {
         long initalFrameTime = System.nanoTime();
@@ -49,7 +50,9 @@ public class GameObject extends GameLoop {
     }
 
     protected void render() {
-        gameFrame.draw();
+        if (gameFrame != null) {
+            gameFrame.draw();
+        }
     }
 
     protected void update(double deltaTime) {
@@ -62,4 +65,9 @@ public class GameObject extends GameLoop {
         }
     }
 
+    public void resetGame() {
+        gameFrame = null;
+        GameEntityManager.removeAll();
+        stop();
+    }
 }

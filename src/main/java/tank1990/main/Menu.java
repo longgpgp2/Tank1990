@@ -96,7 +96,7 @@ public class Menu extends JPanel implements KeyListener, Runnable {
                 System.out.println("Start game selected!");
                 backgroundMusic.stopSound();
                 parentFrame.dispose();
-                new GameObject().startGame();
+                GameObject.getInstance().startGame();
                 break;
             case 1:
                 System.out.println("Options selected");
