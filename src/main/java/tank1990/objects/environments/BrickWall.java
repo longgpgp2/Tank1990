@@ -5,7 +5,6 @@ import tank1990.common.classes.GameSprite;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
-import tank1990.manager.GameEntityManager;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -41,11 +40,9 @@ public class BrickWall extends Environment implements DestructibleEntity {
 	@Override
 	public void destroy() {
 		maskImage = null;
-
-		// setCollision(null); // can disable collision box instead
 		getCollision().setEnabled(false);
 		setSprite(null);
-		image=null;
+		image = null;
 		destroyed = true;
 	}
 
