@@ -36,6 +36,22 @@ public class GameEntityManager {
     }
   }
 
+  public static void removeCollisionEntity(EntityType type, GameEntity gameEntity) {
+    if (gameEntity == null) {
+      return;
+    }
+
+    gameCollisionEntites.get(type).remove(gameEntity);
+  }
+
+  public static void addCollisionEntity(EntityType type, GameEntity gameEntity) {
+    if (gameEntity == null) {
+      return;
+    }
+
+    gameCollisionEntites.get(type).add(gameEntity);
+  }
+
   public static ArrayList<GameEntity> getGameEntities() {
     return gameEntities;
   }

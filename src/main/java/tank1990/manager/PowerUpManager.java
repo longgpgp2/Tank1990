@@ -1,15 +1,12 @@
 package tank1990.manager;
 
-import tank1990.main.GamePanel;
+import tank1990.common.enums.EntityType;
 import tank1990.main.GameState;
-import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
-import tank1990.objects.tanks.Tank;
 
 import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * PowerUpManager manages how power-ups are added and removed from the current game
@@ -34,12 +31,10 @@ public class PowerUpManager {
      */
     public static boolean addPowerUp() {
         if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
-            List<Environment> environments = GamePanel.getEnvironments();
-            List<Tank> tanks = GamePanel.getTanks();
-
             PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);
-            GameEntityManager.add(powerUp);
+            GameEntityManager.addCollisionEntity(EntityType.PLAYER, powerUp);;
+            
             // tạo sound mỗi khi 1 powerup được spawn
             SoundManager spawnSound = new SoundManager();
             spawnSound.soundLoader(".\\src\\main\\resources\\sounds\\spawn-sound-powerup.wav");
@@ -70,6 +65,7 @@ public class PowerUpManager {
         powerUp.getCollision().setEnabled(false);
         // remove power-up from the field
         GameEntityManager.remove(powerUp);
+        GameEntityManager.removeCollisionEntity(EntityType.PLAYER, powerUp);
         powerUps.remove(powerUp);
     }
 
@@ -117,6 +113,7 @@ public class PowerUpManager {
         // remove all power-ups
         for (PowerUp powerUp : powerUps) {
             GameEntityManager.remove(powerUp);
+            GameEntityManager.removeCollisionEntity(EntityType.PLAYER, powerUp);
         }
         powerUps.clear();
     }
