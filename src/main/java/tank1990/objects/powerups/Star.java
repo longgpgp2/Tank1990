@@ -6,17 +6,40 @@ import tank1990.objects.tanks.PlayerTank;
 
 import javax.swing.*;
 
+/**
+ * Star là một PowerUp khi kích hoạt sẽ cường hóa các Bullet cho PlayerTank
+ * Có 4 cấp độ:
+ * - Lv 1: cấp độ gốc
+ * - Lv 2: tốc độ đạn tăng gấp đôi
+ * - Lv 3: số lượng đạn tăng thêm 1
+ * - Lv 4: sát thương đạn tăng thêm 1
+ * 
+ */
 public class Star extends PowerUp{
+	/**
+	 * Constructor
+	 * 
+	 * @param x hoành độ
+	 * @param y tung độ
+	 */
 	public Star(int x, int y) {
 		super(x ,y);
 		image = new ImageIcon("src/main/resources/images/powerup_star.png").getImage();
 	}
+
+	/**
+	 * Kích hoạt hiệu ứng của Star:
+	 * - Cộng điểm cho PlayerTank
+	 * - Cộng star cho PlayerTank nếu star < 4
+	 * - Áp dụng cường hóa 
+	 * 
+	 */
 	@Override
 	public void activate(){
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;
-		if (playerTank.getStar() < 4) { // cap at level 4
+		if (playerTank.getStar() < 4) { // giới hạn ở cấp độ 4
 			playerTank.setStar(playerTank.getStar() + 1);
 			System.out.println("[POWER-UP] Increased power level by 1. Current level: " + playerTank.getStar());
 		} else {
@@ -24,6 +47,7 @@ public class Star extends PowerUp{
 			return;
 		}
 
+		// cường hóa các Bullet cho PlayerTank
 		switch (playerTank.getStar()) {
 			case 2:
 				playerTank.setBulletSpeed(playerTank.getBulletSpeed() * 2);
