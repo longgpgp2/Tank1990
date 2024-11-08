@@ -31,7 +31,6 @@ public class PlayerTank extends Tank {
 
     public int maxBullets;
 
-
     public int speed = 80;
     // public boolean isShield = false;
     // public boolean isAppear = true;
@@ -39,7 +38,7 @@ public class PlayerTank extends Tank {
     public KeyHandler keyHandler;
 
     private int star = 1;
-//    private int lives = 3;
+    // private int lives = 3;
     private int point = 0;
     // private Appear appear;
     // private Shield shield;
@@ -71,7 +70,7 @@ public class PlayerTank extends Tank {
         startAnimation();
     }
 
-    private void startAnimation() {
+    public void startAnimation() {
         new Thread(() -> {
             while (!appear.isAnimationFinished()) {
                 image = appear.getCurrentFrame().getImage();
@@ -112,7 +111,7 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
-        if (health == 0){
+        if (health == 0) {
             System.out.println("Game Over");
             GameObject.getInstance().resetGame();
             return;
@@ -171,17 +170,18 @@ public class PlayerTank extends Tank {
         }
     }
 
-    public void disablePlayer(){
-        enabled=false;
-        if(collisionBox!=null) {
+    public void disablePlayer() {
+        enabled = false;
+        if (collisionBox != null) {
             collisionBox.setEnabled(false);
             setPosition(GameConstants.TANK_DISABLED_POSITION);
         }
-        image=null;
+        image = null;
     }
-    public void enablePlayer(){
-        enabled=true;
-        if(collisionBox!=null) {
+
+    public void enablePlayer() {
+        enabled = true;
+        if (collisionBox != null) {
             collisionBox.setEnabled(true);
             setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
         }
@@ -195,13 +195,13 @@ public class PlayerTank extends Tank {
         this.star = star;
     }
 
-//    public int getLives() {
-//        return lives;
-//    }
+    // public int getLives() {
+    // return lives;
+    // }
 
-//    public void setLives(int lives) {
-//        this.lives = lives;
-//    }
+    // public void setLives(int lives) {
+    // this.lives = lives;
+    // }
 
     public int getPoint() {
         return point;

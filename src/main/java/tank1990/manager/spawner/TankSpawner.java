@@ -95,6 +95,7 @@ public class TankSpawner {
             tank.getCollision().setEnabled(true);
             tank.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
         }
+        tank.startShield();
     }
 
     public static void removeEnemies() {
