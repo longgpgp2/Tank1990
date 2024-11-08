@@ -26,11 +26,11 @@ public class GameConstants {
         public static final String[] PERK_LIST = { "Star", "Grenade", "Helmet", "Tank", "Timer", "Shovel" };
         public static final EntityType[] IMPASSABLE_ENTITIES = {
                         EntityType.PLAYER, EntityType.BASE, EntityType.EDGE,
-                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL,
+                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.BASE_WALL,
         };
         public static final EntityType[] PLAYER_IMPASSABLE_ENTITIES = {
                         EntityType.ENEMY, EntityType.BASE, EntityType.EDGE,
-                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.POWER_UP
+                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.BASE_WALL, EntityType.POWER_UP
         };
 
 }

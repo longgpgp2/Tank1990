@@ -176,7 +176,7 @@ public class TankSpawner {
         PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
         GameInfoPanel.getInstance().decreaseLives();
         if (playerTank != null) {
-            playerTank.setPosition(new Vector2D(100, 80));
+            playerTank.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
             if (gameState.isSoundOn()) {
                 playerSound.resetSound();
                 playerSound.playSound();

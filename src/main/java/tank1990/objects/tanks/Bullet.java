@@ -14,6 +14,7 @@ import tank1990.main.GameInfoPanel;
 import tank1990.manager.MapManager;
 import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
+import tank1990.objects.environments.BaseWall;
 import tank1990.objects.environments.BrickWall;
 
 public class Bullet extends GameEntity {
@@ -145,6 +146,10 @@ public class Bullet extends GameEntity {
 
             if (collidedGameEntity instanceof BrickWall) {
                 ((BrickWall) collidedGameEntity).hitComponent(this);
+            }
+
+            if (collidedGameEntity instanceof BaseWall) {
+                ((BaseWall) collidedGameEntity).hitComponent(this);
             }
 
             if (collidedGameEntity instanceof EnemyTank) {

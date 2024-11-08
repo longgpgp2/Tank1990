@@ -1,6 +1,6 @@
 package tank1990.main;
 
-import java.util.ArrayList;
+import static tank1990.manager.spawner.TankSpawner.*;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.GameLoop;
@@ -11,9 +11,6 @@ import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.PowerUpManager;
 import tank1990.manager.spawner.TankSpawner;
-import tank1990.objects.tanks.PlayerTank;
-
-import static tank1990.manager.spawner.TankSpawner.playerTank;
 
 public class GameObject extends GameLoop {
     private static GameObject instance;
@@ -25,15 +22,7 @@ public class GameObject extends GameLoop {
     }
 
     public void startGame() {
-        GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                EntityType.BRICK,
-                EntityType.STEEL,
-                EntityType.ENEMY,
-                EntityType.PLAYER
-
-        });
+        CollisionUtil.addCollisionToObjects();
         run();
     }
 
@@ -98,7 +87,8 @@ public class GameObject extends GameLoop {
         MapManager.generateEnvironments(currentLevel);
         TankSpawner.enableEnemySpawner(currentLevel);
         CollisionUtil.addCollisionToObjects();
-        if(playerTank.getHealth()==0) playerTank.setHealth(1);
+        if (playerTank.getHealth() == 0)
+            playerTank.setHealth(1);
         GameInfoPanel.getInstance().resetEnemyPanel();
         GameInfoPanel.getInstance().updateLevelLabel();
         GameInfoPanel.getInstance().resetPoint();
