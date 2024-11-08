@@ -129,8 +129,11 @@ public class MapManager {
             base = (Base) GameEntityManager.getGameEntity(EntityType.BASE)[0];
         }
 
+
         return base;
     }
+
+
     // Đọc từ level và tạo ra map tương ứng
     public static List<Environment> generateEnvironments(int level) {
         List<Environment> envs = new ArrayList();

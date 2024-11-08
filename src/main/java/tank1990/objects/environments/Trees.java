@@ -5,8 +5,6 @@ import tank1990.common.enums.EntityType;
 
 import java.awt.Graphics2D;
 
-import javax.swing.*;
-
 public class Trees extends Environment {
     public Trees(int x, int y) {
         super(EntityType.TREE, true, false, true, x, y);

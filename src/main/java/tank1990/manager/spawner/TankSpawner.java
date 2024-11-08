@@ -14,6 +14,7 @@ import javax.swing.Timer;
 
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
