@@ -181,12 +181,12 @@ public class Bullet extends GameEntity {
                     continue;
                 }
 
-                if (playerTank.getLives() <= 0) {
+                if (playerTank.getHealth() <= 0) {
                     playerTank.destroy();
                 }
 
-                if (playerTank.getLives() > 0) {
-                    playerTank.setLives(playerTank.getLives() - damage);
+                if (playerTank.getHealth() > 0) {
+                    playerTank.setHealth(playerTank.getHealth() - damage);
                     playerTank.respawn();
                     this.destroy();
                 }

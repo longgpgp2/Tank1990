@@ -162,13 +162,7 @@ public class GameFrame extends JFrame {
     menuBar.add(helpMenu);
     this.setJMenuBar(menuBar);
 
-    newGameItem.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                      resetGame();
-                                    }
-                                  }
-    );
+    newGameItem.addActionListener(e ->resetGame());
     exitItem.addActionListener(e -> System.exit(0));
     soundItem.addActionListener(e -> toggleSound());
     instructionsItem.addActionListener(e -> showInstructions());
@@ -247,7 +241,7 @@ public class GameFrame extends JFrame {
 
   private void resetGame() {
     System.out.println("Game reset!");
-
+    GameObject.getInstance().resetGame();
   }
   public void draw() {
     repaint();

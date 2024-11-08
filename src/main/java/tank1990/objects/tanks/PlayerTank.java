@@ -15,6 +15,7 @@ import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
+import tank1990.main.GameObject;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
@@ -38,7 +39,7 @@ public class PlayerTank extends Tank {
     public KeyHandler keyHandler;
 
     private int star = 1;
-    private int lives = 3;
+//    private int lives = 3;
     private int point = 0;
     // private Appear appear;
     // private Shield shield;
@@ -111,8 +112,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
-        if (lives == 0)
+        if (health == 0){
+            System.out.println("Game Over");
+            GameObject.getInstance().resetGame();
             return;
+        }
+
         keyHandler.updateVelocity();
 
         if (isAppear) {
@@ -190,13 +195,13 @@ public class PlayerTank extends Tank {
         this.star = star;
     }
 
-    public int getLives() {
-        return lives;
-    }
+//    public int getLives() {
+//        return lives;
+//    }
 
-    public void setLives(int lives) {
-        this.lives = lives;
-    }
+//    public void setLives(int lives) {
+//        this.lives = lives;
+//    }
 
     public int getPoint() {
         return point;

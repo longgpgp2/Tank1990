@@ -5,9 +5,15 @@ import tank1990.common.classes.GameLoop;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
+import tank1990.manager.MapManager;
+import tank1990.manager.PowerUpManager;
+import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.tanks.PlayerTank;
 
 public class GameObject extends GameLoop {
+    private static GameObject instance;
     private GameFrame gameFrame;
+    private int currentLevel = 1;
 
     public GameObject() {
         gameFrame = new GameFrame();
@@ -24,6 +30,12 @@ public class GameObject extends GameLoop {
 
         });
         run();
+    }
+    public static GameObject getInstance() {
+        if (instance == null) {
+            instance = new GameObject();
+        }
+        return instance;
     }
 
     @Override
@@ -43,7 +55,9 @@ public class GameObject extends GameLoop {
     }
 
     protected void render() {
-        gameFrame.draw();
+        if (gameFrame != null) {
+            gameFrame.draw();
+        }
     }
 
     protected void update(double deltaTime) {
@@ -54,5 +68,32 @@ public class GameObject extends GameLoop {
         } catch (Exception e) {
             // System.out.println(e);
         }
+    }
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void resetGame() {
+//        gameFrame = null;
+        try{
+            GameEntityManager.removeAll();
+            TankSpawner.removePlayer();
+            TankSpawner.removeEnemies();
+            TankSpawner.disableEnemySpawner();
+            PowerUpManager.resetPowerUps();
+//            MapManager.generateEnvironments(currentLevel);
+//            TankSpawner.spawnPlayer();
+//            TankSpawner.enableEnemySpawner(currentLevel);
+//            PowerUpManager.startAutoSpawn();
+        }catch (Exception e){
+
+        }
+
+    }
+
+    public void nextLevel() {
+        currentLevel += 1;
+//        GameEntityManager.removeAll();
+        MapManager.generateEnvironments(currentLevel);
     }
 }

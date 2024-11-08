@@ -24,9 +24,33 @@ public class GameEntityManager {
 
     for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
       GameEntity value = iterator.next();
-      if (value == gameEntity) {
-        iterator.remove();
+      if (value != gameEntity) {
+        continue;
       }
+
+      if (value.getCollision() != null) {
+        value.setCollision(null);
+      }
+
+      if (value.image != null) {
+        value.image = null;
+      }
+
+      iterator.remove();
+    }
+  }
+  public static void removeAll() {
+    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
+        try {
+          GameEntity gameEntity = iterator.next();
+          if (gameEntity != null) {
+            remove(gameEntity);
+          }
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+
+
     }
   }
 
