@@ -7,7 +7,7 @@ import tank1990.objects.animation.ExplosionAnimation;
 import java.awt.*;
 
 public class Base extends Environment {
-    private boolean isDestroy = false;
+    public boolean isDestroy = false;
 
     public Base(int x, int y) {
         super(EntityType.BASE, false, true, false, x, y);
@@ -18,7 +18,6 @@ public class Base extends Environment {
     @Override
     public void destroy() {
         System.out.println("Gà");
-
         // animation nổ
         ExplosionAnimation explosion = new ExplosionAnimation();
         explosion.startAnimation(() -> {

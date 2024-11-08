@@ -10,10 +10,13 @@ import javax.swing.*;
 
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.SoundManager;
+import tank1990.objects.tanks.PlayerTank;
 
 
 public class GameFrame extends JFrame {
-  public GamePanel gamePanel;
+
+  private static GameFrame instance;
+  private PlayerTank playerTank;
   private SoundManager backgroundMusic;
   private GameState gameState;
   JPanel panel, infoPanel, enemyPanel, livePanel, levelPanel, leveloutSide, pointPanel;
@@ -44,6 +47,12 @@ public class GameFrame extends JFrame {
 
     // khởi tạo giao diện
     initUI();
+  }
+  public static GameFrame getInstance() {
+    if (instance == null) {
+      instance = new GameFrame();
+    }
+    return instance;
   }
   private void initUI() {
     panel = new GamePanel();
@@ -241,7 +250,8 @@ public class GameFrame extends JFrame {
 
   private void resetGame() {
     System.out.println("Game reset!");
-    GameObject.getInstance().resetGame();
+    GameObject.getInstance().eraseGame();
+    GameObject.getInstance().newGame();
   }
   public void draw() {
     repaint();

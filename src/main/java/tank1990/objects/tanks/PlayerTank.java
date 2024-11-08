@@ -1,7 +1,6 @@
 package tank1990.objects.tanks;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 
@@ -16,6 +15,7 @@ import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.main.GameObject;
+import tank1990.main.GamePanel;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
@@ -112,11 +112,12 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
-        if (health == 0){
-            System.out.println("Game Over");
-            GameObject.getInstance().resetGame();
-            return;
-        }
+//        if (health == 0){
+//            System.out.println("Game Over");
+//
+//            return;
+//        }
+
 
         keyHandler.updateVelocity();
 

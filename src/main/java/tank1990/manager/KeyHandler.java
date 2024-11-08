@@ -129,7 +129,7 @@ public class KeyHandler {
             TankSpawner.enableEnemySpawner(1);
         }
         if (key == KeyEvent.VK_0) { // FOR TESTING
-            GameObject.getInstance().resetGame();
+            GameObject.getInstance().eraseGame();
         }
         if (key == KeyEvent.VK_9) { // FOR TESTING
             GameObject.getInstance().nextLevel();
