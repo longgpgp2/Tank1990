@@ -5,11 +5,13 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
+import tank1990.manager.GameEntityManager;
 import tank1990.objects.animation.Appear;
 import tank1990.objects.animation.Shield;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Tank extends GameEntity {
@@ -186,4 +188,14 @@ public abstract class Tank extends GameEntity {
                 return isAppear;
         }
 
+        public static List<Tank> getTanks() {
+                List<Tank> tanks = new ArrayList<>();
+                Arrays.asList(GameEntityManager.getGameEntity(EntityType.PLAYER))
+                                .stream()
+                                .forEach(gameEntity -> tanks.add((Tank) gameEntity));
+                Arrays.asList(GameEntityManager.getGameEntity(EntityType.ENEMY))
+                                .stream()
+                                .forEach(gameEntity -> tanks.add((Tank) gameEntity));
+                return tanks;
+        }
 }

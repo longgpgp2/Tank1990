@@ -22,6 +22,7 @@ public abstract class GameEntity extends Component {
     public int width;
     public int height;
 
+    public Image image;
     public int spriteNum = 1;
     public int spriteCounter = 0;
 
@@ -31,7 +32,6 @@ public abstract class GameEntity extends Component {
     protected Vector2D position;
 
     protected CollisionBox collisionBox;
-    public Image image;
     protected GameSprite sprite;
 
     public GameEntity(EntityType type, Vector2D position, int width, int height) {

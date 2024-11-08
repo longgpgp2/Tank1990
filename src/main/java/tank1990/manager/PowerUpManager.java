@@ -39,7 +39,7 @@ public class PowerUpManager {
     public static boolean addPowerUp() {
         if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
             List<Environment> environments = GamePanel.getEnvironments();
-            List<Tank> tanks = GameEntityManager.getTanks();
+            List<Tank> tanks = Tank.getTanks();
 
             PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);
@@ -73,7 +73,9 @@ public class PowerUpManager {
      */
     private static void removePowerUp(PowerUp powerUp) {
         // disable collision
-        powerUp.getCollision().setEnabled(false);
+        if (powerUp.getCollision() != null) {
+            powerUp.getCollision().setEnabled(false);
+        }
         // remove power-up from the field
         GameEntityManager.remove(powerUp);
         GameEntityManager.removeCollisionEntity(EntityType.PLAYER, powerUp);
@@ -98,6 +100,7 @@ public class PowerUpManager {
      */
     public static void startAutoSpawn() {
         if (autoSpawnAction == null) {
+            autoSpawnTimer = new Timer(autoSpawnDelay, autoSpawnAction);
             autoSpawnAction = e -> {
                 if (addPowerUp()) {
                     System.out.println("A new power-up is added after " + autoSpawnDelay + "ms");
@@ -116,9 +119,10 @@ public class PowerUpManager {
      */
     public static void resetPowerUps() {
         // stop auto spawn
-        autoSpawnTimer.stop();
         if (autoSpawnAction != null) {
-            autoSpawnTimer.removeActionListener(autoSpawnAction);
+            if (autoSpawnTimer != null) {
+                autoSpawnTimer.removeActionListener(autoSpawnAction);
+            }
             autoSpawnTimer = null;
         }
         // remove all power-ups

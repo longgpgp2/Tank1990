@@ -4,7 +4,6 @@ import java.util.*;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.enums.EntityType;
-import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
 public class GameEntityManager {
@@ -39,18 +38,40 @@ public class GameEntityManager {
       iterator.remove();
     }
   }
+
   public static void removeAll() {
     for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
-        try {
-          GameEntity gameEntity = iterator.next();
-          if (gameEntity != null) {
-            remove(gameEntity);
-          }
-        } catch (Exception e) {
-          throw new RuntimeException(e);
-        }
+      GameEntity gameEntity = iterator.next();
 
+      if (gameEntity.getCollision() != null) {
+        gameEntity.setCollision(null);
+      }
 
+      if (gameEntity.image != null) {
+        gameEntity.image = null;
+      }
+
+      iterator.remove();
+    }
+  }
+
+  public static void removeAllExcept(EntityType[] entityTypes) {
+    for (Iterator<GameEntity> iterator = gameEntities.iterator(); iterator.hasNext();) {
+      GameEntity gameEntity = iterator.next();
+
+      if (Arrays.asList(entityTypes).contains(gameEntity.getType())) {
+        continue;
+      }
+
+      if (gameEntity.getCollision() != null) {
+        gameEntity.setCollision(null);
+      }
+
+      if (gameEntity.image != null) {
+        gameEntity.image = null;
+      }
+
+      iterator.remove();
     }
   }
 
@@ -85,17 +106,6 @@ public class GameEntityManager {
         .stream()
         .filter(gameEntity -> gameEntity.getType().equals(type))
         .toArray(GameEntity[]::new);
-  }
-
-  public static List<Tank> getTanks(){
-    List<Tank> tanks = new ArrayList<>();
-    Arrays.asList(GameEntityManager.getGameEntity(EntityType.PLAYER))
-            .stream()
-            .forEach(gameEntity -> tanks.add((Tank) gameEntity));
-    Arrays.asList(GameEntityManager.getGameEntity(EntityType.ENEMY))
-            .stream()
-            .forEach(gameEntity -> tanks.add((Tank) gameEntity));
-    return tanks;
   }
 
   public static void setCollisionEntities(

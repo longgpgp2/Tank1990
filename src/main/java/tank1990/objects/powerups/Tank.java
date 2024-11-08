@@ -1,7 +1,13 @@
 package tank1990.objects.powerups;
 
+import tank1990.common.enums.EntityType;
+import tank1990.manager.GameEntityManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.PlayerTank;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -10,7 +16,7 @@ import javax.swing.*;
  * Số lượng mạng tối đa của PlayerTank là 3.
  * 
  */
-public class Tank extends PowerUp{
+public class Tank extends PowerUp {
 	/**
 	 * Constructor
 	 * 
@@ -18,7 +24,7 @@ public class Tank extends PowerUp{
 	 * @param y tung độ
 	 */
 	public Tank(int x, int y) {
-		super(x ,y);
+		super(x, y);
 		image = new ImageIcon("src/main/resources/images/powerup_tank.png").getImage();
 	}
 
@@ -29,7 +35,7 @@ public class Tank extends PowerUp{
 	 * 
 	 */
 	@Override
-	public void activate(){
+	public void activate() {
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;

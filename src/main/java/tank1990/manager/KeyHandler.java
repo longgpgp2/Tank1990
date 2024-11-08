@@ -54,10 +54,6 @@ public class KeyHandler {
             upPressed = false;
             tank.setDirection(Direction.DOWN);
             updateImage();
-        }else if (key == KeyEvent.VK_0) { // FOR TESTING
-            tank.setHealth(0);
-        } else if (key == KeyEvent.VK_9) { // FOR TESTING
-            GameObject.getInstance().nextLevel();
         }
     }
 
@@ -119,20 +115,30 @@ public class KeyHandler {
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if(key==KeyEvent.VK_1) {
+        if (key == KeyEvent.VK_1) { // FOR TESTING
             TankSpawner.removeEnemies();
             TankSpawner.disableEnemySpawner();
         }
-        if(key==KeyEvent.VK_2) {
+        if (key == KeyEvent.VK_2) { // FOR TESTING
             TankSpawner.removePlayer();
         }
-        if(key==KeyEvent.VK_3) {
+        if (key == KeyEvent.VK_3) { // FOR TESTING
             TankSpawner.spawnPlayer();
         }
-        if(key==KeyEvent.VK_4) {
+        if (key == KeyEvent.VK_4) { // FOR TESTING
             TankSpawner.enableEnemySpawner(1);
         }
-        if(!tank.enabled) return;
+        if (key == KeyEvent.VK_0) { // FOR TESTING
+            GameObject.getInstance().resetGame();
+        }
+        if (key == KeyEvent.VK_9) { // FOR TESTING
+            GameObject.getInstance().nextLevel();
+        }
+        if (key == KeyEvent.VK_8) { // FOR TESTING
+            GameObject.getInstance().newGame();
+        }
+        if (!tank.enabled)
+            return;
         setPress(key);
         if (key == KeyEvent.VK_SPACE) {
             tank.shoot();
@@ -143,12 +149,13 @@ public class KeyHandler {
     }
 
     public void keyReleased(KeyEvent e) {
-        if(!tank.enabled){
-            upPressed=false;
-            downPressed=false;
-            leftPressed=false;
-            rightPressed=false;
-            return;}
+        if (!tank.enabled) {
+            upPressed = false;
+            downPressed = false;
+            leftPressed = false;
+            rightPressed = false;
+            return;
+        }
 
         int code = e.getKeyCode();
 

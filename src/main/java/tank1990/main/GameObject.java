@@ -1,5 +1,7 @@
 package tank1990.main;
 
+import java.util.ArrayList;
+
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.GameLoop;
 import tank1990.common.constants.GameConstants;
@@ -31,6 +33,7 @@ public class GameObject extends GameLoop {
         });
         run();
     }
+
     public static GameObject getInstance() {
         if (instance == null) {
             instance = new GameObject();
@@ -69,31 +72,46 @@ public class GameObject extends GameLoop {
             // System.out.println(e);
         }
     }
+
     public int getCurrentLevel() {
         return currentLevel;
     }
 
     public void resetGame() {
-//        gameFrame = null;
-        try{
-            GameEntityManager.removeAll();
-            TankSpawner.removePlayer();
-            TankSpawner.removeEnemies();
-            TankSpawner.disableEnemySpawner();
-            PowerUpManager.resetPowerUps();
-//            MapManager.generateEnvironments(currentLevel);
-//            TankSpawner.spawnPlayer();
-//            TankSpawner.enableEnemySpawner(currentLevel);
-//            PowerUpManager.startAutoSpawn();
-        }catch (Exception e){
+        TankSpawner.removePlayer();
+        TankSpawner.removeEnemies();
+        TankSpawner.disableEnemySpawner();
+        PowerUpManager.resetPowerUps();
+        GameEntityManager.removeAllExcept(new EntityType[] {
+                EntityType.PLAYER,
+                EntityType.BULLET,
+        });
+    }
 
-        }
+    public void newGame() {
+        currentLevel = 1;
 
+        PowerUpManager.startAutoSpawn();
+        TankSpawner.spawnPlayer();
+        MapManager.generateEnvironments(currentLevel);
+        TankSpawner.enableEnemySpawner(currentLevel);
     }
 
     public void nextLevel() {
         currentLevel += 1;
-//        GameEntityManager.removeAll();
+
+        TankSpawner.removePlayer();
+        TankSpawner.removeEnemies();
+        TankSpawner.disableEnemySpawner();
+        PowerUpManager.resetPowerUps();
+        GameEntityManager.removeAllExcept(new EntityType[] {
+                EntityType.PLAYER,
+                EntityType.BULLET,
+        });
+
+        TankSpawner.spawnPlayer();
+        PowerUpManager.startAutoSpawn();
+        TankSpawner.enableEnemySpawner(currentLevel);
         MapManager.generateEnvironments(currentLevel);
     }
 }

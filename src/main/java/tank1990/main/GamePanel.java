@@ -23,6 +23,7 @@ import javax.swing.Timer;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
@@ -49,13 +50,8 @@ public class GamePanel extends JPanel implements ActionListener {
         setBackground(Color.BLACK);
         environments = MapManager.generateEnvironments(currentLevel);
         tanks = TankSpawner.spawnTanks(currentLevel);
-        // powerUps.add(MapManager.createPowerUp(environments, tanks));
-        // startTimer();
-        // start a timer that spawn a power-up occasionally
         PowerUpManager.startAutoSpawn();
     }
-
-    ArrayList<GameEntity> gameEntities = GameEntityManager.getGameEntities();
 
     /**
      * Cập nhật physic cho từng game entity
@@ -72,7 +68,6 @@ public class GamePanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(g, this);
-        MapManager.drawEnvironments(g, this);
 
         // draw every available power-ups
         if (!powerUps.isEmpty()) {
@@ -84,6 +79,10 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         PlayerTank playerTank = MapManager.getPlayerTank();
+        if (playerTank == null) {
+            return;
+        }
+
         // playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
@@ -109,7 +108,11 @@ public class GamePanel extends JPanel implements ActionListener {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            MapManager.getPlayerTank().keyReleased(e);
+            PlayerTank playerTank = MapManager.getPlayerTank();
+            if (playerTank != null) {
+                playerTank.keyReleased(e);
+
+            }
         }
 
         @Override
@@ -121,6 +124,5 @@ public class GamePanel extends JPanel implements ActionListener {
     public static List<Environment> getEnvironments() {
         return environments;
     }
-
 
 }
