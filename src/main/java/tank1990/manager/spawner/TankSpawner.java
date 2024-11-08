@@ -13,6 +13,7 @@ import javax.swing.Timer;
 
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
+import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
@@ -46,6 +47,7 @@ public class TankSpawner {
         // addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
         // CollisionUtil.addCollisionToObjects();
         // }
+        CollisionUtil.addCollisionToObjects();
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,6 +113,8 @@ public class TankSpawner {
     }
 
     public static void enableEnemySpawner(int level) {
+        Tank.getTanks().get(0).setDirection(Direction.UP);
+        enemyTypes = new LinkedList<>();
         enemyTypes = readTanksFromLevel(level);
         startQueueingEnemies(enemyTypes);
     }
