@@ -166,6 +166,7 @@ public class Bullet extends GameEntity {
                         playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
                         System.out.println(playerTank.getPoint());
                     }
+                    bulletExplosion = new BulletExplosion((int) lastX, (int) lastY);
                     this.destroy();
                 }
             }

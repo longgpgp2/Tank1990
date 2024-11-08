@@ -108,6 +108,7 @@ public class GamePanel extends JPanel implements ActionListener {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
         }
 
+
         try {
             for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
                 gameEntity.draw((Graphics2D) g);
