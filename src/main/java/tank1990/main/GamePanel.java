@@ -78,16 +78,6 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-        PlayerTank playerTank = MapManager.getPlayerTank();
-        if (playerTank == null) {
-            return;
-        }
-
-        // playerTank.draw(g);
-        for (Bullet bullet : playerTank.getBullets()) {
-            bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
-        }
-
         try {
             for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
                 gameEntity.draw((Graphics2D) g);
