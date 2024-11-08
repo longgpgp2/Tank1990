@@ -7,12 +7,29 @@ import tank1990.objects.environments.Environment;
 import javax.swing.*;
 import java.util.List;
 
+/**
+ * Shovel là một PowerUp khi kích hoạt sẽ biến tất cả BaseWall tạm thành SteelWall tạm thời.
+ * Sau một khoản thời gian sẽ biến đổi trở lại thành BrickWall và hồi phục mọi tổn thất.
+ * 
+ */
 public class Shovel extends PowerUp{
+	/**
+	 * Constructor
+	 * 
+	 * @param x hoành độ
+	 * @param y tung độ
+	 */
 	public Shovel(int x, int y) {
 		super(x ,y);
 		image = new ImageIcon("src/main/resources/images/powerup_shovel.png").getImage();
 	}
 
+	/**
+	 * Kích hoạt hiệu ứng của Shovel:
+	 * - Cộng điểm cho PlayerTank
+	 * - Biến đổi các BaseWall
+	 * 
+	 */
 	@Override
 	public void activate() {
 		this.updatePoint();

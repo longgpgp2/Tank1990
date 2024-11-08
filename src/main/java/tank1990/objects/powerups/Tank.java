@@ -5,15 +5,31 @@ import tank1990.objects.tanks.PlayerTank;
 
 import javax.swing.*;
 
-public class Tank extends PowerUp{
-
+/**
+ * Tank (PowerUp) là một PowerUp khi kích hoạt sẽ cho PlayerTank thêm 1 mạng.
+ * Số lượng mạng tối đa của PlayerTank là 3.
+ * 
+ */
+public class Tank extends PowerUp {
+	/**
+	 * Constructor
+	 * 
+	 * @param x hoành độ
+	 * @param y tung độ
+	 */
 	public Tank(int x, int y) {
-		super(x ,y);
+		super(x, y);
 		image = new ImageIcon("src/main/resources/images/powerup_tank.png").getImage();
 	}
 
+	/**
+	 * Kích hoạt hiệu ứng của Tank:
+	 * - Cộng điểm cho PlayerTank
+	 * - Cộng lives cho PlayerTank nếu lives < 3
+	 * 
+	 */
 	@Override
-	public void activate(){
+	public void activate() {
 		this.updatePoint();
 
 		PlayerTank playerTank = TankSpawner.playerTank;

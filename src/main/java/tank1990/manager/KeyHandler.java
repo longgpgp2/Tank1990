@@ -6,6 +6,7 @@ import javax.swing.ImageIcon;
 
 import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
+import tank1990.main.GameObject;
 import tank1990.objects.tanks.PlayerTank;
 
 public class KeyHandler {
@@ -52,6 +53,10 @@ public class KeyHandler {
             upPressed = false;
             tank.setDirection(Direction.DOWN);
             updateImage();
+        } else if (key == KeyEvent.VK_0) { // FOR TESTING
+            tank.setLives(0);
+        } else if (key == KeyEvent.VK_9) { // FOR TESTING
+            GameObject.getInstance().nextLevel();
         }
     }
 

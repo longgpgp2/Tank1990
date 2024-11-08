@@ -39,6 +39,7 @@ public class Bullet extends GameEntity {
 
         setBulletImage();
         setCollision(new CollisionBox(this, new Vector2D(0, 0), 5, 5));
+        collisionBox.setEnabled(false);
         collisionBox.setEnableFrontCollisionCheck(false);
         collisionBox.setEnableCollisionResponse(false);
     }
@@ -160,7 +161,7 @@ public class Bullet extends GameEntity {
                     enemyDestroyed = true;
                     enemyTank.destroy();
                     System.out.println(source);
-                    if(source instanceof PlayerTank) {
+                    if (source instanceof PlayerTank) {
                         PlayerTank playerTank = MapManager.getPlayerTank();
                         playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
                         System.out.println(playerTank.getPoint());

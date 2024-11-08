@@ -105,10 +105,6 @@ public class MapManager {
                 g.drawImage(currentShieldFrame.getImage(), (int) tank.getPosition().x, (int) tank.getPosition().y, null);
             }
         }
-        Tank tank = getPlayerTank();
-        g.drawRect((int)tank.getCollision().x, (int) tank.getCollision().y, tank.getCollision().width, tank.getCollision().height );
-        g.setColor(Color.red);
-        g.drawRect( (int) (tank.getPosition().x), (int) (tank.getPosition().y), tank.width, tank.height);
 
     }
 
