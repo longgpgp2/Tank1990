@@ -41,6 +41,7 @@ public class GamePanel extends JPanel implements ActionListener {
     int currentLevel = 1;
     private boolean isGameOver = false;
     private Image gameOverImage;
+
     GamePanel() {
         this.setPreferredSize(new Dimension(GameConstants.MAP_WIDTH, GameConstants.MAP_HEIGHT));
         this.setBackground(Color.WHITE);
@@ -71,6 +72,7 @@ public class GamePanel extends JPanel implements ActionListener {
             g.drawImage(gameOverImage, x, y, null);
         }
     }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -90,24 +92,27 @@ public class GamePanel extends JPanel implements ActionListener {
             }
         }
 
-
         PlayerTank playerTank = MapManager.getPlayerTank();
+        Base base = MapManager.getBase();
+
         if (playerTank == null) {
             return;
         }
+
+        if (base == null) {
+            return;
+        }
         // Game Over
-        if (playerTank.getHealth() == 0) {
+        if (playerTank.getHealth() == 0 || (base == null || base.isDestroy())) {
             isGameOver = true;
             GameObject.getInstance().eraseGame();
             drawGameOver(g);
         }
 
-
         // playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
         }
-
 
         try {
             for (GameEntity gameEntity : GameEntityManager.getGameEntities()) {
