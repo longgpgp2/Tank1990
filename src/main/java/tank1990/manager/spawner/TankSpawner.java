@@ -80,7 +80,7 @@ public class TankSpawner {
 //    }
 
     public static void removePlayer(){
-        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().getFirst();
+        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().get(0);
         tank.enabled=false;
         if(tank.getCollision()!=null) {
             tank.getCollision().setEnabled(false);
@@ -89,7 +89,7 @@ public class TankSpawner {
         tank.image=null;
     }
     public static void spawnPlayer(){
-        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().getFirst();
+        PlayerTank tank = (PlayerTank) GameEntityManager.getTanks().get(0);
         tank.enabled=true;
         if(tank.getCollision()!=null) {
             tank.getCollision().setEnabled(true);
