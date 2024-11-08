@@ -10,6 +10,7 @@ import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.interfaces.DestructibleEntity;
+import tank1990.main.GameInfoPanel;
 import tank1990.manager.MapManager;
 import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
@@ -160,10 +161,12 @@ public class Bullet extends GameEntity {
                 if (enemyTank.getHealth() <= 0) {
                     enemyDestroyed = true;
                     enemyTank.destroy();
+                    GameInfoPanel.getInstance().removeEnemyIcon();
                     System.out.println(source);
                     if (source instanceof PlayerTank) {
                         PlayerTank playerTank = MapManager.getPlayerTank();
                         playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
+                        GameInfoPanel.getInstance().updatePoint();
                         System.out.println(playerTank.getPoint());
                     }
                     bulletExplosion = new BulletExplosion((int) lastX, (int) lastY);

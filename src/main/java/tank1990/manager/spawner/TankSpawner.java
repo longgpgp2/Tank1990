@@ -2,6 +2,7 @@ package tank1990.manager.spawner;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import tank1990.common.enums.Direction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,6 +17,7 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
+import tank1990.main.GameInfoPanel;
 import tank1990.main.GamePanel;
 import tank1990.main.GameState;
 import tank1990.manager.GameEntityManager;
@@ -46,6 +48,7 @@ public class TankSpawner {
         // addAnEnemyToList(unoccupiedIndices, tanks, types.poll());
         // CollisionUtil.addCollisionToObjects();
         // }
+        CollisionUtil.addCollisionToObjects();
         timer = new Timer(5000, (ActionListener) new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,6 +114,8 @@ public class TankSpawner {
     }
 
     public static void enableEnemySpawner(int level) {
+        Tank.getTanks().get(0).setDirection(Direction.UP);
+        enemyTypes = new LinkedList<>();
         enemyTypes = readTanksFromLevel(level);
         startQueueingEnemies(enemyTypes);
     }
@@ -162,6 +167,7 @@ public class TankSpawner {
 
     public static void respawnPlayer() {
         PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
+        GameInfoPanel.getInstance().decreaseLives();
         if (playerTank != null) {
             playerTank.setPosition(new Vector2D(100, 80));
             if (gameState.isSoundOn()) {

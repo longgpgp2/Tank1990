@@ -25,6 +25,8 @@ import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
+    private static PlayerTank instance;
+
     private int owner;
     public long lastShotTime = 0;
     public long shotDelay = 300;
@@ -69,7 +71,12 @@ public class PlayerTank extends Tank {
 
         startAnimation();
     }
-
+    public static PlayerTank getInstance(int tankOwner) {
+        if (instance == null) {
+            instance = new PlayerTank(tankOwner);
+        }
+        return instance;
+    }
     public void startAnimation() {
         new Thread(() -> {
             while (!appear.isAnimationFinished()) {

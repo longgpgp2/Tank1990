@@ -92,11 +92,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
 
         PlayerTank playerTank = MapManager.getPlayerTank();
+        Base base = MapManager.getBase();
         if (playerTank == null) {
             return;
         }
         // Game Over
-        if (playerTank.getHealth() == 0) {
+        if (playerTank.getHealth() == 0 || (base == null || base.isDestroy())) {
             isGameOver = true;
             GameObject.getInstance().eraseGame();
             drawGameOver(g);

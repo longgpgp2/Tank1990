@@ -17,11 +17,11 @@ public class Base extends Environment {
 
     @Override
     public void destroy() {
-        System.out.println("Gà");
+//        System.out.println("Gà");
         // animation nổ
         ExplosionAnimation explosion = new ExplosionAnimation();
         explosion.startAnimation(() -> {
-            setSprite(new GameSprite("src/main/resources/haha.jpg"));
+//            setSprite(new GameSprite("src/main/resources/haha.jpg"));
             isDestroy = true;
         }, new ExplosionAnimation.ImageUpdateCallback() {
             @Override

@@ -1,6 +1,7 @@
 package tank1990.objects.powerups;
 
 import tank1990.common.enums.EntityType;
+import tank1990.main.GameInfoPanel;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.tanks.PlayerTank;
@@ -41,6 +42,7 @@ public class Tank extends PowerUp {
 		PlayerTank playerTank = TankSpawner.playerTank;
 		if (playerTank.getHealth() < 3) { // giới hạn 3 mạng
 			playerTank.setHealth(playerTank.getHealth() + 1);
+			GameInfoPanel.getInstance().increaseLives();
 			System.out.println("[POWER-UP] Increase lives by 1. Current lives: " + playerTank.getHealth());
 		} else {
 			System.out.println("[POWER-UP] Maximum lives reached. Current lives: " + playerTank.getHealth());

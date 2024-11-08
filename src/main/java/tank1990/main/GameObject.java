@@ -17,7 +17,7 @@ import static tank1990.manager.spawner.TankSpawner.playerTank;
 public class GameObject extends GameLoop {
     private static GameObject instance;
     private GameFrame gameFrame;
-    private int currentLevel = 1;
+    public int currentLevel = 1;
 
     public GameObject() {
         gameFrame = new GameFrame();
@@ -97,11 +97,13 @@ public class GameObject extends GameLoop {
         MapManager.generateEnvironments(currentLevel);
         TankSpawner.enableEnemySpawner(currentLevel);
         playerTank.setHealth(1);
+        GameInfoPanel.getInstance().resetEnemyPanel();
+        GameInfoPanel.getInstance().updateLevelLabel();
+        GameInfoPanel.getInstance().resetPoint();
     }
 
     public void nextLevel() {
         currentLevel += 1;
-
         TankSpawner.removePlayer();
         TankSpawner.removeEnemies();
         TankSpawner.disableEnemySpawner();
@@ -115,5 +117,7 @@ public class GameObject extends GameLoop {
         PowerUpManager.startAutoSpawn();
         TankSpawner.enableEnemySpawner(currentLevel);
         MapManager.generateEnvironments(currentLevel);
+        GameInfoPanel.getInstance().resetEnemyPanel();
+        GameInfoPanel.getInstance().updateLevelLabel();
     }
 }
