@@ -15,13 +15,13 @@ public class CollisionUtil {
   private static final int MAX_WIDTH = GameConstants.MAP_WIDTH + GameConstants.MAP_SHIFT_WIDTH;
   private static final int MAX_HEIGHT = GameConstants.MAP_HEIGHT + GameConstants.MAP_SHIFT_HEIGHT;
 
-  public static void addCollisionToObjects(){
+  public static void addCollisionToObjects() {
     GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
     GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
     GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-            EntityType.BRICK,
-            EntityType.STEEL,
-            EntityType.ENEMY, EntityType.BASE,  EntityType.BASE_WALL,
+        EntityType.BRICK,
+        EntityType.STEEL,
+        EntityType.ENEMY, EntityType.BASE, EntityType.BASE_WALL, EntityType.PLAYER
     });
   }
 
