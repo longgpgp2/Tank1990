@@ -336,7 +336,6 @@ public abstract class EnemyTank extends Tank {
 
         GameEntityManager.remove(this);
         TankSpawner.enemyTanks.remove(this);
-        GameInfoPanel.getInstance().removeEnemyIcon();
         if (TankSpawner.checkVictory()) {
             System.out.println("Victory");
             GameObject.getInstance().nextLevel();
