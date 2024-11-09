@@ -2,16 +2,12 @@ package tank1990.manager;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.Timer;
 
 import tank1990.common.enums.EntityType;
-import tank1990.main.GamePanel;
 import tank1990.main.GameState;
-import tank1990.objects.environments.Environment;
 import tank1990.objects.powerups.PowerUp;
-import tank1990.objects.tanks.Tank;
 
 /**
  * PowerUpManager manages how power-ups are added and removed from the current
@@ -19,32 +15,44 @@ import tank1990.objects.tanks.Tank;
  *
  */
 public class PowerUpManager {
-    private static int autoSpawnDelay = 10000;
-    private static int autoRemoveDelay = 30000;
+    private static int autoSpawnDelay = 30000;
+    private static int autoRemoveDelay = 15000;
 
     private static ArrayList<PowerUp> powerUps = new ArrayList<>();
     private static ActionListener autoSpawnAction = null;
     private static Timer autoSpawnTimer = new Timer(autoSpawnDelay, autoSpawnAction);
+    private static GameState gameState = GameState.getInstance();
+
+    private static int charge = 0;
 
     public static ArrayList<PowerUp> getPowerUps() {
         return powerUps;
     }
 
-    private static GameState gameState = GameState.getInstance();
+    public static void updateCharge() {
+        charge++;
+
+        if (charge < 3) {
+            return;
+        }
+
+        int numberOfNewPowerUps = charge / 3;
+        charge %= 3;
+        for (int i = 0; i < numberOfNewPowerUps; i++) {
+            addPowerUp();
+        }
+        System.out.println(numberOfNewPowerUps + " power-up(s) added from defeating enemies.");
+    }
 
     /**
      * Create and add a new PowerUp
      *
      */
-    public static boolean addPowerUp() {
-        if (powerUps.size() < 5) { // Limit the number of power-up can be on the field
-            List<Environment> environments = GamePanel.getEnvironments();
-            List<Tank> tanks = Tank.getTanks();
-
+    private static boolean addPowerUp() {
+        if (powerUps.size() < 3) { // Limit the number of power-up can be on the field
             PowerUp powerUp = MapManager.createPowerUp();
             powerUps.add(powerUp);
             GameEntityManager.addCollisionEntity(EntityType.PLAYER, powerUp);
-            ;
 
             // tạo sound mỗi khi 1 powerup được spawn
             SoundManager spawnSound = new SoundManager();
@@ -131,6 +139,7 @@ public class PowerUpManager {
             GameEntityManager.removeCollisionEntity(EntityType.PLAYER, powerUp);
         }
         powerUps.clear();
+        charge = 0;
     }
 
     public static int getAutoSpawnDelay() {
@@ -147,5 +156,13 @@ public class PowerUpManager {
 
     public static void setAutoRemoveDelay(int autoRemoveDelay) {
         PowerUpManager.autoRemoveDelay = autoRemoveDelay;
+    }
+
+    public static int getCharge() {
+        return charge;
+    }
+
+    public static void setCharge(int powerUpCharge) {
+        PowerUpManager.charge = powerUpCharge;
     }
 }
