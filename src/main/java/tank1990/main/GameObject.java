@@ -100,34 +100,36 @@ public class GameObject extends GameLoop {
     public void nextLevel() {
         currentLevel += 1;
         if (currentLevel >=4){
+            GameObject.getInstance().eraseGame();
+            stop();
+            GamePanel.getInstance().showVictoryDialog();
+        }else {
+            TankSpawner.removePlayer();
+            TankSpawner.removeEnemies();
+            TankSpawner.disableEnemySpawner();
+            PowerUpManager.resetPowerUps();
+            GameEntityManager.removeAllExcept(new EntityType[] {
+                    EntityType.PLAYER,
+                    EntityType.BULLET,
+            });
+            TankSpawner.spawnPlayer();
+            PowerUpManager.startAutoSpawn();
+            TankSpawner.enableEnemySpawner(currentLevel);
+            MapManager.generateEnvironments(currentLevel);
+            GameInfoPanel.getInstance().resetEnemyPanel();
+            GameInfoPanel.getInstance().updateLevelLabel();
+            GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+            GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+                    EntityType.BRICK,
+                    EntityType.STEEL,
+                    EntityType.ENEMY,
+                    EntityType.BASE,
+                    EntityType.BASE_WALL,
+                    EntityType.PLAYER,
+                    EntityType.BORDER,
+            });
 
-            return;
         }
-        TankSpawner.removePlayer();
-        TankSpawner.removeEnemies();
-        TankSpawner.disableEnemySpawner();
-        PowerUpManager.resetPowerUps();
-        GameEntityManager.removeAllExcept(new EntityType[] {
-                EntityType.PLAYER,
-                EntityType.BULLET,
-        });
-
-        TankSpawner.spawnPlayer();
-        PowerUpManager.startAutoSpawn();
-        TankSpawner.enableEnemySpawner(currentLevel);
-        MapManager.generateEnvironments(currentLevel);
-        GameInfoPanel.getInstance().resetEnemyPanel();
-        GameInfoPanel.getInstance().updateLevelLabel();
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                EntityType.BRICK,
-                EntityType.STEEL,
-                EntityType.ENEMY,
-                EntityType.BASE,
-                EntityType.BASE_WALL,
-                EntityType.PLAYER,
-                EntityType.BORDER,
-        });
 
     }
 }

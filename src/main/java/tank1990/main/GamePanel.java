@@ -38,6 +38,7 @@ public class GamePanel extends JPanel implements ActionListener {
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 1;
     private boolean isGameOver = false;
+    private static GamePanel instance;
     private Image gameOverImage;
 
     GamePanel() {
@@ -51,7 +52,12 @@ public class GamePanel extends JPanel implements ActionListener {
         TankSpawner.spawnTanks(currentLevel);
         PowerUpManager.startAutoSpawn();
     }
-
+    public static GamePanel getInstance() {
+        if (instance == null) {
+            instance = new GamePanel();
+        }
+        return instance;
+    }
     /**
      * Cập nhật physic cho từng game entity
      *
@@ -108,6 +114,7 @@ public class GamePanel extends JPanel implements ActionListener {
             return;
         }
 
+
         // playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
             bullet.draw((Graphics2D) g); // Vẽ viên đạn và vụ nổ nếu có
@@ -123,7 +130,19 @@ public class GamePanel extends JPanel implements ActionListener {
 
         g2D.dispose();
     }
+    public void showVictoryDialog() {
+        PlayerTank playerTank = MapManager.getPlayerTank();
+        String victoryMessage = "<html><h2>Victory!</h2>"
+                + "<p>Your Points: " + playerTank.getPoint() + "</p>"
+                + "</html>";
+        int option = JOptionPane.showOptionDialog(this, victoryMessage, "Victory",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                null, new Object[]{"OK"}, "OK");
 
+        // Kiểm tra nếu người dùng nhấn "OK"
+        if (option == JOptionPane.OK_OPTION) {
+            System.exit(0);  // Thoát khỏi ứng dụng
+        }    }
     @Override
     public void actionPerformed(ActionEvent e) {
 

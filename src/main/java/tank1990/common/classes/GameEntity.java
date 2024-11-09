@@ -174,7 +174,6 @@ public abstract class GameEntity extends Component {
         if (!getCollision().isEnabled()) {
             return null;
         }
-        // CollisionUtil.checkEdgeCollision(this);
 
         HashSet<GameEntity> collidedGameEntities = new HashSet<>();
 
