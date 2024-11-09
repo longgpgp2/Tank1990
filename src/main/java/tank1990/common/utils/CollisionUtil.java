@@ -39,10 +39,7 @@ public class CollisionUtil {
   public static Vector2D getPositionByIndex(int index, int tileWidth, int tileHeight) {
     int x = (index % 33) * (tileWidth);
     int y = (index / 33) * (tileHeight);
-    // int column = (int) index % tileWidth;
-    // int row = (int) index / tileHeight;
 
-    // return new Vector2D(column * tileWidth, row * tileHeight);
     return new Vector2D(x, y);
   }
 
@@ -73,42 +70,8 @@ public class CollisionUtil {
     return Vector2D.zero();
   }
 
-  public static Vector2D getCollisionOffset(GameEntity gameEntityA, GameEntity gameEntityB) {
-
-    return null;
-  }
-
   public static boolean isOutOfBound(GameEntity gameEntity) {
     return !getOutOfBoundOffset(gameEntity).isEqual(Vector2D.zero());
-  }
-
-  public static boolean isWorldPositionSolid(Vector2D position, GameEntity[] tileMap) {
-    int column = (int) (position.x / (GameConstants.ENTITY_WIDTH * 2));
-    int row = (int) (position.y / (GameConstants.ENTITY_HEIGHT * 2));
-
-    if (column >= GameConstants.FRAME_WIDTH / (GameConstants.ENTITY_WIDTH * 2))
-      return true;
-
-    if (row >= GameConstants.FRAME_HEIGHT / (GameConstants.ENTITY_HEIGHT * 2))
-      return true;
-
-    int tileMapIndex = getTileIndex(position);
-
-    boolean tileIsSolid = false;
-    GameEntity gameEntity = tileMap[tileMapIndex];
-
-    if (gameEntity != null) {
-      tileIsSolid = true;
-    }
-
-    return tileIsSolid;
-  }
-
-  public static void checkEdgeCollision(GameEntity gameEntityA) {
-    if (isOutOfBound(gameEntityA)) {
-      Vector2D boundOffset = getOutOfBoundOffset(gameEntityA);
-      gameEntityA.setPosition(gameEntityA.getPosition().add(boundOffset));
-    }
   }
 
   public static boolean checkIntersection(AABB firstAABB, AABB secondAABB) {
