@@ -21,7 +21,11 @@ public class CollisionUtil {
     GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
         EntityType.BRICK,
         EntityType.STEEL,
-        EntityType.ENEMY, EntityType.BASE, EntityType.BASE_WALL, EntityType.PLAYER
+        EntityType.ENEMY,
+        EntityType.BASE,
+        EntityType.BASE_WALL,
+        EntityType.PLAYER,
+        EntityType.BORDER,
     });
   }
 
