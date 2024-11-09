@@ -112,7 +112,6 @@ public class GameObject extends GameLoop {
                 EntityType.PLAYER,
                 EntityType.BULLET,
         });
-
         TankSpawner.spawnPlayer();
         PowerUpManager.startAutoSpawn();
         TankSpawner.enableEnemySpawner(currentLevel);
