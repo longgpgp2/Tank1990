@@ -105,9 +105,14 @@ public class GamePanel extends JPanel implements ActionListener {
         // Game Over
         if (playerTank.getHealth() == 0 || (base == null || base.isDestroy())) {
             isGameOver = true;
-            GameObject.getInstance().eraseGame();
+            TankSpawner.removePlayer();
+            TankSpawner.removeEnemies();
+            TankSpawner.disableEnemySpawner();
+            PowerUpManager.resetPowerUps();
             drawGameOver(g);
+            return;
         }
+
 
         // playerTank.draw(g);
         for (Bullet bullet : playerTank.getBullets()) {
