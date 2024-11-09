@@ -12,7 +12,8 @@ public enum EntityType {
   BULLET(9),
   PLAYER_SPAWNER(10),
   ENEMY(11),
-  POWER_UP(12);
+  POWER_UP(12),
+  BORDER(13);
 
   private final int value;
 

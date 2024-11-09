@@ -96,6 +96,10 @@ public class GameObject extends GameLoop {
 
     public void nextLevel() {
         currentLevel += 1;
+        if (currentLevel >=4){
+
+            return;
+        }
         TankSpawner.removePlayer();
         TankSpawner.removeEnemies();
         TankSpawner.disableEnemySpawner();
@@ -115,7 +119,12 @@ public class GameObject extends GameLoop {
         GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
                 EntityType.BRICK,
                 EntityType.STEEL,
-                EntityType.ENEMY, EntityType.BASE, EntityType.BASE_WALL, EntityType.PLAYER,
+                EntityType.ENEMY,
+                EntityType.BASE,
+                EntityType.BASE_WALL,
+                EntityType.PLAYER,
+                EntityType.BORDER,
         });
+
     }
 }

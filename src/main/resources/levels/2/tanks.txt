@@ -1,1 +1,1 @@
-FastTank FastTank FastTank FastTank FastTank FastTank PowerTank ArmorTank PowerTank ArmorTank PowerTank ArmorTank
+FastTank FastTank FastTank FastTank FastTank PowerTank ArmorTank PowerTank ArmorTank PowerTank

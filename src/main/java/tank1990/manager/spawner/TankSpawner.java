@@ -219,7 +219,7 @@ public class TankSpawner {
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = br.readLine();
-            Arrays.stream(line.split(" ")).forEach(tank -> tanks.add(tank));
+            Arrays.stream(line.trim().split(" ")).forEach(tank -> tanks.add(tank));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
