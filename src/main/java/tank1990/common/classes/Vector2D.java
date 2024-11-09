@@ -62,39 +62,4 @@ public class Vector2D {
   public static Vector2D zero() {
     return new Vector2D(0, 0);
   }
-
-  public static double intersectVectors(Vector2D originA, Vector2D endA, Vector2D originB, Vector2D endB) {
-    Vector2D r = endA.minus(originA);
-    Vector2D s = endB.minus(originB);
-
-    Double numerator = originB.minus(originA).crossProduct(r);
-    Double denominator = r.crossProduct(s);
-
-    if (numerator == 0 && denominator == 0) {
-      return Double.POSITIVE_INFINITY;
-    }
-    if (denominator == 0) {
-      return Double.POSITIVE_INFINITY;
-    }
-
-    Double u = numerator / denominator;
-    Double intersectionRatio = ((originB.minus(originA)).crossProduct(s)) / denominator;
-
-    if ((intersectionRatio >= 0) && (intersectionRatio <= 1) && (u >= 0) && (u <= 1)) {
-      return intersectionRatio;
-    }
-    return Double.POSITIVE_INFINITY;
-  }
-  public Vector2D subtract(Vector2D other) {
-    return new Vector2D(this.x - other.x, this.y - other.y);
-  }
-    public Vector2D scale(double factor) {
-      return new Vector2D(this.x * factor, this.y * factor);
-    }
-
-  public double distance(Vector2D other) {
-    double dx = this.x - other.x;
-    double dy = this.y - other.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
 }
