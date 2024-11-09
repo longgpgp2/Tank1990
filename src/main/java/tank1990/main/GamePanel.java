@@ -34,9 +34,7 @@ import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
 
 public class GamePanel extends JPanel implements ActionListener {
-    Timer timer;
     static List<Environment> environments = new ArrayList<>();
-    static List<Tank> tanks;
     static List<PowerUp> powerUps = PowerUpManager.getPowerUps();
     int currentLevel = 1;
     private boolean isGameOver = false;
@@ -50,7 +48,7 @@ public class GamePanel extends JPanel implements ActionListener {
         gameOverImage = new ImageIcon(".\\src\\main\\resources\\images\\game_over.png").getImage();
         setBackground(Color.BLACK);
         environments = MapManager.generateEnvironments(currentLevel);
-        tanks = TankSpawner.spawnTanks(currentLevel);
+        TankSpawner.spawnTanks(currentLevel);
         PowerUpManager.startAutoSpawn();
     }
 
@@ -76,10 +74,7 @@ public class GamePanel extends JPanel implements ActionListener {
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (TankSpawner.checkVictory(tanks)) {
-            System.out.println("Victory");
-            GameObject.getInstance().nextLevel();
-        }
+
         Graphics2D g2D = (Graphics2D) g;
         MapManager.drawTanks(g, this);
 

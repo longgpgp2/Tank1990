@@ -1,18 +1,16 @@
 package tank1990.main;
 
-import java.util.ArrayList;
+import static tank1990.manager.spawner.TankSpawner.*;
 
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.GameLoop;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
+import tank1990.common.utils.CollisionUtil;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.PowerUpManager;
 import tank1990.manager.spawner.TankSpawner;
-import tank1990.objects.tanks.PlayerTank;
-
-import static tank1990.manager.spawner.TankSpawner.playerTank;
 
 public class GameObject extends GameLoop {
     private static GameObject instance;
@@ -24,15 +22,7 @@ public class GameObject extends GameLoop {
     }
 
     public void startGame() {
-        GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                EntityType.BRICK,
-                EntityType.STEEL,
-                EntityType.ENEMY,
-                EntityType.PLAYER
-
-        });
+        CollisionUtil.addCollisionToObjects();
         run();
     }
 
@@ -96,7 +86,9 @@ public class GameObject extends GameLoop {
         TankSpawner.spawnPlayer();
         MapManager.generateEnvironments(currentLevel);
         TankSpawner.enableEnemySpawner(currentLevel);
-        playerTank.setHealth(1);
+        CollisionUtil.addCollisionToObjects();
+        if (playerTank.getHealth() == 0)
+            playerTank.setHealth(1);
         GameInfoPanel.getInstance().resetEnemyPanel();
         GameInfoPanel.getInstance().updateLevelLabel();
         GameInfoPanel.getInstance().resetPoint();
@@ -104,6 +96,10 @@ public class GameObject extends GameLoop {
 
     public void nextLevel() {
         currentLevel += 1;
+        if (currentLevel >=4){
+
+            return;
+        }
         TankSpawner.removePlayer();
         TankSpawner.removeEnemies();
         TankSpawner.disableEnemySpawner();
@@ -118,5 +114,16 @@ public class GameObject extends GameLoop {
         MapManager.generateEnvironments(currentLevel);
         GameInfoPanel.getInstance().resetEnemyPanel();
         GameInfoPanel.getInstance().updateLevelLabel();
+        GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
+        GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
+                EntityType.BRICK,
+                EntityType.STEEL,
+                EntityType.ENEMY,
+                EntityType.BASE,
+                EntityType.BASE_WALL,
+                EntityType.PLAYER,
+                EntityType.BORDER,
+        });
+
     }
 }

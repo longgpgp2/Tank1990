@@ -7,12 +7,13 @@ public enum EntityType {
   RIVER(4),
   TREE(5),
   EDGE(6),
-  BOX(7),
+  BASE_WALL(7),
   PLAYER(8),
   BULLET(9),
   PLAYER_SPAWNER(10),
   ENEMY(11),
-  POWER_UP(12);
+  POWER_UP(12),
+  BORDER(13);
 
   private final int value;
 

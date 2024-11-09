@@ -1,6 +1,9 @@
 package tank1990.objects.powerups;
 
+import tank1990.common.classes.GameEntity;
+import tank1990.common.enums.EntityType;
 import tank1990.main.GamePanel;
+import tank1990.manager.GameEntityManager;
 import tank1990.objects.environments.BaseWall;
 import tank1990.objects.environments.Environment;
 
@@ -34,8 +37,8 @@ public class Shovel extends PowerUp{
 	public void activate() {
 		this.updatePoint();
 
-		List<Environment> environments = GamePanel.getEnvironments();
-		for (Environment env : environments) {
+		List<GameEntity> environments = List.of(GameEntityManager.getGameEntity(EntityType.BASE_WALL));
+		for (GameEntity env : environments) {
 			if (env instanceof BaseWall) {
 				((BaseWall) env).transform();
 			}

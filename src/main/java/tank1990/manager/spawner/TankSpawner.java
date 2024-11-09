@@ -2,12 +2,17 @@ package tank1990.manager.spawner;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import tank1990.common.enums.Direction;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.Timer;
@@ -17,14 +22,11 @@ import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
-import tank1990.common.utils.CommonUtil;
 import tank1990.main.GameInfoPanel;
-import tank1990.main.GamePanel;
 import tank1990.main.GameState;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.MapManager;
 import tank1990.manager.SoundManager;
-import tank1990.objects.environments.Environment;
 import tank1990.objects.tanks.EnemyTank;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
@@ -59,7 +61,8 @@ public class TankSpawner {
                     return;
                 }
                 if (!isBoardFull) {
-                    addAnEnemyToList(MapManager.getUnoccupiedIndex(), Tank.getTanks(), types.poll());
+                    addAnEnemyToList(MapManager.getUnoccupiedIndex(), Tank.getTanks(), types.peek());
+                    types.poll();
                     CollisionUtil.addCollisionToObjects();
                 }
             }
@@ -99,6 +102,7 @@ public class TankSpawner {
             tank.getCollision().setEnabled(true);
             tank.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
         }
+        CollisionUtil.addCollisionToObjects();
         tank.startShield();
     }
 
@@ -119,6 +123,7 @@ public class TankSpawner {
         enemyTypes = new LinkedList<>();
         enemyTypes = readTanksFromLevel(level);
         startQueueingEnemies(enemyTypes);
+        CollisionUtil.addCollisionToObjects();
     }
 
     public static void disableEnemySpawner() {
@@ -128,7 +133,6 @@ public class TankSpawner {
     // trả ra 1 list tất cả các tank|| được dùng để init tanks
     public static List<Tank> spawnTanks(int level) {
         List<Tank> tanks = new ArrayList<>();
-        Set<Integer> unoccupiedIndices = MapManager.getUnoccupiedIndex();
         enemyTypes = readTanksFromLevel(level);
         playerTank = (PlayerTank) createPlayer();
         tanks.add(playerTank);
@@ -138,10 +142,12 @@ public class TankSpawner {
 
     // truyền list tanks vào để check victory: player còn sống && kẻ địch đã spawn
     // hết && health của tất cả địch = 0
-    public static boolean checkVictory(List<Tank> tanks) {
+    public static boolean checkVictory() {
+        List<Tank> tanks = Tank.getTanks();
         boolean isPlayerAlive = MapManager.getPlayerTank().getHealth() != 0;
-        boolean areEnemiesAllSpawned = true;
+        boolean areEnemiesAllSpawned = false;
         if (enemyTypes != null) {
+
             areEnemiesAllSpawned = enemyTypes.peek() == null;
         }
         boolean areEnemiesAllDead = tanks.stream()
@@ -170,7 +176,7 @@ public class TankSpawner {
         PlayerTank playerTank = (PlayerTank) GameEntityManager.getGameEntity(EntityType.PLAYER)[0];
         GameInfoPanel.getInstance().decreaseLives();
         if (playerTank != null) {
-            playerTank.setPosition(new Vector2D(100, 80));
+            playerTank.setPosition(CollisionUtil.getPositionByIndex(GameConstants.PLAYER_SPAWNING_INDEX, 16, 16));
             if (gameState.isSoundOn()) {
                 playerSound.resetSound();
                 playerSound.playSound();
@@ -213,7 +219,7 @@ public class TankSpawner {
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line = br.readLine();
-            Arrays.stream(line.split(" ")).forEach(tank -> tanks.add(tank));
+            Arrays.stream(line.trim().split(" ")).forEach(tank -> tanks.add(tank));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

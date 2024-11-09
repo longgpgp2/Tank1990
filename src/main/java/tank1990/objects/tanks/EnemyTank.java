@@ -19,6 +19,8 @@ import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
+import tank1990.main.GameInfoPanel;
+import tank1990.main.GameObject;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.PowerUpManager;
 import tank1990.objects.animation.Appear;
@@ -313,6 +315,7 @@ public abstract class EnemyTank extends Tank {
 
     @Override
     public void destroy() {
+
         // animation nổ
         ExplosionAnimation explosion = new ExplosionAnimation();
         explosion.startAnimation(() -> {
@@ -329,10 +332,15 @@ public abstract class EnemyTank extends Tank {
             collisionBox = null;
         }
 
-        PowerUpManager.addPowerUp();
+        PowerUpManager.updateCharge();
 
         GameEntityManager.remove(this);
         TankSpawner.enemyTanks.remove(this);
+        GameInfoPanel.getInstance().removeEnemyIcon();
+        if (TankSpawner.checkVictory()) {
+            System.out.println("Victory");
+            GameObject.getInstance().nextLevel();
+        }
     }
 
     public String getName() {

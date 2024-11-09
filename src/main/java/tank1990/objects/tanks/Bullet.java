@@ -14,6 +14,7 @@ import tank1990.main.GameInfoPanel;
 import tank1990.manager.MapManager;
 import tank1990.objects.animation.BulletExplosion;
 import tank1990.objects.environments.Base;
+import tank1990.objects.environments.BaseWall;
 import tank1990.objects.environments.BrickWall;
 
 public class Bullet extends GameEntity {
@@ -147,6 +148,10 @@ public class Bullet extends GameEntity {
                 ((BrickWall) collidedGameEntity).hitComponent(this);
             }
 
+            if (collidedGameEntity instanceof BaseWall) {
+                ((BaseWall) collidedGameEntity).hitComponent(this);
+            }
+
             if (collidedGameEntity instanceof EnemyTank) {
                 EnemyTank enemyTank = (EnemyTank) collidedGameEntity;
                 if (enemyTank.isAppearing()) {
@@ -161,7 +166,6 @@ public class Bullet extends GameEntity {
                 if (enemyTank.getHealth() <= 0) {
                     enemyDestroyed = true;
                     enemyTank.destroy();
-                    GameInfoPanel.getInstance().removeEnemyIcon();
                     System.out.println(source);
                     if (source instanceof PlayerTank) {
                         PlayerTank playerTank = MapManager.getPlayerTank();

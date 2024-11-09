@@ -1,6 +1,7 @@
 package tank1990.objects.environments;
 
 import tank1990.common.classes.GameSprite;
+import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.spawner.TankSpawner;
 
@@ -13,6 +14,7 @@ import javax.swing.*;
 public class BaseWall extends BrickWall {
     public BaseWall(int x, int y) {
         super(x, y);
+        type=EntityType.BASE_WALL;
     }
 
     /**

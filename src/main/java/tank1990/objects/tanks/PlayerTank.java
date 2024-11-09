@@ -1,6 +1,7 @@
 package tank1990.objects.tanks;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.util.HashSet;
 
@@ -14,14 +15,10 @@ import tank1990.common.enums.CollisionType;
 import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
-import tank1990.main.GameObject;
-import tank1990.main.GamePanel;
-import tank1990.manager.GameEntityManager;
 import tank1990.manager.KeyHandler;
 import tank1990.manager.PowerUpManager;
-import tank1990.objects.animation.Appear;
-import tank1990.objects.animation.Shield;
 import tank1990.manager.spawner.TankSpawner;
+import tank1990.objects.animation.Appear;
 import tank1990.objects.powerups.PowerUp;
 
 public class PlayerTank extends Tank {
@@ -71,12 +68,14 @@ public class PlayerTank extends Tank {
 
         startAnimation();
     }
+
     public static PlayerTank getInstance(int tankOwner) {
         if (instance == null) {
             instance = new PlayerTank(tankOwner);
         }
         return instance;
     }
+
     public void startAnimation() {
         new Thread(() -> {
             while (!appear.isAnimationFinished()) {
@@ -119,12 +118,11 @@ public class PlayerTank extends Tank {
     @Override
     public void update(double deltaTime) {
 
-//        if (health == 0){
-//            System.out.println("Game Over");
-//
-//            return;
-//        }
-
+        // if (health == 0){
+        // System.out.println("Game Over");
+        //
+        // return;
+        // }
 
         keyHandler.updateVelocity();
 
