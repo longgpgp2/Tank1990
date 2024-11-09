@@ -87,8 +87,11 @@ public class GameObject extends GameLoop {
         MapManager.generateEnvironments(currentLevel);
         TankSpawner.enableEnemySpawner(currentLevel);
         CollisionUtil.addCollisionToObjects();
-        if (playerTank.getHealth() == 0)
-            playerTank.setHealth(1);
+        playerTank.setHealth(1);
+        playerTank.setPoint(0);
+        playerTank.setBulletCount(1);
+        playerTank.setBulletSpeed(150);
+        playerTank.setMovementSpeed(1);
         GameInfoPanel.getInstance().resetEnemyPanel();
         GameInfoPanel.getInstance().updateLevelLabel();
         GameInfoPanel.getInstance().resetPoint();
