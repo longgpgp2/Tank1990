@@ -47,6 +47,7 @@ public class Grenade extends PowerUp {
 		// thực hiện xóa bỏ các EnemyTank
 		for (EnemyTank tank : removedTanks) {
 			tank.health = 0;
+   GameInfoPanel.getInstance().removeEnemyIcon();
 			tank.destroy();
 		}
 		System.out.println("[POWER-UP] Destroy all enemy tanks");
