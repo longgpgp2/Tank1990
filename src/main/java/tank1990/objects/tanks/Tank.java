@@ -88,6 +88,10 @@ public abstract class Tank extends GameEntity {
          * Generate bullets based on bullets count.
          */
         public void initalizeBullets() {
+                if (bullets.size() > 0) {
+                        bullets.clear();
+                }
+
                 for (int i = 0; i < bulletCount; i++) {
                         int x = (int) Bullet.DEFAULT_POSITION.x;
                         int y = (int) Bullet.DEFAULT_POSITION.y;

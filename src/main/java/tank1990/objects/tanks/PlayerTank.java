@@ -94,6 +94,10 @@ public class PlayerTank extends Tank {
     }
 
     public void respawn() {
+        this.star = 1;
+        this.bulletCount = 1;
+        this.bulletSpeed = 150;
+        initalizeBullets();
         TankSpawner.respawnPlayer();
         startShield();
     }

@@ -92,6 +92,7 @@ public class GameObject extends GameLoop {
         playerTank.setBulletCount(1);
         playerTank.setBulletSpeed(150);
         playerTank.setMovementSpeed(1);
+        playerTank.initalizeBullets();
         GameInfoPanel.getInstance().resetEnemyPanel();
         GameInfoPanel.getInstance().updateLevelLabel();
         GameInfoPanel.getInstance().resetPoint();
