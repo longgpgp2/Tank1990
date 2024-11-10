@@ -61,7 +61,6 @@ public class GameObject extends GameLoop {
                 gameEntity.update(deltaTime);
             }
         } catch (Exception e) {
-            // System.out.println(e);
         }
     }
 
@@ -100,11 +99,11 @@ public class GameObject extends GameLoop {
 
     public void nextLevel() {
         currentLevel += 1;
-        if (currentLevel >=4){
+        if (currentLevel >= 4) {
             GameObject.getInstance().eraseGame();
             stop();
             GamePanel.getInstance().showVictoryDialog();
-        }else {
+        } else {
             TankSpawner.removePlayer();
             TankSpawner.removeEnemies();
             TankSpawner.disableEnemySpawner();

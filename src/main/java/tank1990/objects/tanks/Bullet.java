@@ -1,6 +1,7 @@
 package tank1990.objects.tanks;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.util.HashSet;
 
 import tank1990.common.classes.CollisionBox;
@@ -166,13 +167,11 @@ public class Bullet extends GameEntity {
                 if (enemyTank.getHealth() <= 0) {
                     enemyDestroyed = true;
                     enemyTank.destroy();
-                    System.out.println(source);
                     if (source instanceof PlayerTank) {
                         PlayerTank playerTank = MapManager.getPlayerTank();
                         playerTank.setPoint(playerTank.getPoint() + enemyTank.getPoint());
                         GameInfoPanel.getInstance().updatePoint();
                         GameInfoPanel.getInstance().removeEnemyIcon();
-                        System.out.println(playerTank.getPoint());
                     }
                     bulletExplosion = new BulletExplosion((int) lastX, (int) lastY);
                     this.destroy();

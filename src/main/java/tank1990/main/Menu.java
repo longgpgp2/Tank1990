@@ -1,22 +1,30 @@
 package tank1990.main;
 
-import tank1990.manager.FontManager;
-import tank1990.manager.SoundManager;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import tank1990.manager.FontManager;
+import tank1990.manager.SoundManager;
+
 public class Menu extends JPanel implements KeyListener, Runnable {
     private int currentSelection = 0;
-    private String[] menuItems = {"Start", "Options", "Exit"};
+    private String[] menuItems = { "Start", "Options", "Exit" };
     private Image logoImage;
     private JFrame parentFrame;
     private Font customFont;
     private SoundManager soundManager, backgroundMusic;
-    private GameState gameState ;
-    public Menu(Frame frame){
+    private GameState gameState;
+
+    public Menu(Frame frame) {
         this.parentFrame = (JFrame) frame;
         FontManager font = new FontManager("/fonts/6809-chargen.regular.ttf", 36f);
         customFont = font.getCustomFont();
@@ -35,30 +43,31 @@ public class Menu extends JPanel implements KeyListener, Runnable {
             backgroundMusic.stopSound();
         }
     }
+
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g. setColor(Color.BLACK);
-        g.fillRect(0,0,getWidth(),getHeight());
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, getWidth(), getHeight());
 
-        if (logoImage != null){
-            g.drawImage(logoImage, getWidth()/ 2 - logoImage.getWidth(null) / 2, 100, null);
+        if (logoImage != null) {
+            g.drawImage(logoImage, getWidth() / 2 - logoImage.getWidth(null) / 2, 100, null);
         }
 
         g.setFont(customFont != null ? customFont : new Font("Arial", Font.PLAIN, 36));
-        for (int i =0; i< menuItems.length; i++){
-            if ( i == currentSelection){
+        for (int i = 0; i < menuItems.length; i++) {
+            if (i == currentSelection) {
                 g.setColor(Color.YELLOW);
-            }else{
+            } else {
                 g.setColor(Color.WHITE);
             }
             g.drawString(menuItems[i], getWidth() / 2 - 100, 300 + i * 50);
         }
     }
+
     @Override
     public void run() {
-
 
         while (true) {
             repaint();
@@ -69,48 +78,47 @@ public class Menu extends JPanel implements KeyListener, Runnable {
             }
         }
     }
+
     @Override
-    public void keyPressed(KeyEvent e){
+    public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
-        if (key == KeyEvent.VK_W){
-            currentSelection --;
-            if (currentSelection <0){
-                currentSelection = menuItems.length-1;
+        if (key == KeyEvent.VK_W) {
+            currentSelection--;
+            if (currentSelection < 0) {
+                currentSelection = menuItems.length - 1;
             }
             selectSoundManager();
-        }else if(key == KeyEvent.VK_S){
-            currentSelection ++;
-            if (currentSelection >= menuItems.length){
-                currentSelection =0;
+        } else if (key == KeyEvent.VK_S) {
+            currentSelection++;
+            if (currentSelection >= menuItems.length) {
+                currentSelection = 0;
             }
             selectSoundManager();
-        }else if(key == KeyEvent.VK_ENTER){
+        } else if (key == KeyEvent.VK_ENTER) {
             selectSoundManager();
             selectMenuItem();
         }
         repaint();
     }
-    public void selectMenuItem(){
-        switch (currentSelection){
+
+    public void selectMenuItem() {
+        switch (currentSelection) {
             case 0:
-                System.out.println("Start game selected!");
                 backgroundMusic.stopSound();
                 parentFrame.dispose();
                 GameObject.getInstance().startGame();
                 break;
             case 1:
-                System.out.println("Options selected");
                 parentFrame.dispose();
                 openOptionsMenu();
                 break;
             case 2:
-                System.out.println("Exit selected");
                 System.exit(0);
                 break;
         }
     }
 
-    private void openOptionsMenu(){
+    private void openOptionsMenu() {
         JFrame optionsFrame = new JFrame("Options Menu");
         OptionsMenu optionsMenu = new OptionsMenu(optionsFrame, backgroundMusic, gameState);
         optionsFrame.add(optionsMenu);
@@ -120,11 +128,13 @@ public class Menu extends JPanel implements KeyListener, Runnable {
         optionsFrame.setVisible(true);
         new Thread(optionsMenu).start();
     }
+
     public void refreshBackgroundMusic() {
         if (gameState.isSoundOn()) {
             backgroundMusic.resetSound(); // Chơi nhạc nếu isSoundOn là true
         }
     }
+
     @Override
     public void keyReleased(KeyEvent e) {
     }
@@ -132,11 +142,12 @@ public class Menu extends JPanel implements KeyListener, Runnable {
     @Override
     public void keyTyped(KeyEvent e) {
     }
-    public void selectSoundManager(){
-        if (gameState.isSoundOn()){
+
+    public void selectSoundManager() {
+        if (gameState.isSoundOn()) {
             soundManager.resetSound();
             soundManager.playSound();
-        }else {
+        } else {
             soundManager.stopSound();
         }
     }

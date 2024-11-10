@@ -121,13 +121,6 @@ public class PlayerTank extends Tank {
 
     @Override
     public void update(double deltaTime) {
-
-        // if (health == 0){
-        // System.out.println("Game Over");
-        //
-        // return;
-        // }
-
         keyHandler.updateVelocity();
 
         if (isAppear) {
@@ -143,9 +136,7 @@ public class PlayerTank extends Tank {
         if (collidedEntities == null) {
             move(deltaTime);
         } else {
-            // System.out.println("--------------------");
             for (GameEntity e : collidedEntities) {
-                // System.out.println(e);
                 if (e.getType() == EntityType.POWER_UP) {
                     // remove and trigger power-up effect
                     PowerUpManager.triggerPowerUp((PowerUp) e);

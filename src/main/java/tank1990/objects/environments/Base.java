@@ -1,10 +1,11 @@
 package tank1990.objects.environments;
 
+import java.awt.Graphics2D;
+import java.awt.Image;
+
 import tank1990.common.classes.GameSprite;
 import tank1990.common.enums.EntityType;
 import tank1990.objects.animation.ExplosionAnimation;
-
-import java.awt.*;
 
 public class Base extends Environment {
     public boolean isDestroy = false;
@@ -17,11 +18,8 @@ public class Base extends Environment {
 
     @Override
     public void destroy() {
-//        System.out.println("Gà");
-        // animation nổ
         ExplosionAnimation explosion = new ExplosionAnimation();
         explosion.startAnimation(() -> {
-//            setSprite(new GameSprite("src/main/resources/haha.jpg"));
             isDestroy = true;
         }, new ExplosionAnimation.ImageUpdateCallback() {
             @Override

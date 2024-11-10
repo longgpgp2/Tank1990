@@ -6,13 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.swing.Timer;
@@ -228,18 +222,26 @@ public class TankSpawner {
 
     // thêm kẻ địch vào list tank
     public static List<Tank> addAnEnemyToList(Set<Integer> unoccupiedIndices, List<Tank> tanks, String enemyType) {
-        Set<Integer> tanksIndices = new HashSet<>();
-        if (!tanks.isEmpty()) {
-            for (Tank tank : tanks) {
-                tanksIndices.add(CollisionUtil.getTileIndex(tank.getPosition()));
-            }
-        }
-
-        unoccupiedIndices.removeAll(tanksIndices);
+        int playerIndex = CollisionUtil.getTileIndex(Tank.getTanks().get(0).getPosition());
+        unoccupiedIndices.remove(playerIndex);
         Tank tank = createEnemyTankByType(enemyType);
         while (true) {
+            Random random = new Random();
+            int[] spawningIndices = {34,63};
+            int enemySpawningIndex = random.nextInt(0, 2);
+            int[][] playerInvalidIndices = {{0, 1, 33, 66}, {29,30,31,62,63,64,94,97,127}};
+
+            boolean isPlayerPositionInvalid = false;
+            for (int index: playerInvalidIndices[enemySpawningIndex]) {
+                if(index==playerIndex) {
+                    isPlayerPositionInvalid = true;
+                    break;
+                }
+            }
+            boolean isIndexBlocked = !MapManager.checkIndexAvailability(spawningIndices[enemySpawningIndex]);
+            if(isIndexBlocked || isPlayerPositionInvalid) continue;
             Vector2D position = CollisionUtil.getPositionByIndex(
-                    GameConstants.ENEMY_SPAWNING_INDEX,
+                    spawningIndices[enemySpawningIndex],
                     GameConstants.ENTITY_WIDTH,
                     GameConstants.ENTITY_HEIGHT);
             tank.setPosition(position);

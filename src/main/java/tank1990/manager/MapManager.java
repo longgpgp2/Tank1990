@@ -1,5 +1,20 @@
 package tank1990.manager;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.ImageObserver;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import javax.swing.ImageIcon;
+
 import tank1990.common.classes.CollisionBox;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
@@ -7,20 +22,17 @@ import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.main.GamePanel;
 import tank1990.manager.spawner.PerkSpawner;
-import tank1990.objects.environments.*;
+import tank1990.objects.environments.Base;
+import tank1990.objects.environments.BaseWall;
+import tank1990.objects.environments.Border;
+import tank1990.objects.environments.BrickWall;
+import tank1990.objects.environments.Environment;
+import tank1990.objects.environments.SteelWall;
+import tank1990.objects.environments.Trees;
+import tank1990.objects.environments.Water;
 import tank1990.objects.powerups.PowerUp;
 import tank1990.objects.tanks.PlayerTank;
 import tank1990.objects.tanks.Tank;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.ImageObserver;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
 
 public class MapManager {
 
@@ -34,7 +46,6 @@ public class MapManager {
         requiredIndices.add(index + 33);
         requiredIndices.add(index + 34);
         if (!unoccupiedIndices.containsAll(requiredIndices)) {
-            System.out.println("Index " + index + " is occupied!");
             return false;
         }
         return true;
@@ -79,10 +90,10 @@ public class MapManager {
         do {
             randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
             randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
-        } while (!checkIndexAvailability(randomIndex) || 
+        } while (!checkIndexAvailability(randomIndex) ||
                 ((randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
-                (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
-        ));
+                        (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
+                ));
         Vector2D powerupPosition = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH,
                 GameConstants.ENTITY_HEIGHT);
 
@@ -90,7 +101,6 @@ public class MapManager {
         String perkName = GameConstants.PERK_LIST[randomArrayIndex];
 
         PowerUp powerUp = PerkSpawner.createPowerUp(perkName, powerupPosition);
-        // System.out.println(powerUp);
         return powerUp;
 
     }
@@ -122,16 +132,15 @@ public class MapManager {
         }
         return null;
     }
+
     public static Base getBase() {
         Base base = null;
         if (GameEntityManager.getGameEntity(EntityType.BASE).length > 0) {
             base = (Base) GameEntityManager.getGameEntity(EntityType.BASE)[0];
         }
 
-
         return base;
     }
-
 
     // Đọc từ level và tạo ra map tương ứng
     public static List<Environment> generateEnvironments(int level) {

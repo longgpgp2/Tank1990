@@ -1,13 +1,23 @@
 package tank1990.main;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
 import tank1990.common.constants.GameConstants;
 import tank1990.manager.MapManager;
 import tank1990.objects.tanks.PlayerTank;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class GameInfoPanel extends JPanel {
     private static GameInfoPanel instance;
@@ -15,9 +25,10 @@ public class GameInfoPanel extends JPanel {
     private JLabel livesLabel, levelLabel, levelIconLabel, pointLabel, pointsTextLabel;
     private List<JLabel> enemyLabels;
     private int points = 0;
-    private int lives =1;
+    private int lives = 1;
     public int level = 1;
-    public GameInfoPanel(){
+
+    public GameInfoPanel() {
         this.setBackground(Color.GRAY);
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         this.setPreferredSize(new Dimension(100, GameConstants.MAP_HEIGHT + 100));
@@ -28,12 +39,14 @@ public class GameInfoPanel extends JPanel {
         initLevelPanel();
         initPointPanel();
     }
+
     public static synchronized GameInfoPanel getInstance() {
         if (instance == null) {
             instance = new GameInfoPanel();
         }
         return instance;
     }
+
     private void initEnemyPanel() {
         enemyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         enemyPanel.setBackground(Color.GRAY);
@@ -57,6 +70,7 @@ public class GameInfoPanel extends JPanel {
         enemyPanel.add(column2);
         add(enemyPanel);
     }
+
     private void initPointPanel() {
         pointPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
         pointPanel.setBackground(Color.GRAY);
@@ -118,6 +132,7 @@ public class GameInfoPanel extends JPanel {
         leveloutSide.add(levelPanel);
         add(leveloutSide);
     }
+
     public void removeEnemyIcon() {
         if (!enemyLabels.isEmpty()) {
             // Xóa tất cả các JLabel hiện có từ enemyPanel
@@ -149,7 +164,7 @@ public class GameInfoPanel extends JPanel {
             // Cập nhật lại GameInfoPanel nếu cần
             this.revalidate();
             this.repaint();
-            System.out.println("Removed an enemy icon. Remaining icons: " + enemyLabels.size());
+
         }
     }
 
@@ -184,7 +199,6 @@ public class GameInfoPanel extends JPanel {
         this.repaint();
     }
 
-
     public void increaseLives() {
         if (lives < 10) {
             lives++;
@@ -205,25 +219,26 @@ public class GameInfoPanel extends JPanel {
         levelPanel.revalidate(); // Xác nhận layout lại nếu cần
         levelPanel.repaint(); // Vẽ lại panel chứa label
     }
-    public void updatePoint(){
+
+    public void updatePoint() {
         PlayerTank playerTank = MapManager.getPlayerTank();
         pointLabel.setText(String.valueOf(playerTank.getPoint()));
         pointLabel.repaint(); // Vẽ lại label
         pointPanel.revalidate(); // Xác nhận layout lại nếu cần
         pointPanel.repaint(); // Vẽ lại panel chứa label
     }
+
     public void resetPoint() {
-        points = 0;  // Đặt lại điểm số về 0
-        pointLabel.setText(String.valueOf(points));  // Cập nhật label hiển thị điểm số
-        pointLabel.repaint();  // Vẽ lại label
-        pointPanel.revalidate();  // Xác nhận layout lại nếu cần
-        pointPanel.repaint();  // Vẽ lại panel chứa label
-        System.out.println("Points have been reset to 0");
+        points = 0; // Đặt lại điểm số về 0
+        pointLabel.setText(String.valueOf(points)); // Cập nhật label hiển thị điểm số
+        pointLabel.repaint(); // Vẽ lại label
+        pointPanel.revalidate(); // Xác nhận layout lại nếu cần
+        pointPanel.repaint(); // Vẽ lại panel chứa label
     }
+
     public void updateLevelLabel() {
         int currentLevel = GameObject.getInstance().getCurrentLevel();
         levelLabel.setText(String.valueOf(currentLevel));
-        System.out.println("Updating level label to: " + currentLevel);
         levelLabel.repaint(); // Vẽ lại label
         levelPanel.revalidate(); // Xác nhận layout lại nếu cần
         levelPanel.repaint(); // Vẽ lại panel chứa label
