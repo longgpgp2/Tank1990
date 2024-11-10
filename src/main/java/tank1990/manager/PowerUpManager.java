@@ -16,7 +16,7 @@ import tank1990.objects.powerups.PowerUp;
  *
  */
 public class PowerUpManager {
-    private static int autoSpawnDelay = 3000;
+    private static int autoSpawnDelay = 30000;
     private static int autoRemoveDelay = 15000;
 
     private static CopyOnWriteArrayList<PowerUp> powerUps = new CopyOnWriteArrayList<>();
