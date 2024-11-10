@@ -2,6 +2,7 @@ package tank1990.manager;
 
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.Timer;
 
@@ -15,17 +16,17 @@ import tank1990.objects.powerups.PowerUp;
  *
  */
 public class PowerUpManager {
-    private static int autoSpawnDelay = 30000;
+    private static int autoSpawnDelay = 3000;
     private static int autoRemoveDelay = 15000;
 
-    private static ArrayList<PowerUp> powerUps = new ArrayList<>();
+    private static CopyOnWriteArrayList<PowerUp> powerUps = new CopyOnWriteArrayList<>();
     private static ActionListener autoSpawnAction = null;
     private static Timer autoSpawnTimer = new Timer(autoSpawnDelay, autoSpawnAction);
     private static GameState gameState = GameState.getInstance();
 
     private static int charge = 0;
 
-    public static ArrayList<PowerUp> getPowerUps() {
+    public static CopyOnWriteArrayList<PowerUp> getPowerUps() {
         return powerUps;
     }
 
@@ -108,7 +109,6 @@ public class PowerUpManager {
      */
     public static void startAutoSpawn() {
         if (autoSpawnAction == null) {
-            autoSpawnTimer = new Timer(autoSpawnDelay, autoSpawnAction);
             autoSpawnAction = e -> {
                 if (addPowerUp()) {
                     System.out.println("A new power-up is added after " + autoSpawnDelay + "ms");
@@ -128,10 +128,8 @@ public class PowerUpManager {
     public static void resetPowerUps() {
         // stop auto spawn
         if (autoSpawnAction != null) {
-            if (autoSpawnTimer != null) {
-                autoSpawnTimer.removeActionListener(autoSpawnAction);
-            }
-            autoSpawnTimer = null;
+            autoSpawnTimer.removeActionListener(autoSpawnAction);
+            autoSpawnAction = null;
         }
         // remove all power-ups
         for (PowerUp powerUp : powerUps) {

@@ -79,9 +79,8 @@ public class MapManager {
         do {
             randomArrayIndex = random.nextInt(unoccupiedIndicesAsArray.length);
             randomIndex = unoccupiedIndicesAsArray[randomArrayIndex];
-        } while (!checkIndexAvailability(randomIndex) || ((randomIndex < 99 || randomIndex >= 990) || // vertical
-                                                                                                      // boundary [3 *
-                                                                                                      // 33, 30 * 33]
+        } while (!checkIndexAvailability(randomIndex) || 
+                ((randomIndex < 99 || randomIndex >= 990) || // vertical boundary [3 * 33, 30 * 33]
                 (randomIndex % 33 < 3 || randomIndex % 33 >= 30) // horizontal boundary [3, 30]
         ));
         Vector2D powerupPosition = CollisionUtil.getPositionByIndex(randomIndex, GameConstants.ENTITY_WIDTH,
