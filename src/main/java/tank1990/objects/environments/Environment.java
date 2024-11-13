@@ -1,15 +1,13 @@
 package tank1990.objects.environments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tank1990.common.classes.GameEntity;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.constants.GameConstants;
 import tank1990.common.enums.EntityType;
 import tank1990.manager.GameEntityManager;
-import tank1990.objects.tanks.Tank;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public abstract class Environment extends GameEntity {
 	public String name = getClass().getSimpleName();
@@ -39,11 +37,13 @@ public abstract class Environment extends GameEntity {
 				", health=" + health +
 				'}';
 	}
-	public static List<Environment> getEnvironments(){
+
+	public static List<Environment> getEnvironments() {
 		List<Environment> envs = new ArrayList<>();
 		GameEntityManager.getGameEntities()
 				.stream()
-				.filter(gameEntity -> gameEntity.getType().getValue()>=1 && gameEntity.getType().getValue()<=7)
+				.filter(gameEntity -> gameEntity.getType().getValue() >= 1 && gameEntity.getType().getValue() <= 7
+						|| gameEntity.getType().equals(EntityType.BORDER))
 				.toArray(GameEntity[]::new);
 		return envs;
 	}

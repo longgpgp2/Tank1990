@@ -3,9 +3,6 @@ package tank1990.common.constants;
 import tank1990.common.classes.Vector2D;
 import tank1990.common.enums.EntityType;
 
-import java.util.Arrays;
-import java.util.Set;
-
 public class GameConstants {
         public static final int FRAME_WIDTH = 1000;
         public static final int FRAME_HEIGHT = 800;
@@ -30,7 +27,18 @@ public class GameConstants {
         };
         public static final EntityType[] PLAYER_IMPASSABLE_ENTITIES = {
                         EntityType.ENEMY, EntityType.BASE, EntityType.EDGE,
-                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.BASE_WALL, EntityType.POWER_UP, EntityType.BORDER
+                        EntityType.BRICK, EntityType.RIVER, EntityType.STEEL, EntityType.BASE_WALL, EntityType.POWER_UP,
+                        EntityType.BORDER
+        };
+        public static final EntityType[] BULLET_IMPASSABLE_ENTITIES = {
+                        EntityType.BRICK,
+                        EntityType.STEEL,
+                        EntityType.ENEMY,
+                        EntityType.BASE,
+                        EntityType.BASE_WALL,
+                        EntityType.PLAYER,
+                        EntityType.BORDER,
+                        EntityType.BULLET
         };
 
 }

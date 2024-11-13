@@ -119,15 +119,7 @@ public class GameObject extends GameLoop {
             GameInfoPanel.getInstance().resetEnemyPanel();
             GameInfoPanel.getInstance().updateLevelLabel();
             GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-            GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-                    EntityType.BRICK,
-                    EntityType.STEEL,
-                    EntityType.ENEMY,
-                    EntityType.BASE,
-                    EntityType.BASE_WALL,
-                    EntityType.PLAYER,
-                    EntityType.BORDER,
-            });
+            GameEntityManager.setCollisionEntities(EntityType.BULLET, GameConstants.BULLET_IMPASSABLE_ENTITIES);
 
         }
 

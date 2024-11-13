@@ -188,7 +188,7 @@ public class MapManager {
                     env.setPosition(new Vector2D(envX, envY));
                     if (!env.crossable && env.getType().equals(EntityType.BASE))
                         env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width * 2, env.height * 2));
-                    if (!env.crossable)
+                    else if (!env.crossable)
                         env.setCollision(new CollisionBox(env, new Vector2D(0, 0), env.width, env.height));
                     envs.add(env);
                 }

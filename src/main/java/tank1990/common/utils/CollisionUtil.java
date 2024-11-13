@@ -18,15 +18,7 @@ public class CollisionUtil {
   public static void addCollisionToObjects() {
     GameEntityManager.setCollisionEntities(EntityType.ENEMY, GameConstants.IMPASSABLE_ENTITIES);
     GameEntityManager.setCollisionEntities(EntityType.PLAYER, GameConstants.PLAYER_IMPASSABLE_ENTITIES);
-    GameEntityManager.setCollisionEntities(EntityType.BULLET, new EntityType[] {
-        EntityType.BRICK,
-        EntityType.STEEL,
-        EntityType.ENEMY,
-        EntityType.BASE,
-        EntityType.BASE_WALL,
-        EntityType.PLAYER,
-        EntityType.BORDER,
-    });
+    GameEntityManager.setCollisionEntities(EntityType.BULLET, GameConstants.BULLET_IMPASSABLE_ENTITIES);
   }
 
   public static int getTileIndex(Vector2D position) {

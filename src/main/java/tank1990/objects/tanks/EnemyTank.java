@@ -2,12 +2,12 @@ package tank1990.objects.tanks;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Arrays;
-import java.util.HashMap;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+import javax.swing.Timer;
 
 import tank1990.common.classes.AABB;
 import tank1990.common.classes.CollisionBox;
@@ -19,13 +19,12 @@ import tank1990.common.enums.Direction;
 import tank1990.common.enums.EntityType;
 import tank1990.common.utils.CollisionUtil;
 import tank1990.common.utils.CommonUtil;
-import tank1990.main.GameInfoPanel;
 import tank1990.main.GameObject;
 import tank1990.manager.GameEntityManager;
 import tank1990.manager.PowerUpManager;
+import tank1990.manager.spawner.TankSpawner;
 import tank1990.objects.animation.Appear;
 import tank1990.objects.animation.ExplosionAnimation;
-import tank1990.manager.spawner.TankSpawner;
 
 public abstract class EnemyTank extends Tank {
     public Image[][] images;
@@ -132,12 +131,13 @@ public abstract class EnemyTank extends Tank {
     }
 
     public void update(double deltaTime) {
-        if(!enabled) return;
+        if (!enabled)
+            return;
         if (isAppear || movementSpeed == 0) {
             return;
         }
 
-         shoot();
+        shoot();
 
         frameCounter += deltaTime * 1000; // Tăng theo thời gian thực
         if (frameCounter >= animationInterval) {

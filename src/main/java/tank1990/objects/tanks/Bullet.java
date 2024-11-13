@@ -153,6 +153,12 @@ public class Bullet extends GameEntity {
                 ((BaseWall) collidedGameEntity).hitComponent(this);
             }
 
+            if (collidedGameEntity instanceof Bullet) {
+                Bullet bullet = (Bullet) collidedGameEntity;
+                bullet.destroy();
+                this.destroy();
+            }
+
             if (collidedGameEntity instanceof EnemyTank) {
                 EnemyTank enemyTank = (EnemyTank) collidedGameEntity;
                 if (enemyTank.isAppearing()) {
